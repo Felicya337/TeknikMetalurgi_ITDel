@@ -19,13 +19,17 @@ class Achievement extends Model
         'image',
         'file',
         'type',
+        'subtype',
+        'is_active',
         'created_by',
         'updated_by',
     ];
 
     protected $casts = [
         'type' => 'string',
+        'subtype' => 'string',
         'date' => 'date',
+        'is_active' => 'boolean',
     ];
 
     public function creator()
@@ -36,5 +40,10 @@ class Achievement extends Model
     public function updater()
     {
         return $this->belongsTo(Admin::class, 'updated_by');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

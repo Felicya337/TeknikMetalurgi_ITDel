@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('file')->nullable();
             $table->enum('type', ['publikasi', 'penelitian', 'pencapaian']);
+            $table->string('subtype')->nullable();
+
+            $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();

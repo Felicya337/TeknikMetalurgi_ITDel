@@ -1,5 +1,6 @@
 <?php $__env->startSection('content'); ?>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -96,6 +97,10 @@
             margin-bottom: 1rem;
         }
 
+        .note-editor.note-frame {
+            border-radius: 8px;
+        }
+
         @media (max-width: 768px) {
             .table-responsive {
                 font-size: 0.85rem;
@@ -125,20 +130,22 @@
                             <table class="table table-striped table-bordered text-center" id="metaProfileTable">
                                 <thead>
                                     <tr>
+                                        <th scope="col" style="width: 5%;">Nomor</th>
                                         <th scope="col" style="width: 20%;">Meta Key</th>
                                         <th scope="col" style="width: 20%;">Judul</th>
                                         <th scope="col" style="width: 25%;">Deskripsi</th>
                                         <th scope="col" style="width: 15%;">Gambar</th>
-                                        <th scope="col" style="width: 10%;">Aktif</th>
-                                        <th scope="col" style="width: 20%;">Aksi</th>
+                                        <th scope="col" style="width: 10%;">Status</th>
+                                        <th scope="col" style="width: 15%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php $__currentLoopData = $metaProfiles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $metaProfile): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
+                                            <td></td> <!-- Placeholder for row number -->
                                             <td><?php echo e($metaProfile->metakey); ?></td>
                                             <td><?php echo e($metaProfile->title); ?></td>
-                                            <td><?php echo e(Str::limit($metaProfile->description, 100)); ?></td>
+                                            <td><?php echo $metaProfile->description; ?></td>
                                             <td>
                                                 <?php if($metaProfile->image): ?>
                                                     <img src="<?php echo e(asset('storage/' . $metaProfile->image)); ?>"
@@ -155,25 +162,30 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-read-metaprofile-<?php echo e($metaProfile->id); ?>">
-                                                    <i class="fas fa-eye"></i> Lihat
-                                                </button>
-                                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-edit-metaprofile-<?php echo e($metaProfile->id); ?>">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                                <form action="<?php echo e(route('admin.metaprofile.destroy', $metaProfile->id)); ?>"
-                                                    method="POST" class="d-inline">
-                                                    <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">
-                                                        <i class="fas fa-trash"></i> Hapus
+                                                <div class="d-flex justify-content-center">
+                                                    <button type="button" class="btn btn-info btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-read-metaprofile-<?php echo e($metaProfile->id); ?>">
+                                                        <i class="fas fa-eye"></i> Lihat
                                                     </button>
-                                                </form>
+                                                    <button type="button" class="btn btn-warning btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-edit-metaprofile-<?php echo e($metaProfile->id); ?>">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
+                                                    <form
+                                                        action="<?php echo e(route('admin.metaprofile.destroy', $metaProfile->id)); ?>"
+                                                        method="POST" class="d-inline">
+                                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                                                        <button type="submit"
+                                                            class="btn btn-danger btn-sm mx-1 delete-btn">
+                                                            <i class="fas fa-trash"></i> Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
 
-                                        <!-- MODAL READ METAPROFILE -->
                                         <div class="modal fade" id="modal-read-metaprofile-<?php echo e($metaProfile->id); ?>"
                                             tabindex="-1"
                                             aria-labelledby="modal-read-metaprofileLabel-<?php echo e($metaProfile->id); ?>"
@@ -194,7 +206,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- MODAL EDIT METAPROFILE -->
                                         <div class="modal fade" id="modal-edit-metaprofile-<?php echo e($metaProfile->id); ?>"
                                             tabindex="-1"
                                             aria-labelledby="modal-edit-metaprofileLabel-<?php echo e($metaProfile->id); ?>"
@@ -224,7 +235,6 @@
         </div>
     </div>
 
-    <!-- MODAL ADD METAPROFILE -->
     <div class="modal fade" id="modal-metaprofile" tabindex="-1" aria-labelledby="modal-metaprofileLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -243,21 +253,154 @@
 
 <?php $__env->startPush('scripts'); ?>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
+            // DataTables Initialization
             $('#metaProfileTable').DataTable({
                 responsive: true,
                 pageLength: 10,
-                searching: false,
-                lengthChange: false,
-                paging: false,
-                info: false
+                searching: true,
+                lengthChange: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ entri per halaman",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                    infoFiltered: "(disaring dari _MAX_ total entri)",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    },
+                    aria: {
+                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
+                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
+                    }
+                },
+                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                columns: [{
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1; // Row number starts from 1
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'metakey'
+                    },
+                    {
+                        data: 'title'
+                    },
+                    {
+                        data: 'description'
+                    },
+                    {
+                        data: 'image'
+                    },
+                    {
+                        data: 'is_active'
+                    },
+                    {
+                        data: 'action'
+                    }
+                ],
+                columnDefs: [{
+                    targets: 3, // Deskripsi column
+                    render: function(data, type, row) {
+                        return type === 'display' ? data : $('<div/>').html(data).text();
+                    }
+                }],
+                initComplete: function() {
+                    $('.dataTables_length select').addClass('form-select form-select-sm');
+                    $('.dataTables_filter input').addClass('form-control form-control-sm');
+                }
             });
 
+            // Initialize Summernote for Create Form
+            $('#editor-create').summernote({
+                height: 300,
+                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                fontNamesIgnoreCheck: ['Poppins'],
+                fontSizes: ['12', '14', '16', '20', '24', '32'],
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                callbacks: {
+                    onChange: function(contents) {
+                        $('#description-create').val(contents);
+                    },
+                    onInit: function() {
+                        $('#editor-create').summernote('code', $('#description-create').val());
+                    }
+                }
+            });
+
+            // Initialize Summernote for Edit Forms when modals are shown
+            $('div[id^="modal-edit-metaprofile-"]').on('shown.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var metaProfileId = modalId.replace('modal-edit-metaprofile-', '');
+                var editorId = 'editor-edit-' + metaProfileId;
+
+                if (!$('#' + editorId).hasClass('note-editor')) {
+                    $('#' + editorId).summernote({
+                        height: 300,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                            'Courier New'
+                        ],
+                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        callbacks: {
+                            onChange: function(contents) {
+                                $('#description-edit-' + metaProfileId).val(contents);
+                            }
+                        }
+                    });
+
+                    var description = $('#description-edit-' + metaProfileId).val();
+                    $('#' + editorId).summernote('code', description);
+                }
+            });
+
+            // Destroy Summernote instances when edit modals are hidden
+            $('div[id^="modal-edit-metaprofile-"]').on('hidden.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var metaProfileId = modalId.replace('modal-edit-metaprofile-', '');
+                var editorId = 'editor-edit-' + metaProfileId;
+
+                if ($('#' + editorId).hasClass('note-editor')) {
+                    $('#' + editorId).summernote('destroy');
+                }
+            });
+
+            // SweetAlert2 for Notifications
             <?php if(session('success')): ?>
                 Swal.fire({
                     icon: 'success',
@@ -278,6 +421,7 @@
                 });
             <?php endif; ?>
 
+            // SweetAlert2 for Delete Confirmation
             $('.delete-btn').on('click', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form');

@@ -1,5 +1,6 @@
 <?php $__env->startSection('content'); ?>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -96,6 +97,10 @@
             margin-bottom: 1rem;
         }
 
+        .note-editor.note-frame {
+            border-radius: 8px;
+        }
+
         @media (max-width: 768px) {
             .table-responsive {
                 font-size: 0.85rem;
@@ -125,21 +130,22 @@
                             <table class="table table-striped table-bordered text-center" id="achievementTable">
                                 <thead>
                                     <tr>
+                                        <th scope="col" style="width: 5%;">Nomor</th>
+                                        <th scope="col" style="width: 10%;">Jenis</th>
+                                        <th scope="col" style="width: 10%;">Tipe</th>
                                         <th scope="col" style="width: 15%;">Judul</th>
                                         <th scope="col" style="width: 20%;">Deskripsi</th>
-                                        <th scope="col" style="width: 15%;">Tanggal</th>
-                                        <th scope="col" style="width: 10%;">Tipe</th>
+                                        <th scope="col" style="width: 10%;">Tanggal</th>
                                         <th scope="col" style="width: 10%;">Gambar</th>
                                         <th scope="col" style="width: 10%;">File</th>
-                                        <th scope="col" style="width: 20%;">Aksi</th>
+                                        <th scope="col" style="width: 10%;">Aktif</th>
+                                        <th scope="col" style="width: 15%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php $__currentLoopData = $achievements; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $achievement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
-                                            <td><?php echo e($achievement->title); ?></td>
-                                            <td><?php echo e(Str::limit($achievement->description, 100)); ?></td>
-                                            <td><?php echo e($achievement->date ? $achievement->date->format('d-m-Y') : '-'); ?></td>
+                                            <td></td> <!-- Placeholder for row number -->
                                             <td>
                                                 <span
                                                     class="badge <?php echo e($achievement->type == 'publikasi' ? 'bg-primary' : ($achievement->type == 'penelitian' ? 'bg-info' : 'bg-success')); ?>">
@@ -147,6 +153,16 @@
 
                                                 </span>
                                             </td>
+                                            <td>
+                                                <?php if($achievement->subtype): ?>
+                                                    <span class="badge bg-secondary"><?php echo e($achievement->subtype); ?></span>
+                                                <?php else: ?>
+                                                    <span class="text-muted">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?php echo e($achievement->title); ?></td>
+                                            <td><?php echo Str::limit($achievement->description, 100); ?></td>
+                                            <td><?php echo e($achievement->date ? $achievement->date->format('d-m-Y') : '-'); ?></td>
                                             <td>
                                                 <?php if($achievement->image): ?>
                                                     <img src="<?php echo e(asset('storage/' . $achievement->image)); ?>"
@@ -166,21 +182,34 @@
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-read-achievement-<?php echo e($achievement->id); ?>">
-                                                    <i class="fas fa-eye"></i> Lihat
-                                                </button>
-                                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-edit-achievement-<?php echo e($achievement->id); ?>">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                                <form action="<?php echo e(route('admin.achievement.destroy', $achievement->id)); ?>"
-                                                    method="POST" class="d-inline">
-                                                    <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">
-                                                        <i class="fas fa-trash"></i> Hapus
+                                                <span
+                                                    class="badge <?php echo e($achievement->is_active ? 'bg-success' : 'bg-danger'); ?>">
+                                                    <?php echo e($achievement->is_active ? 'Aktif' : 'Tidak Aktif'); ?>
+
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <button type="button" class="btn btn-info btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-read-achievement-<?php echo e($achievement->id); ?>">
+                                                        <i class="fas fa-eye"></i> Lihat
                                                     </button>
-                                                </form>
+                                                    <button type="button" class="btn btn-warning btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-edit-achievement-<?php echo e($achievement->id); ?>">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
+                                                    <form
+                                                        action="<?php echo e(route('admin.achievement.destroy', $achievement->id)); ?>"
+                                                        method="POST" class="d-inline">
+                                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                                                        <button type="submit"
+                                                            class="btn btn-danger btn-sm mx-1 delete-btn">
+                                                            <i class="fas fa-trash"></i> Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
 
@@ -254,21 +283,163 @@
 
 <?php $__env->startPush('scripts'); ?>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
+            // DataTables Initialization
             $('#achievementTable').DataTable({
                 responsive: true,
                 pageLength: 10,
-                searching: false,
-                lengthChange: false,
-                paging: false,
-                info: false
+                searching: true,
+                lengthChange: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ entri per halaman",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                    infoFiltered: "(disaring dari _MAX_ total entri)",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    },
+                    aria: {
+                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
+                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
+                    }
+                },
+                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                columns: [{
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1; // Row number starts from 1
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'type'
+                    },
+                    {
+                        data: 'subtype'
+                    },
+                    {
+                        data: 'title'
+                    },
+                    {
+                        data: 'description'
+                    },
+                    {
+                        data: 'date'
+                    },
+                    {
+                        data: 'image'
+                    },
+                    {
+                        data: 'file'
+                    },
+                    {
+                        data: 'is_active'
+                    },
+                    {
+                        data: 'action'
+                    }
+                ],
+                columnDefs: [{
+                    targets: 4, // Description column
+                    render: function(data, type, row) {
+                        return type === 'display' ? data : $('<div/>').html(data).text();
+                    }
+                }],
+                initComplete: function() {
+                    $('.dataTables_length select').addClass('form-select form-select-sm');
+                    $('.dataTables_filter input').addClass('form-control form-control-sm');
+                }
             });
 
+            // Initialize Summernote for Create Form
+            $('#editor-create').summernote({
+                height: 300,
+                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                fontNamesIgnoreCheck: ['Poppins'],
+                fontSizes: ['12', '14', '16', '20', '24', '32'],
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                callbacks: {
+                    onChange: function(contents) {
+                        $('#description-create').val(contents);
+                    },
+                    onInit: function() {
+                        $('#editor-create').summernote('code', $('#description-create').val());
+                    }
+                }
+            });
+
+            // Initialize Summernote for Edit Forms when modals are shown
+            $('div[id^="modal-edit-achievement-"]').on('shown.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var achievementId = modalId.replace('modal-edit-achievement-', '');
+                var editorId = 'editor-edit-' + achievementId;
+
+                if (!$('#' + editorId).hasClass('note-editor')) {
+                    $('#' + editorId).summernote({
+                        height: 300,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                            'Courier New'
+                        ],
+                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        callbacks: {
+                            onChange: function(contents) {
+                                $('#description-edit-' + achievementId).val(contents);
+                            }
+                        }
+                    });
+
+                    var description = $('#description-edit-' + achievementId).val();
+                    $('#' + editorId).summernote('code', description);
+                }
+            });
+
+            // Destroy Summernote instances when edit modals are hidden
+            $('div[id^="modal-edit-achievement-"]').on('hidden.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var achievementId = modalId.replace('modal-edit-achievement-', '');
+                var editorId = 'editor-edit-' + achievementId;
+
+                if ($('#' + editorId).hasClass('note-editor')) {
+                    $('#' + editorId).summernote('destroy');
+                }
+            });
+
+            // SweetAlert2 for Notifications
             <?php if(session('success')): ?>
                 Swal.fire({
                     icon: 'success',
@@ -289,6 +460,7 @@
                 });
             <?php endif; ?>
 
+            // SweetAlert2 for Delete Confirmation
             $('.delete-btn').on('click', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form');

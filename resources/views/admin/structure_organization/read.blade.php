@@ -12,8 +12,17 @@
         <p>{{ $structure->degree ?? '-' }}</p>
     </div>
     <div class="mb-3">
+        <label class="form-label fw-bold">Level</label>
+        <p>{{ $structure->level }}</p>
+    </div>
+    <div class="mb-3">
         <label class="form-label fw-bold">Induk</label>
-        <p>{{ $structure->parent ? $structure->parent->name : '-' }}</p>
+        <p>{{ $structure->parent ? $structure->parent->name . ' (' . $structure->parent->title . ')' : 'Tidak ada induk' }}
+        </p>
+    </div>
+    <div class="mb-3">
+        <label class="form-label fw-bold">Status</label>
+        <p>{{ $structure->is_active ? 'Aktif' : 'Nonaktif' }}</p>
     </div>
     <div class="mb-3">
         <label class="form-label fw-bold">Foto</label>
@@ -26,5 +35,7 @@
             @endif
         </div>
     </div>
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+    </div>
 </div>

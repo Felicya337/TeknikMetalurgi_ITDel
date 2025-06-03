@@ -27,7 +27,7 @@ class CurriculumController extends Controller
             'course_name' => 'required|string|max:255',
             'semester' => 'required|integer|between:1,8',
             'credits' => 'required|integer|min:1',
-            'status' => 'required|in:aktif,tidak aktif',
+            'is_active' => 'nullable|boolean',
         ]);
 
         Curriculum::create([
@@ -35,7 +35,7 @@ class CurriculumController extends Controller
             'course_name' => $request->course_name,
             'semester' => $request->semester,
             'credits' => $request->credits,
-            'status' => $request->status,
+            'is_active' => $request->has('is_active') ? 1 : 0,
             'created_by' => Auth::guard('admin')->id() ?? null,
         ]);
 
@@ -63,7 +63,7 @@ class CurriculumController extends Controller
             'course_name' => 'required|string|max:255',
             'semester' => 'required|integer|between:1,8',
             'credits' => 'required|integer|min:1',
-            'status' => 'required|in:aktif,tidak aktif',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $curriculum->update([
@@ -71,7 +71,7 @@ class CurriculumController extends Controller
             'course_name' => $request->course_name,
             'semester' => $request->semester,
             'credits' => $request->credits,
-            'status' => $request->status,
+            'is_active' => $request->has('is_active') ? 1 : 0,
             'updated_by' => Auth::guard('admin')->id() ?? null,
         ]);
 

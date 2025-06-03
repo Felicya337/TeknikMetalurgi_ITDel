@@ -22,11 +22,15 @@ class StudentActivityController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'required|boolean',
+            'type' => 'required|in:kegiatan_mahasiswa,kegiatan_prodi,club_mahasiswa',
+            'is_active' => 'nullable', // Ubah menjadi nullable
         ]);
 
-        $data = $request->only(['title', 'description', 'is_active']);
-        $data['created_by'] = Auth::guard('admin')->id() ?? null;
+        $data = $request->only(['title', 'description', 'type']);
+        $data['created_by'] = Auth::guard('admin')->id();
+
+        // Perbaikan handling checkbox is_active
+        $data['is_active'] = $request->has('is_active') ? true : false;
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('activities/images', 'public');
@@ -45,11 +49,15 @@ class StudentActivityController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'required|boolean',
+            'type' => 'required|in:kegiatan_mahasiswa,kegiatan_prodi,club_mahasiswa',
+            'is_active' => 'nullable', // Ubah menjadi nullable
         ]);
 
-        $data = $request->only(['title', 'description', 'is_active']);
-        $data['updated_by'] = Auth::guard('admin')->id() ?? null;
+        $data = $request->only(['title', 'description', 'type']);
+        $data['updated_by'] = Auth::guard('admin')->id();
+
+        // Perbaikan handling checkbox is_active
+        $data['is_active'] = $request->has('is_active') ? true : false;
 
         if ($request->hasFile('image')) {
             if ($activity->image) {

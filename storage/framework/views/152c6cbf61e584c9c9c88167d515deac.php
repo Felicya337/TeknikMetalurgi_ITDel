@@ -18,7 +18,9 @@ unset($__errorArgs, $__bag); ?>
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Deskripsi</label>
-        <textarea class="form-control" id="description" name="description" rows="5" required><?php echo e(old('description', $news->description)); ?></textarea>
+        <div id="editor-edit-<?php echo e($news->id); ?>" style="height: 400px;"></div>
+        <input type="hidden" id="description-edit-<?php echo e($news->id); ?>" name="description"
+            value="<?php echo old('description', $news->description); ?>">
         <?php $__errorArgs = ['description'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -77,12 +79,10 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
     </div>
-    <div class="mb-3">
-        <label for="is_active" class="form-label">Status</label>
-        <select class="form-control" id="is_active" name="is_active" required>
-            <option value="1" <?php echo e($news->is_active ? 'selected' : ''); ?>>Aktif</option>
-            <option value="0" <?php echo e(!$news->is_active ? 'selected' : ''); ?>>Tidak Aktif</option>
-        </select>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1"
+            <?php echo e(old('is_active', $news->is_active) ? 'checked' : ''); ?>>
+        <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
         <?php $__errorArgs = ['is_active'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :

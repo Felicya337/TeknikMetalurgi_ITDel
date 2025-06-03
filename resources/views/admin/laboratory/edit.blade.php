@@ -11,36 +11,39 @@
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Deskripsi</label>
-        <textarea class="form-control" id="description" name="description" rows="5">{{ old('description', $laboratory->description) }}</textarea>
+        <div id="editor-edit-{{ $laboratory->id }}" style="height: 300px;"></div>
+        <input type="hidden" id="description-edit-{{ $laboratory->id }}" name="description"
+            value="{{ old('description', $laboratory->description) }}">
         @error('description')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
         <label for="academic_days" class="form-label">Hari Akademik</label>
-        <select class="form-control" id="academic_days" name="academic_days[]" multiple>
-            <option value="Monday"
-                {{ in_array('Monday', old('academic_days', $laboratory->academic_days ?? [])) ? 'selected' : '' }}>Senin
-            </option>
-            <option value="Tuesday"
-                {{ in_array('Tuesday', old('academic_days', $laboratory->academic_days ?? [])) ? 'selected' : '' }}>
-                Selasa</option>
-            <option value="Wednesday"
-                {{ in_array('Wednesday', old('academic_days', $laboratory->academic_days ?? [])) ? 'selected' : '' }}>
-                Rabu</option>
-            <option value="Thursday"
-                {{ in_array('Thursday', old('academic_days', $laboratory->academic_days ?? [])) ? 'selected' : '' }}>
-                Kamis</option>
-            <option value="Friday"
-                {{ in_array('Friday', old('academic_days', $laboratory->academic_days ?? [])) ? 'selected' : '' }}>Jumat
-            </option>
-            <option value="Saturday"
-                {{ in_array('Saturday', old('academic_days', $laboratory->academic_days ?? [])) ? 'selected' : '' }}>
-                Sabtu</option>
-            <option value="Sunday"
-                {{ in_array('Sunday', old('academic_days', $laboratory->academic_days ?? [])) ? 'selected' : '' }}>
-                Minggu</option>
-        </select>
+        @php
+            $selectedDays = old('academic_days', $laboratory->academic_days ?? []);
+            $days = [
+                'Monday' => 'Senin',
+                'Tuesday' => 'Selasa',
+                'Wednesday' => 'Rabu',
+                'Thursday' => 'Kamis',
+                'Friday' => 'Jumat',
+                'Saturday' => 'Sabtu',
+                'Sunday' => 'Minggu',
+            ];
+        @endphp
+        <div class="row">
+            @foreach ($days as $value => $label)
+                <div class="col-md-4 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="day_{{ $value }}_edit"
+                            name="academic_days[]" value="{{ $value }}"
+                            {{ in_array($value, $selectedDays) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="day_{{ $value }}_edit">{{ $label }}</label>
+                    </div>
+                </div>
+            @endforeach
+        </div>
         @error('academic_days')
             <div class="text-danger">{{ $message }}</div>
         @enderror
@@ -71,8 +74,8 @@
             <div class="mt-2">
                 <p>Gambar saat ini:</p>
                 @foreach ($laboratory->images as $image)
-                    <img src="{{ asset('storage/' . $image) }}" class="img-thumbnail" alt="Laboratory Image"
-                        style="max-width: 100px; margin-right: 10px;">
+                    <img src="{{ asset('storage/' . $image) }}" class="img-thumbnail"
+                        style="max-width: 100px; margin-right: 10px;" alt="Laboratory Image">
                 @endforeach
             </div>
         @endif
@@ -80,5 +83,15 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
-    <button type="submit" class="btn btn-primary">Simpan</button>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1"
+            {{ old('is_active', $laboratory->is_active) ? 'checked' : '' }}>
+        <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
+        @error('is_active')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
 </form>

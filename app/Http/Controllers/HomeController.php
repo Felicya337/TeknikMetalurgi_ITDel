@@ -14,9 +14,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $news = News::all();
-        $testimonials = Testimonial::all();
-        $collaborates = Collaborate::all();
+        $news = News::where('is_active', true)->get();
+        $testimonials = Testimonial::where('is_active', true)->get();
+        $collaborates = Collaborate::where('is_active', true)->get();
         return view('home', compact('news', 'testimonials', 'collaborates'));
     }
 

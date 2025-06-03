@@ -12,7 +12,7 @@ class MetaProfileController extends Controller
 {
     public function index()
     {
-        $metaProfiles = MetaProfile::latest()->paginate(10);
+        $metaProfiles = MetaProfile::latest()->get();
         return view('admin.metaprofile.index', compact('metaProfiles'));
     }
 

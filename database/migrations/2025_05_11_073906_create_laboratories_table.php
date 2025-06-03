@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('academic_hours')->nullable();
             $table->string('collaborative_hours')->nullable();
             $table->json('images')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();

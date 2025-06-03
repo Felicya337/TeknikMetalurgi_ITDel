@@ -2,28 +2,29 @@
     @csrf
     <div class="mb-3">
         <label for="title" class="form-label">Judul</label>
-        <input type="text" class="form-control" id="title" name="title" required>
+        <input type="text" class="form-control" id="title" name="title" required value="{{ old('title') }}">
         @error('title')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Deskripsi</label>
-        <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+        <div id="editor-create" style="height: 400px;"></div>
+        <input type="hidden" id="description-create" name="description" value="{{ old('description') }}">
         @error('description')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
         <label for="date" class="form-label">Tanggal</label>
-        <input type="date" class="form-control" id="date" name="date" required>
+        <input type="date" class="form-control" id="date" name="date" required value="{{ old('date') }}">
         @error('date')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
         <label for="author" class="form-label">Penulis</label>
-        <input type="text" class="form-control" id="author" name="author" required>
+        <input type="text" class="form-control" id="author" name="author" required value="{{ old('author') }}">
         @error('author')
             <div class="text-danger">{{ $message }}</div>
         @enderror
@@ -35,12 +36,10 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
-    <div class="mb-3">
-        <label for="is_active" class="form-label">Status</label>
-        <select class="form-control" id="is_active" name="is_active" required>
-            <option value="1">Aktif</option>
-            <option value="0">Tidak Aktif</option>
-        </select>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1"
+            {{ old('is_active', 1) ? 'checked' : '' }}>
+        <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
         @error('is_active')
             <div class="text-danger">{{ $message }}</div>
         @enderror

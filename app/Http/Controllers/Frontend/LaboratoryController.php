@@ -15,8 +15,8 @@ class LaboratoryController extends Controller
      */
     public function index()
     {
-        $laboratories = Laboratory::paginate(9);
-        return view('laboratories', compact('laboratories'));
+        $laboratories = Laboratory::where('is_active', true)->paginate(9);
+        return view('laboratory', compact('laboratories'));
     }
 
     /**

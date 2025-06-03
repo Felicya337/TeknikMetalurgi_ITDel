@@ -9,7 +9,7 @@
     </div>
     <div class="mb-3">
         <label class="form-label fw-bold">Semester</label>
-        <p><?php echo e($curriculum->semester); ?></p>
+        <p>Semester <?php echo e($curriculum->semester); ?></p>
     </div>
     <div class="mb-3">
         <label class="form-label fw-bold">Credits (SKS)</label>
@@ -18,8 +18,8 @@
     <div class="mb-3">
         <label class="form-label fw-bold">Status</label>
         <p>
-            <span class="badge <?php echo e($curriculum->status == 'aktif' ? 'bg-success' : 'bg-danger'); ?>">
-                <?php echo e($curriculum->status == 'aktif' ? 'Aktif' : 'Tidak Aktif'); ?>
+            <span class="badge <?php echo e($curriculum->is_active ? 'bg-success' : 'bg-danger'); ?>">
+                <?php echo e($curriculum->is_active ? 'Aktif' : 'Tidak Aktif'); ?>
 
             </span>
         </p>

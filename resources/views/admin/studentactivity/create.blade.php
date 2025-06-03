@@ -1,35 +1,51 @@
 <form action="{{ route('admin.studentactivity.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="mb-3">
-        <label for="title" class="form-label">Judul</label>
-        <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" required>
+        <label for="type_create" class="form-label">Jenis Kegiatan</label>
+        <select class="form-control" id="type_create" name="type" required>
+            <option value="kegiatan_mahasiswa" {{ old('type') == 'kegiatan_mahasiswa' ? 'selected' : '' }}>
+                Kegiatan Mahasiswa</option>
+            <option value="kegiatan_prodi" {{ old('type') == 'kegiatan_prodi' ? 'selected' : '' }}>
+                Kegiatan Prodi</option>
+            <option value="club_mahasiswa" {{ old('type') == 'club_mahasiswa' ? 'selected' : '' }}>
+                Club Mahasiswa</option>
+        </select>
+        @error('type')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
+    </div>
+    <div class="mb-3">
+        <label for="title_create" class="form-label">Judul</label>
+        <input type="text" class="form-control" id="title_create" name="title" value="{{ old('title') }}"
+            required>
         @error('title')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
-        <label for="description" class="form-label">Deskripsi</label>
-        <textarea class="form-control" id="description" name="description" rows="5">{{ old('description') }}</textarea>
+        <label for="description_create" class="form-label">Deskripsi</label>
+        <div id="editor-create" style="height: 300px;"></div>
+        <input type="hidden" id="description-create" name="description" value="{{ old('description') }}">
         @error('description')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
-        <label for="image" class="form-label">Gambar</label>
-        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+        <label for="image_create" class="form-label">Gambar</label>
+        <input type="file" class="form-control" id="image_create" name="image" accept="image/*">
         @error('image')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
-    <div class="mb-3">
-        <label for="is_active" class="form-label">Status</label>
-        <select class="form-control" id="is_active" name="is_active" required>
-            <option value="1" {{ old('is_active', 1) == 1 ? 'selected' : '' }}>Aktif</option>
-            <option value="0" {{ old('is_active', 1) == 0 ? 'selected' : '' }}>Tidak Aktif</option>
-        </select>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="is_active_create" name="is_active" value="1"
+            {{ old('is_active', true) ? 'checked' : '' }}>
+        <label class="form-check-label" for="is_active_create">Aktifkan (Tampil di Halaman User)</label>
         @error('is_active')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
-    <button type="submit" class="btn btn-primary">Simpan</button>
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
 </form>

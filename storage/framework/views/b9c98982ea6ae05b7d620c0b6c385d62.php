@@ -1,8 +1,7 @@
 <?php $__env->startSection('content'); ?>
-    <!-- Add Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -51,6 +50,7 @@
             background-color: #0056b3;
         }
 
+        .btn-info,
         .btn-warning,
         .btn-danger {
             border-radius: 8px;
@@ -97,6 +97,29 @@
             margin-bottom: 1rem;
         }
 
+        .note-editor.note-frame {
+            border-radius: 8px;
+        }
+
+        .description-preview {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            /* Limit to 3 lines for preview */
+            -webkit-box-orient: vertical;
+        }
+
+        .see-more {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .see-more:hover {
+            color: #0056b3;
+        }
+
         @media (max-width: 768px) {
             .table-responsive {
                 font-size: 0.85rem;
@@ -125,20 +148,29 @@
                             <table class="table table-striped table-bordered text-center" id="newsTable">
                                 <thead>
                                     <tr>
+                                        <th scope="col" style="width: 5%;">Nomor</th>
                                         <th scope="col" style="width: 20%;">Judul</th>
-                                        <th scope="col" style="width: 25%;">Deskripsi</th>
+                                        <th scope="col" style="width: 20%;">Deskripsi</th>
                                         <th scope="col" style="width: 15%;">Tanggal</th>
                                         <th scope="col" style="width: 15%;">Penulis</th>
                                         <th scope="col" style="width: 10%;">Gambar</th>
                                         <th scope="col" style="width: 10%;">Aktif</th>
-                                        <th scope="col" style="width: 10%;">Aksi</th>
+                                        <th scope="col" style="width: 15%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
+                                            <td></td> <!-- Placeholder for row number -->
                                             <td><?php echo e($item->title); ?></td>
-                                            <td><?php echo e(Str::limit($item->description, 100)); ?></td>
+                                            <td>
+                                                <div class="description-preview">
+                                                    <?php echo Str::words(strip_tags($item->description), 100, '...'); ?>
+
+                                                </div>
+                                                <span class="see-more" data-bs-toggle="modal"
+                                                    data-bs-target="#modal-read-news-<?php echo e($item->id); ?>">Selengkapnya</span>
+                                            </td>
                                             <td><?php echo e($item->date->format('d-m-Y')); ?></td>
                                             <td><?php echo e($item->author); ?></td>
                                             <td>
@@ -156,20 +188,45 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-edit-news-<?php echo e($item->id); ?>">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                                <form action="<?php echo e(route('admin.news.destroy', $item->id)); ?>" method="POST"
-                                                    class="d-inline">
-                                                    <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">
-                                                        <i class="fas fa-trash"></i> Hapus
+                                                <div class="d-flex justify-content-center">
+                                                    <button type="button" class="btn btn-info btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-read-news-<?php echo e($item->id); ?>">
+                                                        <i class="fas fa-eye"></i> Lihat
                                                     </button>
-                                                </form>
+                                                    <button type="button" class="btn btn-warning btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-edit-news-<?php echo e($item->id); ?>">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
+                                                    <form action="<?php echo e(route('admin.news.destroy', $item->id)); ?>"
+                                                        method="POST" class="d-inline">
+                                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                                                        <button type="submit"
+                                                            class="btn btn-danger btn-sm mx-1 delete-btn">
+                                                            <i class="fas fa-trash"></i> Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
-                                        <!-- MODAL EDIT NEWS -->
+
+                                        <div class="modal fade" id="modal-read-news-<?php echo e($item->id); ?>" tabindex="-1"
+                                            aria-labelledby="modal-read-newsLabel-<?php echo e($item->id); ?>" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Detail Berita</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <?php echo $__env->make('admin.news.read', ['news' => $item], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="modal fade" id="modal-edit-news-<?php echo e($item->id); ?>" tabindex="-1"
                                             aria-labelledby="modal-edit-newsLabel-<?php echo e($item->id); ?>" aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -187,7 +244,6 @@
                                         </div>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
-
                             </table>
                         </div>
                     </div>
@@ -196,7 +252,6 @@
         </div>
     </div>
 
-    <!-- MODAL ADD NEWS -->
     <div class="modal fade" id="modal-news" tabindex="-1" aria-labelledby="modal-newsLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -205,33 +260,283 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <?php echo $__env->make('admin.news.create', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                    <form action="<?php echo e(route('admin.news.store')); ?>" method="POST" enctype="multipart/form-data">
+                        <?php echo csrf_field(); ?>
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Judul</label>
+                            <input type="text" class="form-control" id="title" name="title" required
+                                value="<?php echo e(old('title')); ?>">
+                            <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="text-danger"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Deskripsi</label>
+                            <div id="editor-create" style="height: 300px;"></div>
+                            <input type="hidden" id="description-create" name="description"
+                                value="<?php echo e(old('description')); ?>">
+                            <?php $__errorArgs = ['description'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="text-danger"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Tanggal</label>
+                            <input type="date" class="form-control" id="date" name="date" required
+                                value="<?php echo e(old('date')); ?>">
+                            <?php $__errorArgs = ['date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="text-danger"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="author" class="form-label">Penulis</label>
+                            <input type="text" class="form-control" id="author" name="author" required
+                                value="<?php echo e(old('author')); ?>">
+                            <?php $__errorArgs = ['author'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="text-danger"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Gambar</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <?php $__errorArgs = ['image'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="text-danger"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                                value="1" <?php echo e(old('is_active', 1) ? 'checked' : ''); ?>>
+                            <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
+                            <?php $__errorArgs = ['is_active'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="text-danger"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 <?php $__env->stopSection(); ?>
-
 <?php $__env->startPush('scripts'); ?>
-    <!-- Include DataTables and SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
-            // Initialize DataTables without search and pagination
+            // DataTables Initialization (unchanged)
             $('#newsTable').DataTable({
                 responsive: true,
                 pageLength: 10,
-                searching: false, // Disable search
-                lengthChange: false, // Disable entries dropdown
-                paging: false, // Disable pagination
-                info: false // Disable table info
+                searching: true,
+                lengthChange: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ entri per halaman",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                    infoFiltered: "(disaring dari _MAX_ total entri)",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    },
+                    aria: {
+                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
+                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
+                    }
+                },
+                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                columns: [{
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1;
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'title'
+                    },
+                    {
+                        data: 'description'
+                    },
+                    {
+                        data: 'date'
+                    },
+                    {
+                        data: 'author'
+                    },
+                    {
+                        data: 'image'
+                    },
+                    {
+                        data: 'is_active'
+                    },
+                    {
+                        data: 'action'
+                    }
+                ],
+                columnDefs: [{
+                    targets: 2,
+                    render: function(data, type, row) {
+                        return type === 'display' ? data : $('<div/>').html(data).text();
+                    }
+                }],
+                initComplete: function() {
+                    $('.dataTables_length select').addClass('form-select form-select-sm');
+                    $('.dataTables_filter input').addClass('form-control form-control-sm');
+                }
             });
 
-            // Flash message handling
+            // Initialize Summernote for Create Form
+            $('#editor-create').summernote({
+                height: 400, // Increased height for better usability
+                minHeight: 300,
+                maxHeight: 600,
+                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                fontNamesIgnoreCheck: ['Poppins'],
+                fontSizes: ['12', '14', '16', '20', '24', '32'],
+                maximumMessageLength: 1000000, // Already sufficient
+                disableResizeEditor: true, // Prevent resizing
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                callbacks: {
+                    onChange: function(contents) {
+                        $('#description-create').val(contents);
+                    },
+                    onInit: function() {
+                        $('#editor-create').summernote('code', $('#description-create').val());
+                    },
+                    onPaste: function(e) {
+                        // Prevent large pastes from causing issues
+                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
+                            .getData('Text');
+                        if (bufferText.length > 1000000) {
+                            e.preventDefault();
+                            alert('Konten yang ditempel melebihi batas 1 juta karakter.');
+                        }
+                    }
+                }
+            });
+
+            // Initialize Summernote for Edit Forms
+            $('div[id^="modal-edit-news-"]').on('shown.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var newsId = modalId.replace('modal-edit-news-', '');
+                var editorId = 'editor-edit-' + newsId;
+
+                if (!$('#' + editorId).hasClass('note-editor')) {
+                    $('#' + editorId).summernote({
+                        height: 400,
+                        minHeight: 300,
+                        maxHeight: 600,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                            'Courier New'
+                        ],
+                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
+                        maximumMessageLength: 1000000,
+                        disableResizeEditor: true,
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'italic', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        callbacks: {
+                            onChange: function(contents) {
+                                $('#description-edit-' + newsId).val(contents);
+                            },
+                            onPaste: function(e) {
+                                var bufferText = ((e.originalEvent || e).clipboardData || window
+                                    .clipboardData).getData('Text');
+                                if (bufferText.length > 1000000) {
+                                    e.preventDefault();
+                                    alert(
+                                        'Konten yang ditempel melebihi batas 1 juta karakter.');
+                                }
+                            }
+                        }
+                    });
+                    var description = $('#description-edit-' + newsId).val();
+                    $('#' + editorId).summernote('code', description);
+                }
+            });
+
+            // Destroy Summernote instances when modals are hidden
+            $('div[id^="modal-edit-news-"]').on('hidden.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var newsId = modalId.replace('modal-edit-news-', '');
+                var editorId = 'editor-edit-' + newsId;
+
+                if ($('#' + editorId).hasClass('note-editor')) {
+                    $('#' + editorId).summernote('destroy');
+                }
+            });
+
+            // SweetAlert2 for Notifications (unchanged)
             <?php if(session('success')): ?>
                 Swal.fire({
                     icon: 'success',
@@ -252,7 +557,7 @@
                 });
             <?php endif; ?>
 
-            // Custom delete confirmation
+            // SweetAlert2 for Delete Confirmation (unchanged)
             $('.delete-btn').on('click', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form');

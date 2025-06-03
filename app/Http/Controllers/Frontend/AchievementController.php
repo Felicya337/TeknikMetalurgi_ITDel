@@ -11,15 +11,16 @@ class AchievementController extends Controller
 
     public function index()
     {
-        $achievements = Achievement::latest()->paginate($this->perPage);
-        return view('achievements.achievement', compact('achievements')); // Default view, mungkin perlu disesuaikan
+        $achievements = Achievement::active()->latest()->paginate($this->perPage);
+        return view('achievements.achievement', compact('achievements'));
     }
 
     public function publication()
     {
         $publications = Achievement::where('type', 'publikasi')
+            ->active()
             ->latest()
-            ->paginate(6);
+            ->paginate($this->perPage);
 
         return view('achievements.publication', compact('publications'));
     }
@@ -27,18 +28,26 @@ class AchievementController extends Controller
     public function research()
     {
         $researches = Achievement::where('type', 'penelitian')
+            ->active()
             ->latest()
-            ->paginate(6);
+            ->paginate($this->perPage);
 
         return view('achievements.research', compact('researches'));
     }
 
     public function achievement()
     {
-        $achievements = Achievement::where('type', 'pencapaian') // Atau ganti sesuai kebutuhan
+        $achievements = Achievement::where('type', 'pencapaian')
+            ->active()
             ->latest()
-            ->paginate(6);
+            ->paginate($this->perPage);
 
         return view('achievements.achievement', compact('achievements'));
+    }
+
+    public function allAchievements()
+    {
+        $achievements = Achievement::active()->latest()->paginate($this->perPage);
+        return view('user.achievement.index', compact('achievements'));
     }
 }

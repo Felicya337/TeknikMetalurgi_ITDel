@@ -1,5 +1,6 @@
 <?php $__env->startSection('content'); ?>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -89,11 +90,8 @@
             padding: 24px;
         }
 
-        .title-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+        .note-editor.note-frame {
+            border-radius: 8px;
         }
 
         @media (max-width: 768px) {
@@ -112,10 +110,10 @@
         <div class="row">
             <div class="col-md-10 offset-md-1">
                 <div class="mb-3">
-                    <h2 class="mb-0 fw-bold text-dark">Dosen</h2>
+                    <h2 class="mb-0 fw-bold text-dark">Manajemen Dosen & Staf</h2>
                     <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal"
-                        data-bs-target="#modal-lecturer">
-                        <i class="fas fa-plus me-2"></i>Tambah Dosen
+                        data-bs-target="#modal-lecturer-create">
+                        <i class="fas fa-plus me-2"></i>Tambah Data
                     </button>
                 </div>
 
@@ -125,45 +123,73 @@
                             <table class="table table-striped table-bordered text-center" id="lecturerTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" style="width: 15%;">ID Karyawan</th>
-                                        <th scope="col" style="width: 20%;">Nama</th>
-                                        <th scope="col" style="width: 20%;">Email</th>
-                                        <th scope="col" style="width: 10%;">Ruangan</th>
+                                        <th scope="col" style="width: 5%;">No</th>
+                                        <th scope="col" style="width: 10%;">ID Karyawan</th>
+                                        <th scope="col" style="width: 15%;">Nama</th>
+                                        <th scope="col" style="width: 15%;">Email</th>
+                                        <th scope="col" style="width: 10%;">LinkedIn</th>
+                                        <th scope="col" style="width: 10%;">Peran</th>
                                         <th scope="col" style="width: 10%;">Foto</th>
-                                        <th scope="col" style="width: 25%;">Aksi</th>
+                                        <th scope="col" style="width: 10%;">Status</th>
+                                        <th scope="col" style="width: 15%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php $__currentLoopData = $lecturers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $lecturer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
+                                            <td></td> <!-- Placeholder for row number -->
                                             <td><?php echo e($lecturer->employee_id); ?></td>
-                                            <td><?php echo e($lecturer->name); ?></td>
+                                            <td class="text-start"><?php echo e($lecturer->name); ?></td>
                                             <td><?php echo e($lecturer->email); ?></td>
-                                            <td><?php echo e($lecturer->room); ?></td>
+                                            <td>
+                                                <?php if($lecturer->linkedIn_url): ?>
+                                                    <a href="<?php echo e($lecturer->linkedIn_url); ?>" target="_blank"
+                                                        class="text-decoration-none small"
+                                                        title="<?php echo e($lecturer->linkedIn_username); ?>">
+                                                        <i class="fab fa-linkedin text-primary"></i> Profil
+                                                    </a>
+                                                <?php else: ?>
+                                                    <span class="text-muted">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><span class="badge bg-info text-dark"><?php echo e(ucfirst($lecturer->role)); ?></span>
+                                            </td>
                                             <td>
                                                 <?php if($lecturer->image): ?>
                                                     <img src="<?php echo e(asset('storage/' . $lecturer->image)); ?>"
-                                                        class="img-thumbnail" alt="Lecturer Image">
+                                                        class="img-thumbnail" alt="Foto"
+                                                        style="width: 50px; height: 50px; object-fit: cover;">
                                                 <?php else: ?>
-                                                    <span class="text-muted">Tidak ada foto</span>
+                                                    <span class="text-muted small">N/A</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-read-lecturer-<?php echo e($lecturer->id); ?>">
-                                                    <i class="fas fa-eye"></i> Lihat
-                                                </button>
-                                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-edit-lecturer-<?php echo e($lecturer->id); ?>">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                                <form action="<?php echo e(route('admin.lecturer.destroy', $lecturer->id)); ?>"
-                                                    method="POST" class="d-inline">
-                                                    <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">
-                                                        <i class="fas fa-trash"></i> Hapus
+                                                <span class="badge <?php echo e($lecturer->is_active ? 'bg-success' : 'bg-danger'); ?>">
+                                                    <?php echo e($lecturer->is_active ? 'Aktif' : 'Nonaktif'); ?>
+
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex justify-content-center">
+                                                    <button type="button" class="btn btn-info btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-read-lecturer-<?php echo e($lecturer->id); ?>">
+                                                        <i class="fas fa-eye"></i> Lihat
                                                     </button>
-                                                </form>
+                                                    <button type="button" class="btn btn-warning btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-edit-lecturer-<?php echo e($lecturer->id); ?>">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
+                                                    <form action="<?php echo e(route('admin.lecturer.destroy', $lecturer->id)); ?>"
+                                                        method="POST" class="d-inline">
+                                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                                                        <button type="submit"
+                                                            class="btn btn-danger btn-sm mx-1 delete-btn">
+                                                            <i class="fas fa-trash"></i> Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
 
@@ -174,7 +200,8 @@
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Detail Dosen</h5>
+                                                        <h5 class="modal-title">Detail <?php echo e(ucfirst($lecturer->role)); ?>:
+                                                            <?php echo e($lecturer->name); ?></h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -194,7 +221,7 @@
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Dosen</h5>
+                                                        <h5 class="modal-title">Edit Data: <?php echo e($lecturer->name); ?></h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -217,11 +244,12 @@
     </div>
 
     <!-- MODAL ADD LECTURER -->
-    <div class="modal fade" id="modal-lecturer" tabindex="-1" aria-labelledby="modal-lecturerLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-lecturer-create" tabindex="-1" aria-labelledby="modal-lecturerCreateLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Dosen</h5>
+                    <h5 class="modal-title">Tambah Dosen/Staf Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -234,21 +262,164 @@
 
 <?php $__env->startPush('scripts'); ?>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
+            // DataTables Initialization
             $('#lecturerTable').DataTable({
                 responsive: true,
                 pageLength: 10,
-                searching: false,
-                lengthChange: false,
-                paging: false,
-                info: false
+                searching: true,
+                lengthChange: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ entri per halaman",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                    infoFiltered: "(disaring dari _MAX_ total entri)",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    },
+                    aria: {
+                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
+                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
+                    }
+                },
+                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                columns: [{
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1; // Row number starts from 1
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'employee_id'
+                    },
+                    {
+                        data: 'name'
+                    },
+                    {
+                        data: 'email'
+                    },
+                    {
+                        data: 'linkedIn_url'
+                    },
+                    {
+                        data: 'role'
+                    },
+                    {
+                        data: 'image'
+                    },
+                    {
+                        data: 'is_active'
+                    },
+                    {
+                        data: 'action'
+                    }
+                ],
+                columnDefs: [{
+                    targets: [0, 5, 6, 8], // No urut, Peran, Foto, Aksi tidak bisa di-sort
+                    orderable: false
+                }],
+                initComplete: function() {
+                    $('.dataTables_length select').addClass('form-select form-select-sm');
+                    $('.dataTables_filter input').addClass('form-control form-control-sm');
+                }
             });
 
+            // Initialize Summernote for Create Form
+            $('#education-create, #research-create, #courses-create').summernote({
+                height: 300,
+                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                fontNamesIgnoreCheck: ['Poppins'],
+                fontSizes: ['12', '14', '16', '20', '24', '32'],
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                callbacks: {
+                    onChange: function(contents) {
+                        $(this).closest('form').find('input[id$="-create"]').val(contents);
+                    },
+                    onInit: function() {
+                        $(this).summernote('code', $(this).closest('form').find('input[id$="-create"]')
+                            .val());
+                    }
+                }
+            });
+
+            // Initialize Summernote for Edit Forms when modals are shown
+            $('div[id^="modal-edit-lecturer-"]').on('shown.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var lecturerId = modalId.replace('modal-edit-lecturer-', '');
+
+                ['education', 'research', 'courses'].forEach(field => {
+                    var editorId = field + '-edit-' + lecturerId;
+                    var inputId = '#' + field + '-edit-input-' + lecturerId;
+
+                    if (!$('#' + editorId).hasClass('note-editor')) {
+                        $('#' + editorId).summernote({
+                            height: 300,
+                            fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                                'Courier New'
+                            ],
+                            fontNamesIgnoreCheck: ['Poppins'],
+                            fontSizes: ['12', '14', '16', '20', '24', '32'],
+                            toolbar: [
+                                ['style', ['style']],
+                                ['font', ['bold', 'underline', 'clear']],
+                                ['fontname', ['fontname']],
+                                ['fontsize', ['fontsize']],
+                                ['color', ['color']],
+                                ['para', ['ul', 'ol', 'paragraph']],
+                                ['table', ['table']],
+                                ['insert', ['link', 'picture', 'video']],
+                                ['view', ['fullscreen', 'codeview', 'help']]
+                            ],
+                            callbacks: {
+                                onChange: function(contents) {
+                                    $(inputId).val(contents);
+                                }
+                            }
+                        });
+
+                        var content = $(inputId).val();
+                        $('#' + editorId).summernote('code', content);
+                    }
+                });
+            });
+
+            // Destroy Summernote instances when edit modals are hidden
+            $('div[id^="modal-edit-lecturer-"]').on('hidden.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var lecturerId = modalId.replace('modal-edit-lecturer-', '');
+                ['education', 'research', 'courses'].forEach(field => {
+                    var editorId = field + '-edit-' + lecturerId;
+                    if ($('#' + editorId).hasClass('note-editor')) {
+                        $('#' + editorId).summernote('destroy');
+                    }
+                });
+            });
+
+            // SweetAlert2 for Notifications
             <?php if(session('success')): ?>
                 Swal.fire({
                     icon: 'success',
@@ -269,11 +440,25 @@
                 });
             <?php endif; ?>
 
+            <?php if($errors->any()): ?>
+                let errorMsg = "<ul>";
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    errorMsg += "<li><?php echo e($error); ?></li>";
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                errorMsg += "</ul>";
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops, terjadi kesalahan!',
+                    html: errorMsg
+                });
+            <?php endif; ?>
+
+            // SweetAlert2 for Delete Confirmation
             $('.delete-btn').on('click', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Hapus Dosen?',
+                    title: 'Hapus Data?',
                     text: "Tindakan ini tidak dapat dibatalkan!",
                     icon: 'warning',
                     showCancelButton: true,

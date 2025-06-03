@@ -34,4 +34,9 @@ class MetaProfile extends Model
     {
         return $this->belongsTo(Admin::class, 'updated_by');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', 1);
+    }
 }

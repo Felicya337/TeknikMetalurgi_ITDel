@@ -16,15 +16,18 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('linkedIn')->nullable();
             $table->string('room');
-            $table->text('education');
-            $table->text('research');
-            $table->text('courses');
+            $table->mediumText('education')->nullable();
+            $table->mediumText('research')->nullable();
+            $table->mediumText('courses')->nullable();
+            $table->enum('role', ['dosen', 'staf']);
+            $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('created_by')->references('id')->on('admins')->onDelete('set null');
-            $table->foreign('updated_by')->references('id')->on('admins')->onDelete('cascade');
+            $table->foreign('updated_by')->references('id')->on('admins')->onDelete('set null');
         });
     }
 

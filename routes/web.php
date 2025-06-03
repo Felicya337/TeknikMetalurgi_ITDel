@@ -24,24 +24,37 @@ use App\Http\Controllers\Frontend\MetaProfileController as FrontendMetaProfileCo
 use App\Http\Controllers\Frontend\FacilityController as FrontendFacilityController;
 use App\Http\Controllers\Frontend\LaboratoryController as FrontendLaboratoryController;
 use App\Http\Controllers\Frontend\StructureOrganizationController as FrontendStructureOrganizationController;
+use App\Http\Controllers\Frontend\StudentActivityController as FrontendStudentActivityController;
+use App\Http\Controllers\Frontend\LecturerController as FrontendLecturerController;
+use App\Http\Controllers\Frontend\CurriculumController as FrontendCurriculumController;
 
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/not-found', function () {
+    return view('not-found');
+})->name('not-found');
 Route::get('/news', [FrontendNewsController::class, 'index'])->name('news');
 Route::get('/news/{id}', [FrontendNewsController::class, 'show'])->name('newsdetail');
+Route::get('/news/search', [FrontendNewsController::class, 'search'])->name('news.search');
 Route::get('/testimoni', [FrontendTestimonialController::class, 'index'])->name('testimoni');
 Route::get('/collaborate', [FrontendCollaborateController::class, 'index'])->name('collaborate');
 Route::get('/prestasi', [FrontendAchievementController::class, 'index'])->name('prestasi');
 Route::get('/metaprofile', [FrontendMetaProfileController::class, 'index'])->name('metaprofile');
-Route::get('/curriculum', [FrontendMetaProfileController::class, 'curriculum'])->name('curriculum');
-Route::get('/lecturer', [FrontendMetaProfileController::class, 'lecturer'])->name('lecturer');
+Route::get('/curriculum', [FrontendCurriculumController::class, 'index'])->name('curriculum');
+Route::get('/lecturer', [FrontendLecturerController::class, 'index'])->name('lecturer');
 Route::get('/facility', [FrontendFacilityController::class, 'index'])->name('facility');
 Route::get('/laboratory', [FrontendLaboratoryController::class, 'index'])->name('laboratory');
 Route::get('/achievements/publication', [FrontendAchievementController::class, 'publication'])->name('achievements.publication');
 Route::get('/achievements/research', [FrontendAchievementController::class, 'research'])->name('achievements.research');
 Route::get('/achievements/achievement', [FrontendAchievementController::class, 'achievement'])->name('achievements.achievement');
-Route::get('/search', [SearchController::class, 'index'])->name('search');
-
+Route::prefix('student_activity')->name('student_activity.')->group(function () {
+    Route::get('/activity', [FrontendStudentActivityController::class, 'index'])->name('activity');
+    Route::get('/program', [FrontendStudentActivityController::class, 'program'])->name('program');
+    Route::get('/club', [FrontendStudentActivityController::class, 'club'])->name('club');
+});
+Route::get('/structureorganization', [FrontendStructureOrganizationController::class, 'index'])
+    ->name('structureorganization');
+Route::get('/search', [SearchController::class, 'search'])->name('search');
 // Admin Authentication Routes
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
@@ -132,6 +145,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/lecturer/{id}/edit', [LecturerController::class, 'edit'])->name('lecturer.edit');
     Route::put('/lecturer/{id}', [LecturerController::class, 'update'])->name('lecturer.update');
     Route::delete('/lecturer/{id}', [LecturerController::class, 'destroy'])->name('lecturer.destroy');
+    Route::put('/admin/lecturer/{lecturer}/toggle-status', [LecturerController::class, 'toggleStatus'])
+        ->name('admin.lecturer.toggle-status');
 
     // Structure Organization Routes
     Route::get('/structure_organization', [StructureOrganizationController::class, 'index'])->name('structure_organization.index');

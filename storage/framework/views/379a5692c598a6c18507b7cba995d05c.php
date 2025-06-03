@@ -1,8 +1,7 @@
 <?php $__env->startSection('content'); ?>
-    <!-- Add Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -51,9 +50,9 @@
             background-color: #0056b3;
         }
 
+        .btn-info,
         .btn-warning,
-        .btn-danger,
-        .btn-info {
+        .btn-danger {
             border-radius: 8px;
             padding: 6px 12px;
             font-size: 0.85rem;
@@ -98,6 +97,10 @@
             margin-bottom: 1rem;
         }
 
+        .note-editor.note-frame {
+            border-radius: 8px;
+        }
+
         @media (max-width: 768px) {
             .table-responsive {
                 font-size: 0.85rem;
@@ -127,19 +130,23 @@
                             <table class="table table-striped table-bordered text-center" id="collaborateTable">
                                 <thead>
                                     <tr>
+                                        <th scope="col" style="width: 5%;">Nomor</th>
                                         <th scope="col" style="width: 20%;">Nama Institusi</th>
-                                        <th scope="col" style="width: 25%;">Deskripsi</th>
+                                        <th scope="col" style="width: 20%;">Profil Perusahaan</th>
+                                        <th scope="col" style="width: 20%;">Deskripsi</th>
                                         <th scope="col" style="width: 15%;">Tanggal</th>
                                         <th scope="col" style="width: 10%;">Logo</th>
                                         <th scope="col" style="width: 10%;">Aktif</th>
-                                        <th scope="col" style="width: 20%;">Aksi</th>
+                                        <th scope="col" style="width: 15%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php $__currentLoopData = $collaborates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $collaborate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
+                                            <td></td> <!-- Placeholder for row number -->
                                             <td><?php echo e($collaborate->institution_name); ?></td>
-                                            <td><?php echo e(Str::limit($collaborate->institution_description, 100)); ?></td>
+                                            <td><?php echo $collaborate->company_profile; ?></td>
+                                            <td><?php echo $collaborate->institution_description; ?></td>
                                             <td><?php echo e($collaborate->date ? $collaborate->date->format('d-m-Y') : '-'); ?></td>
                                             <td>
                                                 <?php if($collaborate->logo): ?>
@@ -157,25 +164,30 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-read-collaborate-<?php echo e($collaborate->id); ?>">
-                                                    <i class="fas fa-eye"></i> Lihat
-                                                </button>
-                                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                    data-bs-target="#modal-edit-collaborate-<?php echo e($collaborate->id); ?>">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                                <form action="<?php echo e(route('admin.collaborate.destroy', $collaborate->id)); ?>"
-                                                    method="POST" class="d-inline">
-                                                    <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">
-                                                        <i class="fas fa-trash"></i> Hapus
+                                                <div class="d-flex justify-content-center">
+                                                    <button type="button" class="btn btn-info btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-read-collaborate-<?php echo e($collaborate->id); ?>">
+                                                        <i class="fas fa-eye"></i> Lihat
                                                     </button>
-                                                </form>
+                                                    <button type="button" class="btn btn-warning btn-sm mx-1"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#modal-edit-collaborate-<?php echo e($collaborate->id); ?>">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
+                                                    <form
+                                                        action="<?php echo e(route('admin.collaborate.destroy', $collaborate->id)); ?>"
+                                                        method="POST" class="d-inline">
+                                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                                                        <button type="submit"
+                                                            class="btn btn-danger btn-sm mx-1 delete-btn">
+                                                            <i class="fas fa-trash"></i> Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
 
-                                        <!-- MODAL READ COLLABORATE -->
                                         <div class="modal fade" id="modal-read-collaborate-<?php echo e($collaborate->id); ?>"
                                             tabindex="-1"
                                             aria-labelledby="modal-read-collaborateLabel-<?php echo e($collaborate->id); ?>"
@@ -196,7 +208,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- MODAL EDIT COLLABORATE -->
                                         <div class="modal fade" id="modal-edit-collaborate-<?php echo e($collaborate->id); ?>"
                                             tabindex="-1"
                                             aria-labelledby="modal-edit-collaborateLabel-<?php echo e($collaborate->id); ?>"
@@ -226,7 +237,6 @@
         </div>
     </div>
 
-    <!-- MODAL ADD COLLABORATE -->
     <div class="modal fade" id="modal-collaborate" tabindex="-1" aria-labelledby="modal-collaborateLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -244,25 +254,227 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('scripts'); ?>
-    <!-- Include DataTables and SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function() {
-            // Initialize DataTables without search and pagination
+            // DataTables Initialization
             $('#collaborateTable').DataTable({
                 responsive: true,
                 pageLength: 10,
-                searching: false,
-                lengthChange: false,
-                paging: false,
-                info: false
+                searching: true,
+                lengthChange: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ entri per halaman",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                    infoFiltered: "(disaring dari _MAX_ total entri)",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    },
+                    aria: {
+                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
+                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
+                    }
+                },
+                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                columns: [{
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1; // Row number starts from 1
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'institution_name'
+                    },
+                    {
+                        data: 'company_profile'
+                    },
+                    {
+                        data: 'institution_description'
+                    },
+                    {
+                        data: 'date'
+                    },
+                    {
+                        data: 'logo'
+                    },
+                    {
+                        data: 'is_active'
+                    },
+                    {
+                        data: 'action'
+                    }
+                ],
+                columnDefs: [{
+                    targets: [2, 3], // Profil Perusahaan and Deskripsi columns
+                    render: function(data, type, row) {
+                        return type === 'display' ? data : $('<div/>').html(data).text();
+                    }
+                }],
+                initComplete: function() {
+                    $('.dataTables_length select').addClass('form-select form-select-sm');
+                    $('.dataTables_filter input').addClass('form-control form-control-sm');
+                }
             });
 
-            // Flash message handling
+            // Initialize Summernote for Create Form
+            $('#editor-institution-description-create').summernote({
+                height: 300,
+                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                fontNamesIgnoreCheck: ['Poppins'],
+                fontSizes: ['12', '14', '16', '20', '24', '32'],
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                maximumMessageLength: 1000000, // Increase the character limit
+                callbacks: {
+                    onChange: function(contents) {
+                        $('#institution-description-create').val(contents);
+                    },
+                    onInit: function() {
+                        $('#editor-institution-description-create').summernote('code', $(
+                            '#institution-description-create').val());
+                    }
+                }
+            });
+
+            $('#editor-company-profile-create').summernote({
+                height: 300,
+                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                fontNamesIgnoreCheck: ['Poppins'],
+                fontSizes: ['12', '14', '16', '20', '24', '32'],
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                maximumMessageLength: 1000000, // Increase the character limit
+                callbacks: {
+                    onChange: function(contents) {
+                        $('#company-profile-create').val(contents);
+                    },
+                    onInit: function() {
+                        $('#editor-company-profile-create').summernote('code', $(
+                            '#company-profile-create').val());
+                    }
+                }
+            });
+
+            // Initialize Summernote for Edit Forms when modals are shown
+            $('div[id^="modal-edit-collaborate-"]').on('shown.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var collaborateId = modalId.replace('modal-edit-collaborate-', '');
+                var institutionEditorId = 'editor-institution-description-edit-' + collaborateId;
+                var companyProfileEditorId = 'editor-company-profile-edit-' + collaborateId;
+
+                if (!$('#' + institutionEditorId).hasClass('note-editor')) {
+                    $('#' + institutionEditorId).summernote({
+                        height: 300,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                            'Courier New'
+                        ],
+                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        maximumMessageLength: 1000000, // Increase the character limit
+                        callbacks: {
+                            onChange: function(contents) {
+                                $('#institution-description-edit-' + collaborateId).val(
+                                    contents);
+                            }
+                        }
+                    });
+
+                    var institutionDescription = $('#institution-description-edit-' + collaborateId).val();
+                    $('#' + institutionEditorId).summernote('code', institutionDescription);
+                }
+
+                if (!$('#' + companyProfileEditorId).hasClass('note-editor')) {
+                    $('#' + companyProfileEditorId).summernote({
+                        height: 300,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                            'Courier New'
+                        ],
+                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        maximumMessageLength: 1000000, // Increase the character limit
+                        callbacks: {
+                            onChange: function(contents) {
+                                $('#company-profile-edit-' + collaborateId).val(contents);
+                            }
+                        }
+                    });
+
+                    var companyProfile = $('#company-profile-edit-' + collaborateId).val();
+                    $('#' + companyProfileEditorId).summernote('code', companyProfile);
+                }
+            });
+
+            // Destroy Summernote instances when edit modals are hidden
+            $('div[id^="modal-edit-collaborate-"]').on('hidden.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var collaborateId = modalId.replace('modal-edit-collaborate-', '');
+                var institutionEditorId = 'editor-institution-description-edit-' + collaborateId;
+                var companyProfileEditorId = 'editor-company-profile-edit-' + collaborateId;
+
+                if ($('#' + institutionEditorId).hasClass('note-editor')) {
+                    $('#' + institutionEditorId).summernote('destroy');
+                }
+
+                if ($('#' + companyProfileEditorId).hasClass('note-editor')) {
+                    $('#' + companyProfileEditorId).summernote('destroy');
+                }
+            });
+
+            // SweetAlert2 for Notifications
             <?php if(session('success')): ?>
                 Swal.fire({
                     icon: 'success',
@@ -283,7 +495,7 @@
                 });
             <?php endif; ?>
 
-            // Custom delete confirmation
+            // SweetAlert2 for Delete Confirmation
             $('.delete-btn').on('click', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form');

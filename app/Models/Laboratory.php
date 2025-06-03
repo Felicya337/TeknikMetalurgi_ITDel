@@ -18,6 +18,7 @@ class Laboratory extends Model
         'academic_hours',
         'collaborative_hours',
         'images',
+        'is_active',
         'created_by',
         'updated_by',
     ];
@@ -25,7 +26,20 @@ class Laboratory extends Model
     protected $casts = [
         'academic_days' => 'array',
         'images' => 'array',
+        'is_active' => 'boolean',
     ];
+
+    // Scope untuk data aktif (untuk halaman user)
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    // Scope untuk semua data (untuk halaman admin)
+    public function scopeAll($query)
+    {
+        return $query;
+    }
 
     public function creator()
     {

@@ -1,17 +1,13 @@
 @extends('layouts.main')
 
 @section('content')
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb bg-transparent px-0">
+    {{-- Breadcrumb --}}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumbs">
             <li class="breadcrumb-item">
-                <a href="{{ url('/') }}" class="text-decoration-none text-muted">
-                    <i class="bi bi-house-door"></i> Beranda
-                </a>
+                <a href="{{ url('/penelitian') }}" class="text-decoration-none">Penelitian</a>
             </li>
-            <li class="breadcrumb-item">
-                <a href="{{ url('/achievements') }}" class="text-decoration-none text-muted">Prestasi</a>
-            </li>
-            <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Semua Penelitian</li>
+            <li class="breadcrumb-item current-page">Semua Penelitian</li>
         </ol>
     </nav>
 
@@ -33,15 +29,12 @@
                             <h5 class="card-title">{{ $research->title }}</h5>
                             <p class="mb-1 text-muted">
                                 <strong>By:</strong> {{ $research->author ?? 'Anonim' }}
-                                &nbsp;&nbsp;
+
                                 <strong>Date:</strong>
                                 {{ $research->date ? \Carbon\Carbon::parse($research->date)->translatedFormat('F Y') : '-' }}
-
                                 @if ($research->type)
-                                    &nbsp;&nbsp;
                                     <strong>Type:</strong> {{ ucfirst($research->type) }}
                                 @endif
-
                                 @if ($research->file)
                                     <a href="{{ asset('storage/' . $research->file) }}" class="ms-2" download
                                         title="Download">

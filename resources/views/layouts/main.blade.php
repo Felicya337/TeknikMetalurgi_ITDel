@@ -2,28 +2,30 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Website Teknik Metalurgi Institut Teknologi Del">
     <meta name="author" content="Tim Pengembang Teknik Metalurgi IT Del">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Teknik Metalurgi | IT Del</title>
-
     <link rel="icon" type="image/png" href="{{ asset('aset/img/logo.png') }}">
-
-    <!-- CSS Styles -->
-    <link href="{{ URL::asset('aset/css/styles.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('aset/css/feli.css') }}">
+    <link href="{{ asset('aset/css/styles.css') }}" rel="stylesheet">
+    <link href="{{ asset('aset/css/feli.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Encode+Sans+Semi+Condensed:wght@400;600&display=swap"
-        rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body id="top">
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg custom-navbar-top fixed-top navbar-dark">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="{{ asset('aset/img/logo.png') }}" alt="Logo Del" class="logo-img">
+                <img src="/aset/img/logo.png" alt="Logo Del" class="logo-img">
                 <div class="divider"></div>
                 <div class="brand-text">
                     <div class="brand-title">TEKNIK METALURGI</div>
@@ -33,57 +35,63 @@
             <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNavPrimaryAndSecondary" aria-controls="navbarNavPrimaryAndSecondary"
                 aria-expanded="false" aria-label="Toggle navigation">
-                <i class="bi bi-list" style="font-size: 1.5rem; color: white;"></i>
+                <i class="bi bi-list"></i>
             </button>
             <div class="collapse navbar-collapse justify-content-center" id="navbarNavPrimaryAndSecondary">
                 <ul class="navbar-nav nav-links-custom">
-                    <li class="nav-item"><a class="nav-link" href="#beranda">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/">Beranda</a></li>
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownProfil" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Profil
-                        </a>
+                            data-bs-toggle="dropdown" aria-expanded="false">Profil</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownProfil">
-                            <li><a class="dropdown-item" href="{{ url('/metaprofile') }}">Profil Umum</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/curriculum') }}">Kurikulum</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/structure_organization') }}">Struktur
-                                    Organisasi</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/lecturer') }}">Dosen Staff</a></li>
+                            <li><a class="dropdown-item" href="/metaprofile">Profil Umum</a></li>
+                            <li><a class="dropdown-item" href="/curriculum">Kurikulum</a></li>
+                            <li><a class="dropdown-item" href="/structureorganization">Struktur Organisasi</a></li>
+                            <li><a class="dropdown-item" href="/lecturer">Dosen Staff</a></li>
                         </ul>
                     </li>
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPrestasi" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Prestasi
-                        </a>
+                            data-bs-toggle="dropdown" aria-expanded="false">Prestasi</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownPrestasi">
-                            <li><a class="dropdown-item" href="{{ url('/achievements/publication') }}">Publikasi</a>
-                            </li>
-                            <li><a class="dropdown-item" href="{{ url('/achievements/research') }}">Penelitian</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/achievements/achievement') }}">Pencapaian</a>
-                            </li>
+                            <li><a class="dropdown-item" href="/achievements/publication">Publikasi</a></li>
+                            <li><a class="dropdown-item" href="/achievements/research">Penelitian</a></li>
+                            <li><a class="dropdown-item" href="/achievements/achievement">Pencapaian</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('facility') }}">Fasilitas</a>
+
+                    <li class="nav-item"><a class="nav-link" href="/facility">Fasilitas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/laboratory">Laboratorium</a></li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownKegiatan" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Kegiatan</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownKegiatan">
+                            <li><a class="dropdown-item" href="/student_activity/activity">Kegiatan Mahasiswa</a></li>
+                            <li><a class="dropdown-item" href="/student_activity/program">Kegiatan Prodi</a></li>
+                            <li><a class="dropdown-item" href="/student_activity/club">Club Mahasiswa</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="#laboratorium">Laboratorium</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#kegiatan">Kegiatan Prodi</a></li>
                 </ul>
-                <form class="d-flex ms-auto mt-2 mt-lg-0 search-bar" role="search" action="{{ route('search') }}"
-                    method="GET">
+
+                <form class="d-flex ms-auto mt-2 mt-lg-0 search-bar" role="search" id="searchForm">
                     <input class="form-control search-input" type="search" placeholder="Cari Informasi"
-                        aria-label="Search" name="query">
-                    <button class="btn search-button" type="submit"><i class="bi bi-search"></i></button>
+                        aria-label="Search" name="query" id="searchInput">
+                    <button class="btn search-button" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </form>
             </div>
         </div>
     </nav>
 
-    <!-- As a heading -->
+    <!-- Content Section -->
     @yield('content')
+
     <!-- Footer -->
-    <footer>
+    <footer id="footer-section">
         <div class="footer-top">
             <div class="footer-info">
                 <div class="footer-item">
@@ -113,67 +121,64 @@
                         <p>Kami membutuhkan tanggapan anda<br>terhadap website kami</p>
                     </div>
                 </div>
-                <div class="footer-item arrow-up">
+                <div class="footer-item arrow-up" id="arrowUp">
                     <div class="img-container">
-                        <img src="{{ asset('aset/img/Icon.png') }}" alt="Arrow Up Icon">
+                        <img src="{{ asset('aset/img/Icon.png') }}" alt="Arrow Up Icon" onclick="scrollToTop()">
                     </div>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <div class="footer-container">
+                <!-- Kiri: Logo + Nama Fakultas -->
                 <div class="footer-left">
-                    <img src="{{ asset('aset/img/logo.png') }}" alt="Logo IT Del" class="logo-original">
-                    <div class="footer-title">
-                        <div class="fakultas-title">
-                            <div class="baris-1">FAKULTAS TEKNOLOGI INDUSTRI <br> TEKNIK METALURGI</div>
-                            <div class="baris-2">INSTITUT TEKNOLOGI DEL</div>
-                        </div>
+                    <img src="{{ asset('aset/img/logo.png') }}" alt="Logo Del" class="logo-original">
+                    <div class="fakultas-title">
+                        <div class="baris-1">FAKULTAS TEKNOLOGI INDUSTRI</div>
+                        <div class="baris-2">TEKNIK METALURGI</div>
+                        <div class="baris-2">INSTITUT TEKNOLOGI DEL</div>
                     </div>
                 </div>
+
+                <!-- Tengah: Tentang Kami -->
+                <div class="footer-middle">
+                    <h3>TENTANG KAMI</h3>
+                    <p><a href="{{ url('/metaprofile') }}">Sejarah</a></p>
+                    <p><a href="{{ url('/metaprofile#visi-misi') }}">Visi dan Misi dan Tujuan</a></p>
+                    <p><a class="dropdown-item" href="{{ route('structureorganization') }}">Struktur Organisasi</a>
+                    </p>
+                    <p><a href="https://maps.app.goo.gl/tc8HA3Ce9GvYimVF9" target="_blank">Lokasi kampus</a></p>
+                </div>
+
+                <!-- Kanan: Kontak -->
                 <div class="footer-right">
-                    <h3>Kontak Kami</h3>
-                    <p><i class="fas fa-phone"></i> +62 632 331234</p>
-                    <p><i class="fab fa-instagram"></i> <a
-                            href="https://www.instagram.com/metalurgidel?igsh=Y2Y4M3pqancxdHdn"
-                            target="_blank">metalurgidel</a></p>
-                    <p><i class="fas fa-map-marker-alt"></i> Institut Teknologi Del Jl. Sisingamangaraja,<br>Sitoluama
+                    <h3>KONTAK KAMI</h3>
+                    <p><i class="fas fa-phone-alt"></i> +62 632 331234</p>
+                    <p>
+                        <a href="https://www.instagram.com/metalurgidel?igsh=Y2Y4M3pqancxdHdn" target="_blank"
+                            class="social-link">
+                            <i class="fab fa-instagram"></i> metalurgidel
+                        </a>
+                    </p>
+                    <p><i class="fas fa-map-marker-alt"></i> Institut Teknologi Del Jl. Sisingamangaraja, Sitoluama
                         Laguboti, Toba Samosir Sumatera Utara, Indonesia</p>
-                    <p><i class="fas fa-envelope"></i> <a href="mailto:info@del.ac.id"
-                            class="footer-link">info@del.ac.id</a></p>
+                    <p>
+                        <a href="mailto:info@del.ac.id" class="social-link">
+                            <i class="fas fa-envelope"></i> info@del.ac.id
+                        </a>
+                    </p>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 30px; color: #ccc; font-size: 0.9rem;">
-                Dibuat oleh Kelompok 1 PA 1 D3TI 2024
-            </div>
+        </div>
+        <div class="footer-credits">
+            Dibuat oleh: Felicya, Joy, Kesia, Ellysabeth dan Nathaly (Mahasiswa D3TI 2024 & S1 MR 2021)
         </div>
     </footer>
 
-
-
-
-
-
-
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('aset/js/feli.js') }}"></script>
-
-    <script>
-        document.querySelector('.nav-arrow.left').addEventListener('click', () => {
-            document.querySelector('.testimonial-carousel').scrollBy({
-                left: -320,
-                behavior: 'smooth'
-            });
-        });
-
-        document.querySelector('.nav-arrow.right').addEventListener('click', () => {
-            document.querySelector('.testimonial-carousel').scrollBy({
-                left: 320,
-                behavior: 'smooth'
-            });
-        });
-    </script>
+    <script src="{{ asset('aset/js/scripts.js') }}"></script>
 
 </body>
 

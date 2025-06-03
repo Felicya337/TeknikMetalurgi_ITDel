@@ -3,9 +3,10 @@
     <div class="mb-3">
         <label for="type" class="form-label">Tipe</label>
         <select class="form-control" id="type" name="type" required>
-            <option value="classroom" {{ old('type') == 'classroom' ? 'selected' : '' }}>Classroom</option>
-            <option value="smartclass" {{ old('type') == 'smartclass' ? 'selected' : '' }}>Smartclass</option>
-            <option value="reading_room" {{ old('type') == 'reading_room' ? 'selected' : '' }}>Reading Room</option>
+            <option value="">Pilih Tipe Fasilitas</option>
+            <option value="classroom" {{ old('type') == 'classroom' ? 'selected' : '' }}>Ruang Kelas</option>
+            <option value="smartclass" {{ old('type') == 'smartclass' ? 'selected' : '' }}>Smart Class</option>
+            <option value="reading_room" {{ old('type') == 'reading_room' ? 'selected' : '' }}>Ruang Baca</option>
         </select>
         @error('type')
             <div class="text-danger">{{ $message }}</div>
@@ -13,26 +14,39 @@
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Deskripsi</label>
-        <textarea class="form-control" id="description" name="description" rows="5">{{ old('description') }}</textarea>
+        <div id="editor-create" style="height: 300px;"></div>
+        <input type="hidden" id="description-create" name="description" value="{{ old('description') }}">
         @error('description')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
         <label for="academic_days" class="form-label">Hari Akademik</label>
-        <select class="form-control" id="academic_days" name="academic_days[]" multiple>
-            <option value="Monday" {{ in_array('Monday', old('academic_days', [])) ? 'selected' : '' }}>Senin</option>
-            <option value="Tuesday" {{ in_array('Tuesday', old('academic_days', [])) ? 'selected' : '' }}>Selasa
-            </option>
-            <option value="Wednesday" {{ in_array('Wednesday', old('academic_days', [])) ? 'selected' : '' }}>Rabu
-            </option>
-            <option value="Thursday" {{ in_array('Thursday', old('academic_days', [])) ? 'selected' : '' }}>Kamis
-            </option>
-            <option value="Friday" {{ in_array('Friday', old('academic_days', [])) ? 'selected' : '' }}>Jumat</option>
-            <option value="Saturday" {{ in_array('Saturday', old('academic_days', [])) ? 'selected' : '' }}>Sabtu
-            </option>
-            <option value="Sunday" {{ in_array('Sunday', old('academic_days', [])) ? 'selected' : '' }}>Minggu</option>
-        </select>
+        @php
+            $selectedDays = old('academic_days', []);
+            $days = [
+                'Monday' => 'Senin',
+                'Tuesday' => 'Selasa',
+                'Wednesday' => 'Rabu',
+                'Thursday' => 'Kamis',
+                'Friday' => 'Jumat',
+                'Saturday' => 'Sabtu',
+                'Sunday' => 'Minggu',
+            ];
+        @endphp
+        <div class="row">
+            @foreach ($days as $value => $label)
+                <div class="col-md-4 mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="day_{{ $value }}_create"
+                            name="academic_days[]" value="{{ $value }}"
+                            {{ in_array($value, $selectedDays) ? 'checked' : '' }}>
+                        <label class="form-check-label"
+                            for="day_{{ $value }}_create">{{ $label }}</label>
+                    </div>
+                </div>
+            @endforeach
+        </div>
         @error('academic_days')
             <div class="text-danger">{{ $message }}</div>
         @enderror
@@ -61,5 +75,14 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
-    <button type="submit" class="btn btn-primary">Simpan</button>
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1" checked>
+        <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
+        @error('is_active')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </div>
 </form>

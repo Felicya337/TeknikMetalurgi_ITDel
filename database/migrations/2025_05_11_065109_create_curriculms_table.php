@@ -9,12 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('curriculums', function (Blueprint $table) {
+            // Schema as per the provided migration
             $table->id();
             $table->string('course_code')->unique();
             $table->string('course_name');
-            $table->string('semester');
-            $table->string('credits');
-            $table->enum('status', ['aktif', 'tidak'])->default('aktif');
+            $table->integer('semester');
+            $table->integer('credits');
+            $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();

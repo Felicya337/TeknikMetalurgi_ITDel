@@ -8,61 +8,12 @@ use Illuminate\Http\Request;
 
 class CollaborateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $collaborates = Collaborate::all();
-        return view('frontend.collaborate.index', compact('collaborate'));
+        // Ambil hanya kolaborasi yang aktif
+        $collaborates = Collaborate::where('is_active', true)->get(); // atau ->latest()->get(); Jika ingin diurutkan berdasarkan yang terbaru
+        return view('frontend.collaborate.index', compact('collaborates'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    // Metode lain tidak diperlukan untuk contoh ini, tetapi Anda dapat menambahkannya jika perlu.
 }

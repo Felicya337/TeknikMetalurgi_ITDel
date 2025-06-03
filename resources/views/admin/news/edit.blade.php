@@ -11,7 +11,9 @@
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Deskripsi</label>
-        <textarea class="form-control" id="description" name="description" rows="5" required>{{ old('description', $news->description) }}</textarea>
+        <div id="editor-edit-{{ $news->id }}" style="height: 400px;"></div>
+        <input type="hidden" id="description-edit-{{ $news->id }}" name="description"
+            value="{!! old('description', $news->description) !!}">
         @error('description')
             <div class="text-danger">{{ $message }}</div>
         @enderror
@@ -42,12 +44,10 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
-    <div class="mb-3">
-        <label for="is_active" class="form-label">Status</label>
-        <select class="form-control" id="is_active" name="is_active" required>
-            <option value="1" {{ $news->is_active ? 'selected' : '' }}>Aktif</option>
-            <option value="0" {{ !$news->is_active ? 'selected' : '' }}>Tidak Aktif</option>
-        </select>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1"
+            {{ old('is_active', $news->is_active) ? 'checked' : '' }}>
+        <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
         @error('is_active')
             <div class="text-danger">{{ $message }}</div>
         @enderror

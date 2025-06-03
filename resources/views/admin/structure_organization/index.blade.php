@@ -65,6 +65,12 @@
             object-fit: cover;
         }
 
+        .badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
         .modal-content {
             border-radius: 12px;
             border: none;
@@ -114,12 +120,13 @@
                             <table class="table table-striped table-bordered text-center" id="structureTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" style="width: 20%;">Nama</th>
-                                        <th scope="col" style="width: 20%;">Jabatan</th>
+                                        <th scope="col" style="width: 15%;">Nama</th>
+                                        <th scope="col" style="width: 15%;">Jabatan</th>
                                         <th scope="col" style="width: 15%;">Gelar</th>
-                                        <th scope="col" style="width: 15%;">Induk</th>
-                                        <th scope="col" style="width: 10%;">Foto</th>
-                                        <th scope="col" style="width: 20%;">Aksi</th>
+                                        <th scope="col" style="width: 10%;">Level</th>
+                                        <th scope="col" style="width: 10%;">Status</th>
+                                        <th scope="col" style="width: 15%;">Foto</th>
+                                        <th scope="col" style="width: 25%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -128,7 +135,13 @@
                                             <td>{{ $structure->name }}</td>
                                             <td>{{ $structure->title }}</td>
                                             <td>{{ $structure->degree ?? '-' }}</td>
-                                            <td>{{ $structure->parent ? $structure->parent->name : '-' }}</td>
+                                            <td>{{ $structure->level }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge {{ $structure->is_active ? 'bg-success' : 'bg-danger' }}">
+                                                    {{ $structure->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                                </span>
+                                            </td>
                                             <td>
                                                 @if ($structure->image)
                                                     <img src="{{ asset('storage/' . $structure->image) }}"
@@ -149,53 +162,14 @@
                                                 <form
                                                     action="{{ route('admin.structure_organization.destroy', $structure->id) }}"
                                                     method="POST" class="d-inline">
-                                                    @csrf @method('DELETE')
+                                                    @csrf
+                                                    @method('DELETE')
                                                     <button type="submit" class="btn btn-danger btn-sm delete-btn">
                                                         <i class="fas fa-trash"></i> Hapus
                                                     </button>
                                                 </form>
                                             </td>
                                         </tr>
-
-                                        <!-- MODAL READ STRUCTURE -->
-                                        <div class="modal fade" id="modal-read-structure-{{ $structure->id }}"
-                                            tabindex="-1" aria-labelledby="modal-read-structureLabel-{{ $structure->id }}"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-lg modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Detail Struktur Organisasi</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        @include('admin.structure_organization.read', [
-                                                            'structure' => $structure,
-                                                        ])
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- MODAL EDIT STRUCTURE -->
-                                        <div class="modal fade" id="modal-edit-structure-{{ $structure->id }}"
-                                            tabindex="-1" aria-labelledby="modal-edit-structureLabel-{{ $structure->id }}"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-lg modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Struktur Organisasi</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        @include('admin.structure_organization.edit', [
-                                                            'structure' => $structure,
-                                                        ])
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -215,11 +189,53 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    @include('admin.structure_organization.create')
+                    @include('admin.structure_organization.create', [
+                        'allStructures' => $allStructures,
+                        'hasLevelZero' => $hasLevelZero,
+                    ])
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- MODAL READ AND EDIT STRUCTURES -->
+    @foreach ($structures as $structure)
+        <!-- MODAL READ STRUCTURE -->
+        <div class="modal fade" id="modal-read-structure-{{ $structure->id }}" tabindex="-1"
+            aria-labelledby="modal-read-structureLabel-{{ $structure->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detail Struktur Organisasi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @include('admin.structure_organization.read', ['structure' => $structure])
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL EDIT STRUCTURE -->
+        <div class="modal fade" id="modal-edit-structure-{{ $structure->id }}" tabindex="-1"
+            aria-labelledby="modal-edit-structureLabel-{{ $structure->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Struktur Organisasi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @include('admin.structure_organization.edit', [
+                            'structure' => $structure,
+                            'allStructures' => $allStructures,
+                            'hasLevelZero' => $hasLevelZero,
+                        ])
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
 @endsection
 
 @push('scripts')
@@ -230,15 +246,89 @@
 
     <script>
         $(document).ready(function() {
+            // DataTables Initialization for structureTable
             $('#structureTable').DataTable({
                 responsive: true,
                 pageLength: 10,
-                searching: false,
-                lengthChange: false,
-                paging: false,
-                info: false
+                searching: true,
+                lengthChange: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ entri per halaman",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                    infoFiltered: "(disaring dari _MAX_ total entri)",
+                    zeroRecords: "Tidak ada data yang ditemukan",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "Berikutnya",
+                        previous: "Sebelumnya"
+                    },
+                    aria: {
+                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
+                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
+                    }
+                },
+                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                columnDefs: [{
+                        targets: 2, // Gelar
+                        render: function(data) {
+                            return data ? data : '-';
+                        }
+                    },
+                    {
+                        targets: 4, // Status
+                        render: function(data, type, row) {
+                            return data ?
+                                '<span class="badge bg-success">Aktif</span>' :
+                                '<span class="badge bg-danger">Tidak Aktif</span>';
+                        }
+                    },
+                    {
+                        targets: 5, // Foto
+                        render: function(data, type, row) {
+                            return data ?
+                                '<img src="' + '{{ asset('storage/') }}' + data +
+                                '" class="img-thumbnail" alt="Structure Image">' :
+                                '<span class="text-muted">Tidak ada foto</span>';
+                        },
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        targets: 6, // Aksi
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                initComplete: function() {
+                    $('.dataTables_length select').addClass('form-select form-select-sm');
+                    $('.dataTables_filter input').addClass('form-control form-control-sm');
+                }
             });
 
+            // SweetAlert2 for Delete Confirmation
+            $('.delete-btn').on('click', function(e) {
+                e.preventDefault();
+                const form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Hapus Struktur Organisasi?',
+                    text: "Tindakan ini tidak dapat dibatalkan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+            // SweetAlert2 for Notifications
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -258,25 +348,6 @@
                     showConfirmButton: false
                 });
             @endif
-
-            $('.delete-btn').on('click', function(e) {
-                e.preventDefault();
-                const form = $(this).closest('form');
-                Swal.fire({
-                    title: 'Hapus Struktur Organisasi?',
-                    text: "Tindakan ini tidak dapat dibatalkan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
         });
     </script>
 @endpush

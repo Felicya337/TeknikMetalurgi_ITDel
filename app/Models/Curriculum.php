@@ -16,13 +16,13 @@ class Curriculum extends Model
         'course_name',
         'semester',
         'credits',
-        'status',
+        'is_active',
         'created_by',
         'updated_by',
     ];
 
     protected $casts = [
-        'status' => 'string',
+        'is_active' => 'boolean',
         'semester' => 'integer',
         'credits' => 'integer',
     ];

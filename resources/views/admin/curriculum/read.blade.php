@@ -9,7 +9,7 @@
     </div>
     <div class="mb-3">
         <label class="form-label fw-bold">Semester</label>
-        <p>{{ $curriculum->semester }}</p>
+        <p>Semester {{ $curriculum->semester }}</p>
     </div>
     <div class="mb-3">
         <label class="form-label fw-bold">Credits (SKS)</label>
@@ -18,8 +18,8 @@
     <div class="mb-3">
         <label class="form-label fw-bold">Status</label>
         <p>
-            <span class="badge {{ $curriculum->status == 'aktif' ? 'bg-success' : 'bg-danger' }}">
-                {{ $curriculum->status == 'aktif' ? 'Aktif' : 'Tidak Aktif' }}
+            <span class="badge {{ $curriculum->is_active ? 'bg-success' : 'bg-danger' }}">
+                {{ $curriculum->is_active ? 'Aktif' : 'Tidak Aktif' }}
             </span>
         </p>
     </div>

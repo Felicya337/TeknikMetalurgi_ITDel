@@ -25,10 +25,13 @@ class AchievementController extends Controller
             'date' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-            'type' => 'required|in:publikasi,penelitian,pencapaian',
+            'type' => 'required|string|max:255',
+            'subtype' => 'nullable|string|max:255',
+            'is_active' => 'nullable|boolean',
         ]);
 
-        $data = $request->only(['title', 'description', 'author', 'date', 'type']);
+        $data = $request->only(['title', 'description', 'author', 'date', 'type', 'subtype']);
+        $data['is_active'] = $request->has('is_active') ? true : false;
         $data['created_by'] = Auth::guard('admin')->id() ?? null;
 
         if ($request->hasFile('image')) {
@@ -55,10 +58,13 @@ class AchievementController extends Controller
             'date' => 'nullable|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-            'type' => 'required|in:publikasi,penelitian,pencapaian',
+            'type' => 'required|string|max:255',
+            'subtype' => 'nullable|string|max:255',
+            'is_active' => 'nullable|boolean',
         ]);
 
-        $data = $request->only(['title', 'description', 'author', 'date', 'type']);
+        $data = $request->only(['title', 'description', 'author', 'date', 'type', 'subtype']);
+        $data['is_active'] = $request->has('is_active') ? true : false;
         $data['updated_by'] = Auth::guard('admin')->id() ?? null;
 
         if ($request->hasFile('image')) {
@@ -95,5 +101,11 @@ class AchievementController extends Controller
         $achievement->delete();
 
         return redirect()->route('admin.achievement.index')->with('success', 'Prestasi berhasil dihapus.');
+    }
+
+    public function dashboard()
+    {
+        $achievements = Achievement::all(); // Get all achievements
+        return view('admin.dashboard', compact('achievements'));
     }
 }

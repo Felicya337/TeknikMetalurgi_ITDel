@@ -28,7 +28,7 @@ class TestimonialController extends Controller
             'student' => 'required|string|max:255',
             'content' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $data = $request->all();
@@ -62,7 +62,7 @@ class TestimonialController extends Controller
             'student' => 'required|string|max:255',
             'content' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $testimonial = Testimonial::findOrFail($id);
@@ -75,6 +75,8 @@ class TestimonialController extends Controller
                 Storage::disk('public')->delete($testimonial->image);
             }
             $data['image'] = $request->file('image')->store('testimonials', 'public');
+        } else {
+            $data['image'] = $testimonial->image; // Retain existing image
         }
 
         // Set is_active from checkbox
