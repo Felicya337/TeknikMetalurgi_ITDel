@@ -143,8 +143,6 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"><?php echo e(old('education', $lecturer->education)); ?></textarea>
-                <input type="hidden" id="education-edit-input-<?php echo e($lecturer->id); ?>" name="education_hidden_for_js_init"
-                    value="<?php echo e(old('education', $lecturer->education)); ?>"> 
                 <?php $__errorArgs = ['education'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -168,8 +166,6 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"><?php echo e(old('research', $lecturer->research)); ?></textarea>
-                <input type="hidden" id="research-edit-input-<?php echo e($lecturer->id); ?>" name="research_hidden_for_js_init"
-                    value="<?php echo e(old('research', $lecturer->research)); ?>">
                 <?php $__errorArgs = ['research'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -194,8 +190,6 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"><?php echo e(old('courses', $lecturer->courses)); ?></textarea>
-                <input type="hidden" id="courses-edit-input-<?php echo e($lecturer->id); ?>" name="courses_hidden_for_js_init"
-                    value="<?php echo e(old('courses', $lecturer->courses)); ?>">
                 <?php $__errorArgs = ['courses'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -207,7 +201,6 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
             </div>
-
 
             <div class="mb-3">
                 <label for="image_edit_<?php echo e($lecturer->id); ?>" class="form-label">Foto</label>
@@ -224,8 +217,8 @@ unset($__errorArgs, $__bag); ?>"
                     2MB.</small>
                 <?php if($lecturer->image): ?>
                     <div class="mt-2">
-                        <img src="<?php echo e(asset('storage/' . $lecturer->image)); ?>" class="img-thumbnail"
-                            alt="Foto saat ini" style="max-width: 100px;">
+                        <img src="<?php echo e(asset('storage/' . $lecturer->image)); ?>" class="img-thumbnail" alt="Foto saat ini"
+                            style="max-width: 100px;">
                     </div>
                 <?php endif; ?>
                 <?php $__errorArgs = ['image'];
@@ -239,7 +232,6 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
             </div>
-
 
             <div class="mb-3">
                 <label for="role_edit_<?php echo e($lecturer->id); ?>" class="form-label">Peran <span
@@ -269,7 +261,6 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
             </div>
-
 
             <div class="mb-3 form-check">
                 <input type="hidden" name="is_active" value="0">

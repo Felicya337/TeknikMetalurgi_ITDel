@@ -58,7 +58,7 @@ class StructureOrganizationController extends Controller
         $data['is_active'] = $request->has('is_active');
         $data['order'] = StructureOrganization::max('order') + 1 ?? 0;
 
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $data['image'] = $request->file('image')->store('structure/images', 'public');
         }
 
@@ -110,7 +110,8 @@ class StructureOrganizationController extends Controller
         $data['updated_by'] = Auth::guard('admin')->id() ?? null;
         $data['is_active'] = $request->has('is_active');
 
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            // Delete the old image if it exists
             if ($structure->image) {
                 Storage::disk('public')->delete($structure->image);
             }

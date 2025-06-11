@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            background: url('/aset/img/login2.JPG') no-repeat center center fixed;
+            background: url('/aset/img/poster.png') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Poppins', sans-serif;
             animation: fadeIn 1s ease-in;

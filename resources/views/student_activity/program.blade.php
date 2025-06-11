@@ -19,24 +19,32 @@
         /* Header Section */
         .program-header {
             margin-bottom: 30px;
+            text-align: center;
+            /* Center-align the entire header */
         }
 
         .header-content {
             display: flex;
             align-items: center;
+            justify-content: center;
+            /* Center the flex items */
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
 
         .header-logo {
             width: 120px;
             height: 120px;
             flex-shrink: 0;
+            margin-right: 20px;
+            /* Add space between logo and text */
         }
 
         .header-text {
             flex: 1;
             padding-top: 0;
+            text-align: center;
+            /* Center-align text within header-text */
         }
 
         .main-title {
@@ -45,6 +53,7 @@
             color: #000000;
             margin: 0 0 10px 0;
             letter-spacing: 1px;
+
         }
 
         .sub-title {
@@ -58,7 +67,8 @@
             font-size: 14px;
             color: #202020;
             line-height: 1.6;
-            text-align: justify;
+            text-align: center;
+            /* Changed from justify to center */
             margin: 0;
         }
 
@@ -82,6 +92,9 @@
             margin: 0;
             letter-spacing: 0.5px;
             border-bottom: 1px solid #ffffff;
+            /* Should this be #e9ecef or similar for a visible line? */
+            text-align: center;
+            /* Added text-align center */
         }
 
         .activity-body {
@@ -91,6 +104,7 @@
         .activity-row {
             display: flex;
             align-items: center;
+            /* Vertically center items in the row */
             gap: 20px;
         }
 
@@ -109,8 +123,8 @@
 
         .activity-content {
             flex: 1;
-            display: flex;
-            align-items: center;
+            /* display: flex; This might not be needed if p is block */
+            /* align-items: center; This aligns the p tag itself, not its content */
         }
 
         .activity-description {
@@ -148,6 +162,8 @@
                 width: 100px;
                 height: 100px;
                 align-self: center;
+                margin-right: 0;
+                /* Remove margin on mobile */
             }
 
             .header-text {
@@ -264,10 +280,11 @@
                                     <img src="{{ asset('storage/' . $activity->image) }}" alt="{{ $activity->title }}">
                                 @else
                                     <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
+                                    {{-- Pastikan placeholder.png ada atau gunakan path yang benar --}}
                                 @endif
                             </div>
                             <div class="activity-content">
-                                <p class="activity-description">{!! $activity->description !!}</p>
+                                <p class="activity-description">{!! $activity->description !!}</p> {{-- Sudah benar menggunakan {!! !!} --}}
                             </div>
                         </div>
                     </div>

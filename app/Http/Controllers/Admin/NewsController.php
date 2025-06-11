@@ -25,7 +25,7 @@ class NewsController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string|max:16777215', // Align with mediumtext
+            'description' => 'required|string|max:16777215',
             'date' => 'required|date_format:Y-m-d',
             'author' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -62,7 +62,7 @@ class NewsController extends Controller
 
         $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'required|string|max:16777215', // Align with mediumtext
+            'description' => 'required|string|max:16777215',
             'date' => 'required|date_format:Y-m-d',
             'author' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -72,6 +72,9 @@ class NewsController extends Controller
         try {
             $news = News::findOrFail($id);
             $data = $request->all();
+
+            // Hapus id dari data yang akan diperbarui karena id tidak boleh diedit
+            unset($data['id']);
 
             if ($request->hasFile('image')) {
                 if ($news->image && Storage::disk('public')->exists($news->image)) {
@@ -96,7 +99,6 @@ class NewsController extends Controller
         try {
             $news = News::findOrFail($id);
 
-            // Delete image if exists
             if ($news->image && Storage::disk('public')->exists($news->image)) {
                 Storage::disk('public')->delete($news->image);
             }

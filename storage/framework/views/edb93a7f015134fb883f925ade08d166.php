@@ -28,6 +28,38 @@
     <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
         rel="stylesheet">
 
+    <!-- Toast CSS -->
+    <style>
+        .toast-container {
+            z-index: 1050;
+        }
+
+        .toast {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .toast-header {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .toast-body {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+
+        .toast-body a.btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .toast-body a.btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+    </style>
+
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 
@@ -52,7 +84,6 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-
                             <?php if(isset($subtitle)): ?>
                                 <p class="text-muted mt-1"><?php echo $__env->yieldContent('subtitle'); ?></p>
                             <?php endif; ?>
@@ -84,6 +115,21 @@
                 <p>Admin panel settings</p>
             </div>
         </aside>
+
+        <!-- Toast Notification -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="adminNotificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Notifikasi Baru</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <p>Baru saja menerima <span id="notificationType"></span> dari: <span id="notificationEmail"></span>
+                    </p>
+                    <a href="<?php echo e(route('admin.inquiries.index')); ?>" class="btn btn-primary btn-sm">Lihat</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Core Scripts -->
@@ -128,6 +174,23 @@
         });
     </script>
 
+    <!-- Pusher and Notification Script -->
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.Echo.private('admin.inquiries')
+                .listen('App\\Events\\NewInquiryNotification', (e) => {
+                    const toast = new bootstrap.Toast(document.getElementById('adminNotificationToast'));
+                    document.getElementById('notificationType').textContent = e.inquiry?.type === 'question' ?
+                        'pertanyaan' : 'review';
+                    document.getElementById('notificationEmail').textContent = e.inquiry?.email || e.email;
+                    toast.show();
+                });
+        });
+    </script>
+
+    <script src="<?php echo e(asset('js/app.js')); ?>"></script>
+
     <!-- Image Upload and Preview -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -155,7 +218,7 @@
                     if (this.files.length > remainingSlots) {
                         alert(
                             `Anda dapat mengunggah maksimal ${maxImages} gambar (${remainingSlots} slot tersisa).`
-                            );
+                        );
                         this.value = '';
                         return;
                     }

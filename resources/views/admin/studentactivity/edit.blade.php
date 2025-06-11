@@ -1,9 +1,14 @@
 <form action="{{ route('admin.studentactivity.update', $activity->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
+    {{-- Hidden fields to identify form type and ID for error handling --}}
+    <input type="hidden" name="form_type" value="edit">
+    <input type="hidden" name="activity_id" value="{{ $activity->id }}">
+
     <div class="mb-3">
         <label for="type_edit_{{ $activity->id }}" class="form-label">Jenis Kegiatan</label>
-        <select class="form-control" id="type_edit_{{ $activity->id }}" name="type" required>
+        <select class="form-control @error('type') is-invalid @enderror" id="type_edit_{{ $activity->id }}"
+            name="type" required>
             <option value="kegiatan_mahasiswa"
                 {{ old('type', $activity->type) == 'kegiatan_mahasiswa' ? 'selected' : '' }}>
                 Kegiatan Mahasiswa</option>
@@ -13,35 +18,40 @@
                 Club Mahasiswa</option>
         </select>
         @error('type')
-            <div class="text-danger">{{ $message }}</div>
+            <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
         <label for="title_edit_{{ $activity->id }}" class="form-label">Judul</label>
-        <input type="text" class="form-control" id="title_edit_{{ $activity->id }}" name="title"
-            value="{{ old('title', $activity->title) }}" required>
+        <input type="text" class="form-control @error('title') is-invalid @enderror"
+            id="title_edit_{{ $activity->id }}" name="title" value="{{ old('title', $activity->title) }}" required>
         @error('title')
-            <div class="text-danger">{{ $message }}</div>
+            <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3">
-        <label for="description_edit_{{ $activity->id }}" class="form-label">Deskripsi</label>
+        <label for="editor-edit-{{ $activity->id }}" class="form-label">Deskripsi</label>
         <div id="editor-edit-{{ $activity->id }}" style="height: 300px;"></div>
+        {{-- The value is populated by Summernote JS. Ensure old() value is correctly used for re-population on error --}}
         <input type="hidden" id="description-edit-{{ $activity->id }}" name="description"
             value="{{ old('description', $activity->description) }}">
         @error('description')
-            <div class="text-danger">{{ $message }}</div>
+            <div class="text-danger mt-1">{{ $message }}</div> {{-- Ensure this error is visible --}}
         @enderror
     </div>
     <div class="mb-3">
         <label for="image_edit_{{ $activity->id }}" class="form-label">Gambar</label>
-        <input type="file" class="form-control" id="image_edit_{{ $activity->id }}" name="image" accept="image/*">
+        <input type="file" class="form-control @error('image') is-invalid @enderror"
+            id="image_edit_{{ $activity->id }}" name="image" accept="image/*">
         @if ($activity->image)
-            <img src="{{ asset('storage/' . $activity->image) }}" class="img-thumbnail mt-2"
-                alt="Current Activity Image">
+            <div class="mt-2">
+                <small>Gambar Saat Ini:</small><br>
+                <img src="{{ asset('storage/' . $activity->image) }}" class="img-thumbnail mt-1"
+                    alt="Current Activity Image" style="max-width: 200px; max-height: 150px;">
+            </div>
         @endif
         @error('image')
-            <div class="text-danger">{{ $message }}</div>
+            <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
     <div class="mb-3 form-check">
@@ -54,6 +64,6 @@
         @enderror
     </div>
     <div class="d-flex justify-content-end">
-        <button type="submit" class="btn btn-primary">Simpan</button>
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
     </div>
 </form>

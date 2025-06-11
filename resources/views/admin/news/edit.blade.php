@@ -10,8 +10,8 @@
         @enderror
     </div>
     <div class="mb-3">
-        <label for="description" class="form-label">Deskripsi</label>
-        <div id="editor-edit-{{ $news->id }}" style="height: 400px;"></div>
+        <label for="description-edit-{{ $news->id }}" class="form-label">Deskripsi</label>
+        <div id="editor-edit-{{ $news->id }}"></div>
         <input type="hidden" id="description-edit-{{ $news->id }}" name="description"
             value="{!! old('description', $news->description) !!}">
         @error('description')

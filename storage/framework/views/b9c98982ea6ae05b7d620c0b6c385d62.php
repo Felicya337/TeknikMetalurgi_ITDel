@@ -15,10 +15,6 @@
             overflow: hidden;
         }
 
-        .table {
-            margin-bottom: 0;
-        }
-
         .table th {
             background-color: #f8f9fa;
             font-weight: 600;
@@ -106,7 +102,6 @@
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 3;
-            /* Limit to 3 lines for preview */
             -webkit-box-orient: vertical;
         }
 
@@ -161,7 +156,7 @@
                                 <tbody>
                                     <?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
-                                            <td></td> <!-- Placeholder for row number -->
+                                            <td><?php echo e($loop->iteration); ?></td>
                                             <td><?php echo e($item->title); ?></td>
                                             <td>
                                                 <div class="description-preview">
@@ -201,7 +196,8 @@
                                                     </button>
                                                     <form action="<?php echo e(route('admin.news.destroy', $item->id)); ?>"
                                                         method="POST" class="d-inline">
-                                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                                                        <?php echo csrf_field(); ?>
+                                                        <?php echo method_field('DELETE'); ?>
                                                         <button type="submit"
                                                             class="btn btn-danger btn-sm mx-1 delete-btn">
                                                             <i class="fas fa-trash"></i> Hapus
@@ -211,6 +207,7 @@
                                             </td>
                                         </tr>
 
+                                        <!-- Read Modal -->
                                         <div class="modal fade" id="modal-read-news-<?php echo e($item->id); ?>" tabindex="-1"
                                             aria-labelledby="modal-read-newsLabel-<?php echo e($item->id); ?>" aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -221,12 +218,21 @@
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <?php echo $__env->make('admin.news.read', ['news' => $item], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                                        <h4><?php echo e($item->title); ?></h4>
+                                                        <p><strong>Tanggal:</strong> <?php echo e($item->date->format('d-m-Y')); ?></p>
+                                                        <p><strong>Penulis:</strong> <?php echo e($item->author); ?></p>
+                                                        <div><?php echo $item->description; ?></div>
+                                                        <?php if($item->image): ?>
+                                                            <img src="<?php echo e(asset('storage/' . $item->image)); ?>"
+                                                                class="img-thumbnail mt-3" alt="News Image"
+                                                                style="max-width: 300px;">
+                                                        <?php endif; ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
+                                        <!-- Edit Modal -->
                                         <div class="modal fade" id="modal-edit-news-<?php echo e($item->id); ?>" tabindex="-1"
                                             aria-labelledby="modal-edit-newsLabel-<?php echo e($item->id); ?>" aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -237,347 +243,406 @@
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <?php echo $__env->make('admin.news.edit', ['news' => $item], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                        <form action="<?php echo e(route('admin.news.update', $item->id)); ?>"
+                                                            method="POST" enctype="multipart/form-data">
+                                                            <?php echo csrf_field(); ?>
+                                                            <?php echo method_field('PUT'); ?>
+                                                            <div class="mb-3">
+                                                                <label for="title" class="form-label">Judul</label>
+                                                                <input type="text" class="form-control" id="title"
+                                                                    name="title"
+                                                                    value="<?php echo e(old('title', $item->title)); ?>" required>
+                                                                <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                                    <div class="text-danger"><?php echo e($message); ?></div>
+                                                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="description-edit-<?php echo e($item->id); ?>"
+                                                                    class="form-label">Deskripsi</label>
+                                                                <div id="editor-edit-<?php echo e($item->id); ?>"></div>
+                                                                <input type="hidden"
+                                                                    id="description-edit-<?php echo e($item->id); ?>"
+                                                                    name="description"
+                                                                    value="<?php echo e(old('description', $item->description)); ?>">
+                                                                <?php $__errorArgs = ['description'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                                    <div class="text-danger"><?php echo e($message); ?></div>
+                                        <?php endif; ?>
+                            </div>
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Tanggal</label>
+                                <input type="date" class="form-control" id="date" name="date"
+                                    value="<?php echo e(old('date', $item->date->format('Y-m-d'))); ?>" required>
+                                <?php $__errorArgs = ['date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="text-danger"><?php echo e($message); ?></div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="author" class="form-label">Penulis</label>
+                                    <input type="text" class="form-control" id="author" name="author"
+                                        value="<?php echo e(old('author', $item->author)); ?>" required>
+                                    <?php $__errorArgs = ['author'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger"><?php echo e($message); ?></div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="image" class="form-label">Gambar</label>
+                                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                        <?php if($item->image): ?>
+                                            <img src="<?php echo e(asset('storage/' . $item->image)); ?>" class="img-thumbnail mt-2"
+                                                alt="Current News Image">
+                                        <?php endif; ?>
+                                        <?php $__errorArgs = ['image'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="text-danger"><?php echo e($message); ?></div>
+                                            <?php endif; ?>
                                         </div>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </tbody>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                                                value="1" <?php echo e(old('is_active', $item->is_active) ? 'checked' : ''); ?>>
+                                            <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
+                                            <?php $__errorArgs = ['is_active'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <div class="text-danger"><?php echo e($message); ?></div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Simpan</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
 
-    <div class="modal fade" id="modal-news" tabindex="-1" aria-labelledby="modal-newsLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Berita</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="<?php echo e(route('admin.news.store')); ?>" method="POST" enctype="multipart/form-data">
-                        <?php echo csrf_field(); ?>
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Judul</label>
-                            <input type="text" class="form-control" id="title" name="title" required
-                                value="<?php echo e(old('title')); ?>">
-                            <?php $__errorArgs = ['title'];
+                        <!-- Create Modal -->
+                        <div class="modal fade" id="modal-news" tabindex="-1" aria-labelledby="modal-newsLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Tambah Berita</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="<?php echo e(route('admin.news.store')); ?>" method="POST" enctype="multipart/form-data">
+                                            <?php echo csrf_field(); ?>
+                                            <div class="mb-3">
+                                                <label for="title" class="form-label">Judul</label>
+                                                <input type="text" class="form-control" id="title" name="title" required
+                                                    value="<?php echo e(old('title')); ?>">
+                                                <?php $__errorArgs = ['title'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="text-danger"><?php echo e($message); ?></div>
-                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Deskripsi</label>
-                            <div id="editor-create" style="height: 300px;"></div>
-                            <input type="hidden" id="description-create" name="description"
-                                value="<?php echo e(old('description')); ?>">
-                            <?php $__errorArgs = ['description'];
+                                                    <div class="text-danger"><?php echo e($message); ?></div>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="description-create" class="form-label">Deskripsi</label>
+                                                    <div id="editor-create"></div>
+                                                    <input type="hidden" id="description-create" name="description"
+                                                        value="<?php echo e(old('description')); ?>">
+                                                    <?php $__errorArgs = ['description'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="text-danger"><?php echo e($message); ?></div>
-                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="date" class="form-label">Tanggal</label>
-                            <input type="date" class="form-control" id="date" name="date" required
-                                value="<?php echo e(old('date')); ?>">
-                            <?php $__errorArgs = ['date'];
+                                                        <div class="text-danger"><?php echo e($message); ?></div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="date" class="form-label">Tanggal</label>
+                                                        <input type="date" class="form-control" id="date" name="date" required
+                                                            value="<?php echo e(old('date')); ?>">
+                                                        <?php $__errorArgs = ['date'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="text-danger"><?php echo e($message); ?></div>
-                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="author" class="form-label">Penulis</label>
-                            <input type="text" class="form-control" id="author" name="author" required
-                                value="<?php echo e(old('author')); ?>">
-                            <?php $__errorArgs = ['author'];
+                                                            <div class="text-danger"><?php echo e($message); ?></div>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="author" class="form-label">Penulis</label>
+                                                            <input type="text" class="form-control" id="author" name="author" required
+                                                                value="<?php echo e(old('author')); ?>">
+                                                            <?php $__errorArgs = ['author'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="text-danger"><?php echo e($message); ?></div>
-                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                        </div>
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Gambar</label>
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                            <?php $__errorArgs = ['image'];
+                                                                <div class="text-danger"><?php echo e($message); ?></div>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="image" class="form-label">Gambar</label>
+                                                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                                                <?php $__errorArgs = ['image'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="text-danger"><?php echo e($message); ?></div>
-                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
-                                value="1" <?php echo e(old('is_active', 1) ? 'checked' : ''); ?>>
-                            <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
-                            <?php $__errorArgs = ['is_active'];
+                                                                    <div class="text-danger"><?php echo e($message); ?></div>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                                <div class="mb-3 form-check">
+                                                                    <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                                                                        value="1" <?php echo e(old('is_active', 1) ? 'checked' : ''); ?>>
+                                                                    <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
+                                                                    <?php $__errorArgs = ['is_active'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
-                                <div class="text-danger"><?php echo e($message); ?></div>
-                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-<?php $__env->stopSection(); ?>
-<?php $__env->startPush('scripts'); ?>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                                                        <div class="text-danger"><?php echo e($message); ?></div>
+                                                                        <?php endif; ?>
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php $__env->stopSection(); ?>
 
-    <script>
-        $(document).ready(function() {
-            // DataTables Initialization (unchanged)
-            $('#newsTable').DataTable({
-                responsive: true,
-                pageLength: 10,
-                searching: true,
-                lengthChange: true,
-                language: {
-                    search: "Cari:",
-                    lengthMenu: "Tampilkan _MENU_ entri per halaman",
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
-                    infoFiltered: "(disaring dari _MAX_ total entri)",
-                    zeroRecords: "Tidak ada data yang ditemukan",
-                    paginate: {
-                        first: "Pertama",
-                        last: "Terakhir",
-                        next: "Berikutnya",
-                        previous: "Sebelumnya"
-                    },
-                    aria: {
-                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
-                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
-                    }
-                },
-                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
-                columns: [{
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1;
-                        },
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'title'
-                    },
-                    {
-                        data: 'description'
-                    },
-                    {
-                        data: 'date'
-                    },
-                    {
-                        data: 'author'
-                    },
-                    {
-                        data: 'image'
-                    },
-                    {
-                        data: 'is_active'
-                    },
-                    {
-                        data: 'action'
-                    }
-                ],
-                columnDefs: [{
-                    targets: 2,
-                    render: function(data, type, row) {
-                        return type === 'display' ? data : $('<div/>').html(data).text();
-                    }
-                }],
-                initComplete: function() {
-                    $('.dataTables_length select').addClass('form-select form-select-sm');
-                    $('.dataTables_filter input').addClass('form-control form-control-sm');
-                }
-            });
+                                            <?php $__env->startPush('scripts'); ?>
+                                                <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+                                                <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+                                                <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+                                                <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+                                                <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+                                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                                <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 
-            // Initialize Summernote for Create Form
-            $('#editor-create').summernote({
-                height: 400, // Increased height for better usability
-                minHeight: 300,
-                maxHeight: 600,
-                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
-                fontNamesIgnoreCheck: ['Poppins'],
-                fontSizes: ['12', '14', '16', '20', '24', '32'],
-                maximumMessageLength: 1000000, // Already sufficient
-                disableResizeEditor: true, // Prevent resizing
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'italic', 'underline', 'clear']],
-                    ['fontname', ['fontname']],
-                    ['fontsize', ['fontsize']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview', 'help']]
-                ],
-                callbacks: {
-                    onChange: function(contents) {
-                        $('#description-create').val(contents);
-                    },
-                    onInit: function() {
-                        $('#editor-create').summernote('code', $('#description-create').val());
-                    },
-                    onPaste: function(e) {
-                        // Prevent large pastes from causing issues
-                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
-                            .getData('Text');
-                        if (bufferText.length > 1000000) {
-                            e.preventDefault();
-                            alert('Konten yang ditempel melebihi batas 1 juta karakter.');
-                        }
-                    }
-                }
-            });
+                                                <script>
+                                                    $(document).ready(function() {
+                                                        // DataTables Initialization
+                                                        $('#newsTable').DataTable({
+                                                            responsive: true,
+                                                            pageLength: 10,
+                                                            searching: true,
+                                                            lengthChange: true,
+                                                            language: {
+                                                                search: "Cari:",
+                                                                lengthMenu: "Tampilkan _MENU_ entri per halaman",
+                                                                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                                                                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                                                                infoFiltered: "(disaring dari _MAX_ total entri)",
+                                                                zeroRecords: "Tidak ada data yang ditemukan",
+                                                                paginate: {
+                                                                    first: "Pertama",
+                                                                    last: "Terakhir",
+                                                                    next: "Berikutnya",
+                                                                    previous: "Sebelumnya"
+                                                                },
+                                                                aria: {
+                                                                    sortAscending: ": aktifkan untuk mengurutkan kolom naik",
+                                                                    sortDescending: ": aktifkan untuk mengurutkan kolom turun"
+                                                                }
+                                                            },
+                                                            dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                                                            columns: [{
+                                                                    data: null,
+                                                                    render: function(data, type, row, meta) {
+                                                                        return meta.row + 1;
+                                                                    },
+                                                                    orderable: false,
+                                                                    searchable: false
+                                                                },
+                                                                {
+                                                                    data: 'title'
+                                                                },
+                                                                {
+                                                                    data: 'description'
+                                                                },
+                                                                {
+                                                                    data: 'date'
+                                                                },
+                                                                {
+                                                                    data: 'author'
+                                                                },
+                                                                {
+                                                                    data: 'image'
+                                                                },
+                                                                {
+                                                                    data: 'is_active'
+                                                                },
+                                                                {
+                                                                    data: 'action'
+                                                                }
+                                                            ],
+                                                            columnDefs: [{
+                                                                targets: 2,
+                                                                render: function(data, type, row) {
+                                                                    return type === 'display' ? data : $('<div/>').html(data).text();
+                                                                }
+                                                            }],
+                                                            initComplete: function() {
+                                                                $('.dataTables_length select').addClass('form-select form-select-sm');
+                                                                $('.dataTables_filter input').addClass('form-control form-control-sm');
+                                                            }
+                                                        });
 
-            // Initialize Summernote for Edit Forms
-            $('div[id^="modal-edit-news-"]').on('shown.bs.modal', function() {
-                var modalId = $(this).attr('id');
-                var newsId = modalId.replace('modal-edit-news-', '');
-                var editorId = 'editor-edit-' + newsId;
+                                                        // Initialize Summernote for Create Form
+                                                        $('#editor-create').summernote({
+                                                            height: 400,
+                                                            minHeight: 300,
+                                                            maxHeight: 600,
+                                                            fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                                                            fontNamesIgnoreCheck: ['Poppins'],
+                                                            fontSizes: ['12', '14', '16', '20', '24', '32'],
+                                                            disableResizeEditor: true,
+                                                            toolbar: [
+                                                                ['style', ['style']],
+                                                                ['font', ['bold', 'italic', 'underline', 'clear']],
+                                                                ['fontname', ['fontname']],
+                                                                ['fontsize', ['fontsize']],
+                                                                ['color', ['color']],
+                                                                ['para', ['ul', 'ol', 'paragraph']],
+                                                                ['table', ['table']],
+                                                                ['insert', ['link', 'picture', 'video']],
+                                                                ['view', ['fullscreen', 'codeview', 'help']]
+                                                            ],
+                                                            callbacks: {
+                                                                onChange: function(contents) {
+                                                                    $('#description-create').val(contents);
+                                                                },
+                                                                onInit: function() {
+                                                                    $('#editor-create').summernote('code', $('#description-create').val() || '');
+                                                                }
+                                                            }
+                                                        });
 
-                if (!$('#' + editorId).hasClass('note-editor')) {
-                    $('#' + editorId).summernote({
-                        height: 400,
-                        minHeight: 300,
-                        maxHeight: 600,
-                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
-                            'Courier New'
-                        ],
-                        fontNamesIgnoreCheck: ['Poppins'],
-                        fontSizes: ['12', '14', '16', '20', '24', '32'],
-                        maximumMessageLength: 1000000,
-                        disableResizeEditor: true,
-                        toolbar: [
-                            ['style', ['style']],
-                            ['font', ['bold', 'italic', 'underline', 'clear']],
-                            ['fontname', ['fontname']],
-                            ['fontsize', ['fontsize']],
-                            ['color', ['color']],
-                            ['para', ['ul', 'ol', 'paragraph']],
-                            ['table', ['table']],
-                            ['insert', ['link', 'picture', 'video']],
-                            ['view', ['fullscreen', 'codeview', 'help']]
-                        ],
-                        callbacks: {
-                            onChange: function(contents) {
-                                $('#description-edit-' + newsId).val(contents);
-                            },
-                            onPaste: function(e) {
-                                var bufferText = ((e.originalEvent || e).clipboardData || window
-                                    .clipboardData).getData('Text');
-                                if (bufferText.length > 1000000) {
-                                    e.preventDefault();
-                                    alert(
-                                        'Konten yang ditempel melebihi batas 1 juta karakter.');
-                                }
-                            }
-                        }
-                    });
-                    var description = $('#description-edit-' + newsId).val();
-                    $('#' + editorId).summernote('code', description);
-                }
-            });
+                                                        // Initialize Summernote for Edit Forms
+                                                        $('div[id^="modal-edit-news-"]').on('shown.bs.modal', function() {
+                                                            var modalId = $(this).attr('id');
+                                                            var newsId = modalId.replace('modal-edit-news-', '');
+                                                            var editorId = 'editor-edit-' + newsId;
+                                                            var descriptionId = 'description-edit-' + newsId;
 
-            // Destroy Summernote instances when modals are hidden
-            $('div[id^="modal-edit-news-"]').on('hidden.bs.modal', function() {
-                var modalId = $(this).attr('id');
-                var newsId = modalId.replace('modal-edit-news-', '');
-                var editorId = 'editor-edit-' + newsId;
+                                                            if (!$('#' + editorId).hasClass('note-editor')) {
+                                                                $('#' + editorId).summernote({
+                                                                    height: 400,
+                                                                    minHeight: 300,
+                                                                    maxHeight: 600,
+                                                                    fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                                                                        'Courier New'
+                                                                    ],
+                                                                    fontNamesIgnoreCheck: ['Poppins'],
+                                                                    fontSizes: ['12', '14', '16', '20', '24', '32'],
+                                                                    disableResizeEditor: true,
+                                                                    toolbar: [
+                                                                        ['style', ['style']],
+                                                                        ['font', ['bold', 'italic', 'underline', 'clear']],
+                                                                        ['fontname', ['fontname']],
+                                                                        ['fontsize', ['fontsize']],
+                                                                        ['color', ['color']],
+                                                                        ['para', ['ul', 'ol', 'paragraph']],
+                                                                        ['table', ['table']],
+                                                                        ['insert', ['link', 'picture', 'video']],
+                                                                        ['view', ['fullscreen', 'codeview', 'help']]
+                                                                    ],
+                                                                    callbacks: {
+                                                                        onChange: function(contents) {
+                                                                            $('#' + descriptionId).val(contents);
+                                                                        },
+                                                                        onInit: function() {
+                                                                            var description = $('#' + descriptionId).val() || '';
+                                                                            $('#' + editorId).summernote('code', description);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            } else {
+                                                                var description = $('#' + descriptionId).val() || '';
+                                                                $('#' + editorId).summernote('code', description);
+                                                            }
+                                                        });
 
-                if ($('#' + editorId).hasClass('note-editor')) {
-                    $('#' + editorId).summernote('destroy');
-                }
-            });
+                                                        // Destroy Summernote instances when modals are hidden
+                                                        $('div[id^="modal-edit-news-"]').on('hidden.bs.modal', function() {
+                                                            var modalId = $(this).attr('id');
+                                                            var newsId = modalId.replace('modal-edit-news-', '');
+                                                            var editorId = 'editor-edit-' + newsId;
 
-            // SweetAlert2 for Notifications (unchanged)
-            <?php if(session('success')): ?>
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '<?php echo e(session('success')); ?>',
-                    timer: 2500,
-                    showConfirmButton: false
-                });
-            <?php endif; ?>
+                                                            if ($('#' + editorId).hasClass('note-editor')) {
+                                                                $('#' + editorId).summernote('destroy');
+                                                            }
+                                                        });
 
-            <?php if(session('error')): ?>
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: '<?php echo e(session('error')); ?>',
-                    timer: 2500,
-                    showConfirmButton: false
-                });
-            <?php endif; ?>
+                                                        // SweetAlert2 for Notifications
+                                                        <?php if(session('success')): ?>
+                                                            Swal.fire({
+                                                                icon: 'success',
+                                                                title: 'Berhasil!',
+                                                                text: '<?php echo e(session('success')); ?>',
+                                                                timer: 2500,
+                                                                showConfirmButton: false
+                                                            });
+                                                        <?php endif; ?>
 
-            // SweetAlert2 for Delete Confirmation (unchanged)
-            $('.delete-btn').on('click', function(e) {
-                e.preventDefault();
-                const form = $(this).closest('form');
-                Swal.fire({
-                    title: 'Hapus Berita?',
-                    text: "Tindakan ini tidak dapat dibatalkan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
-        });
-    </script>
-<?php $__env->stopPush(); ?>
+                                                        <?php if(session('error')): ?>
+                                                            Swal.fire({
+                                                                icon: 'error',
+                                                                title: 'Error!',
+                                                                text: '<?php echo e(session('error')); ?>',
+                                                                timer: 2500,
+                                                                showConfirmButton: false
+                                                            });
+                                                        <?php endif; ?>
+
+                                                        // SweetAlert2 for Delete Confirmation
+                                                        $('.delete-btn').on('click', function(e) {
+                                                            e.preventDefault();
+                                                            const form = $(this).closest('form');
+                                                            Swal.fire({
+                                                                title: 'Hapus Berita?',
+                                                                text: "Tindakan ini tidak dapat dibatalkan!",
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: '#d33',
+                                                                cancelButtonColor: '#3085d6',
+                                                                confirmButtonText: 'Ya, Hapus!',
+                                                                cancelButtonText: 'Batal'
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    form.submit();
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
+                                            <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/admin/news/index.blade.php ENDPATH**/ ?>

@@ -1,5 +1,36 @@
 <form action="<?php echo e(route('admin.structure_organization.store')); ?>" method="POST" enctype="multipart/form-data">
     <?php echo csrf_field(); ?>
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Jabatan 1</label>
+        <input type="text" class="form-control" id="title" name="title" value="<?php echo e(old('title')); ?>" required>
+        <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+            <div class="text-danger"><?php echo e($message); ?></div>
+        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+    </div>
+
+    <div class="mb-3">
+        <label for="degree" class="form-label">Jabatan 2</label>
+        <input type="text" class="form-control" id="degree" name="degree" value="<?php echo e(old('degree')); ?>">
+        <?php $__errorArgs = ['degree'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+            <div class="text-danger"><?php echo e($message); ?></div>
+        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+    </div>
+
     <div class="mb-3">
         <label for="name" class="form-label">Nama</label>
         <input type="text" class="form-control" id="name" name="name" value="<?php echo e(old('name')); ?>" required>
@@ -14,34 +45,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
     </div>
-    <div class="mb-3">
-        <label for="title" class="form-label">Jabatan</label>
-        <input type="text" class="form-control" id="title" name="title" value="<?php echo e(old('title')); ?>" required>
-        <?php $__errorArgs = ['title'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-            <div class="text-danger"><?php echo e($message); ?></div>
-        <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-    </div>
-    <div class="mb-3">
-        <label for="degree" class="form-label">Gelar</label>
-        <input type="text" class="form-control" id="degree" name="degree" value="<?php echo e(old('degree')); ?>">
-        <?php $__errorArgs = ['degree'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-            <div class="text-danger"><?php echo e($message); ?></div>
-        <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-    </div>
+
     <div class="mb-3">
         <label for="level" class="form-label">Level</label>
         <select class="form-control" id="level" name="level" required>

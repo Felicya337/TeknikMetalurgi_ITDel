@@ -20,7 +20,6 @@ class News extends Model
         'updated_by',
     ];
 
-    // Cast the date column to a Carbon instance
     protected $casts = [
         'date' => 'date',
         'is_active' => 'boolean',

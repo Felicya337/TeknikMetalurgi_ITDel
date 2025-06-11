@@ -32,8 +32,9 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
+    <!-- Pastikan ini ada di form edit -->
     <div class="mb-3">
-        <label for="description" class="form-label">Deskripsi</label>
+        <label for="editor-edit-{{ $achievement->id }}" class="form-label">Deskripsi</label>
         <div id="editor-edit-{{ $achievement->id }}" style="height: 300px;"></div>
         <input type="hidden" id="description-edit-{{ $achievement->id }}" name="description"
             value="{{ old('description', $achievement->description) }}">

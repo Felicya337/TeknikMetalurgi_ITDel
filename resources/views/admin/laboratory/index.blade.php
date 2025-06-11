@@ -17,10 +17,6 @@
             overflow: hidden;
         }
 
-        .table {
-            margin-bottom: 0;
-        }
-
         .table th {
             background-color: #f8f9fa;
             font-weight: 600;
@@ -137,12 +133,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($laboratories as $laboratory)
+                                    @foreach ($laboratories as $index => $laboratory)
                                         <tr>
-                                            <td></td> <!-- Placeholder for row number -->
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>{{ $laboratory->name }}</td>
-                                            <td>{!! Str::limit($laboratory->description, 100) !!}</td>
-                                            <td>{{ $laboratory->academic_days ? implode(', ', $laboratory->academic_days) : '-' }}
+                                            <td>
+                                                @if ($laboratory->description)
+                                                    {!! Str::limit(strip_tags($laboratory->description), 100) !!}
+                                                @else
+                                                    <span class="text-muted">Tidak ada deskripsi</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{ $laboratory->academic_days ? implode(', ', $laboratory->academic_days) : '-' }}
                                             </td>
                                             <td>{{ $laboratory->academic_hours ?? '-' }}</td>
                                             <td>{{ $laboratory->collaborative_hours ?? '-' }}</td>
@@ -287,44 +290,22 @@
                     }
                 },
                 dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
-                columns: [{
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1; // Row number starts from 1
-                        },
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'name'
-                    },
-                    {
-                        data: 'description'
-                    },
-                    {
-                        data: 'academic_days'
-                    },
-                    {
-                        data: 'academic_hours'
-                    },
-                    {
-                        data: 'collaborative_hours'
-                    },
-                    {
-                        data: 'images'
-                    },
-                    {
-                        data: 'is_active'
-                    },
-                    {
-                        data: 'action'
-                    }
-                ],
                 columnDefs: [{
-                    targets: 2, // Description column
+                    targets: 0,
+                    orderable: false,
+                    searchable: false
+                }, {
+                    targets: 2,
                     render: function(data, type, row) {
-                        return type === 'display' ? data : $('<div/>').html(data).text();
+                        if (type === 'display') {
+                            return data.length > 100 ? data.substr(0, 100) + '...' : data;
+                        }
+                        return data;
                     }
+                }, {
+                    targets: 8,
+                    orderable: false,
+                    searchable: false
                 }],
                 initComplete: function() {
                     $('.dataTables_length select').addClass('form-select form-select-sm');
@@ -332,30 +313,49 @@
                 }
             });
 
-            // Initialize Summernote for Create Form
-            $('#editor-create').summernote({
-                height: 300,
-                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
-                fontNamesIgnoreCheck: ['Poppins'],
-                fontSizes: ['12', '14', '16', '20', '24', '32'],
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'underline', 'clear']],
-                    ['fontname', ['fontname']],
-                    ['fontsize', ['fontsize']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview', 'help']]
-                ],
-                callbacks: {
-                    onChange: function(contents) {
-                        $('#description-create').val(contents);
-                    },
-                    onInit: function() {
-                        $('#editor-create').summernote('code', $('#description-create').val());
-                    }
+            // Initialize Summernote for CREATE form
+            function initCreateSummernote() {
+                if ($('#editor-create').length && !$('#editor-create').next('.note-editor').length) {
+                    $('#editor-create').summernote({
+                        height: 300,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        callbacks: {
+                            onChange: function(contents, $editable) {
+                                $('#description-create').val(contents);
+                            },
+                            onInit: function() {
+                                var initialValue = $('#description-create').val();
+                                if (initialValue) {
+                                    $('#editor-create').summernote('code', initialValue);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Initialize create summernote when modal is shown
+            $('#modal-laboratory').on('shown.bs.modal', function() {
+                initCreateSummernote();
+            });
+
+            // Destroy summernote when create modal is hidden
+            $('#modal-laboratory').on('hidden.bs.modal', function() {
+                if ($('#editor-create').next('.note-editor').length) {
+                    $('#editor-create').summernote('destroy');
                 }
             });
 
@@ -364,8 +364,9 @@
                 var modalId = $(this).attr('id');
                 var laboratoryId = modalId.replace('modal-edit-laboratory-', '');
                 var editorId = 'editor-edit-' + laboratoryId;
+                var hiddenInputId = 'description-edit-' + laboratoryId;
 
-                if (!$('#' + editorId).hasClass('note-editor')) {
+                if (!$('#' + editorId).next('.note-editor').length) {
                     $('#' + editorId).summernote({
                         height: 300,
                         fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
@@ -385,14 +386,17 @@
                             ['view', ['fullscreen', 'codeview', 'help']]
                         ],
                         callbacks: {
-                            onChange: function(contents) {
-                                $('#description-edit-' + laboratoryId).val(contents);
+                            onChange: function(contents, $editable) {
+                                $('#' + hiddenInputId).val(contents);
+                            },
+                            onInit: function() {
+                                var existingDescription = $('#' + hiddenInputId).val();
+                                if (existingDescription) {
+                                    $('#' + editorId).summernote('code', existingDescription);
+                                }
                             }
                         }
                     });
-
-                    var description = $('#description-edit-' + laboratoryId).val();
-                    $('#' + editorId).summernote('code', description);
                 }
             });
 
@@ -402,7 +406,7 @@
                 var laboratoryId = modalId.replace('modal-edit-laboratory-', '');
                 var editorId = 'editor-edit-' + laboratoryId;
 
-                if ($('#' + editorId).hasClass('note-editor')) {
+                if ($('#' + editorId).next('.note-editor').length) {
                     $('#' + editorId).summernote('destroy');
                 }
             });

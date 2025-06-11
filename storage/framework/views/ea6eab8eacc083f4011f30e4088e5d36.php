@@ -1,6 +1,5 @@
 <?php $__env->startSection('content'); ?>
     <style>
-        /* Updated CSS for proper dotted line alignment, text indentation, and vision-mission layout */
         .content-wrapper {
             background-color: #fff;
             padding-bottom: 40px;
@@ -38,17 +37,25 @@
             cursor: pointer;
             text-align: center;
             user-select: none;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             z-index: 1;
             flex-shrink: 0;
+            border: 2px solid transparent;
         }
 
         .nav-number.active {
             background-color: #007bff;
+
         }
 
-        .nav-number:hover {
-            background-color: #ccc;
+        .nav-number:hover:not(.active) {
+            background-color: #5495ff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-number:active {
+            transform: scale(0.95);
         }
 
         .nav-item {
@@ -68,8 +75,14 @@
             text-align: center;
             line-height: 1.2;
             max-width: 200px;
-            white球球white-space: normal;
+            white-space: normal;
             z-index: 2;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item:hover .nav-label {
+            color: #007bff;
+            font-weight: 500;
         }
 
         .number-nav::before {
@@ -177,37 +190,63 @@
             transform: translate(-50%, -50%);
         }
 
+        /* PERBAIKAN UTAMA: Ganti CSS vision-mission-container yang lama dengan yang ini */
         .vision-mission-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: stretch;
             padding: 0 50px;
+            max-width: 1000px;
+            margin: 0 auto;
+            margin-bottom: 30px;
+            min-height: 140px;
+            position: relative;
         }
 
         .vision-content {
-            flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
+            padding: 15px 0;
+            /* Padding vertikal yang konsisten */
         }
 
+        /* Left column - Title */
         .vision-content:first-child {
-            flex-basis: 40%;
+            flex-basis: 30%;
             flex-grow: 0;
-            padding-right: 20px;
+            flex-shrink: 0;
+            padding-right: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            /* Align to right side of left column */
+            text-align: right;
+            /* Text align right (closer to divider) */
         }
 
+        /* Right column - Description */
         .vision-content:last-child {
-            flex-basis: 60%;
+            flex-basis: 70%;
             flex-grow: 1;
-            padding-left: 20px;
+            flex-shrink: 0;
+            padding-left: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            /* Align to left side of right column */
         }
 
         .vision-title {
             color: #007bff;
             font-weight: bold;
-            margin-bottom: 10px;
             font-size: 16px;
+            text-align: right;
+            /* Right align title (closer to divider) */
+            line-height: 1.4;
+            margin: 0;
+            width: 100%;
+            /* Remove text overflow properties to allow text wrapping */
         }
 
         .vision-content p {
@@ -215,14 +254,64 @@
             color: #333;
             line-height: 1.6;
             text-align: justify;
+            /* Justify text for better readability */
             margin: 0;
-            text-indent: 0px;
+            text-indent: 0;
+            width: 100%;
         }
 
+        /* Vertical divider - FIXED */
         .divider-line {
-            width: 2px;
+            width: 4px;
             background-color: #000;
             align-self: stretch;
+            /* This ensures full height */
+            margin: 0;
+            /* Remove margin */
+            flex-shrink: 0;
+            /* Prevent shrinking */
+            min-height: 100%;
+            /* Ensure minimum height */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .vision-mission-container {
+                flex-direction: column;
+                padding: 0 20px;
+                min-height: auto;
+            }
+
+            .vision-content:first-child,
+            .vision-content:last-child {
+                flex-basis: 100%;
+                padding: 15px 0;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .vision-content:first-child {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .vision-title {
+                text-align: center;
+                font-size: 14px;
+            }
+
+            .divider-line {
+                width: 100%;
+                height: 3px;
+                margin: 15px 0;
+                align-self: auto;
+            }
+
+            .vision-content p {
+                font-size: 12px;
+                text-align: justify;
+                /* Keep justify alignment on mobile */
+            }
         }
 
         .content-section#prospek-kerja .prospek-title {
@@ -270,11 +359,13 @@
             font-size: 16px;
             margin-bottom: 5px;
             text-align: left;
+            /* Already left-aligned, retained for clarity */
         }
 
         .job-roles {
             display: flex;
             justify-content: flex-start;
+            /* Already left-aligned, retained */
             margin-bottom: 15px;
         }
 
@@ -283,6 +374,7 @@
             gap: 15px;
             flex-wrap: wrap;
             justify-content: flex-start;
+            /* Already left-aligned, retained */
             align-items: flex-start;
         }
 
@@ -292,6 +384,8 @@
             font-size: 13px;
             font-weight: 500;
             white-space: nowrap;
+            text-align: left;
+            /* Added to ensure left alignment */
         }
 
         .job-duties {
@@ -305,7 +399,8 @@
             font-size: 14px;
             color: #333;
             line-height: 1.6;
-            text-align: justify;
+            text-align: left;
+            /* Changed from justify to left */
         }
 
         /* Responsive Design */
@@ -320,7 +415,8 @@
 
             .job-role {
                 flex-direction: column;
-                align-items: center;
+                align-items: flex-start;
+                /* Changed to flex-start for left alignment on mobile */
                 gap: 8px;
             }
 
@@ -331,6 +427,13 @@
             .role-title {
                 font-size: 11px;
                 padding: 4px 10px;
+                text-align: left;
+                /* Ensure left alignment on mobile */
+            }
+
+            .job-duties li {
+                text-align: left;
+                /* Ensure left alignment on mobile */
             }
         }
     </style>
@@ -607,7 +710,7 @@
                 <!-- Row 2 -->
                 <div class="prospek-row">
                     <div class="prospek-card">
-                        <div class="prospek-category">PEREKAYASAAN KUALITAS MATERIAL (Material Quality Engineer)</div>
+                        <div class="prospek-category">PEREKAYASAAN KUALITAS.material (Material Quality Engineer)</div>
 
                         <div class="job-roles">
                             <div class="job-role">

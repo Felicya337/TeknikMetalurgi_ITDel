@@ -2,23 +2,9 @@
     enctype="multipart/form-data">
     <?php echo csrf_field(); ?>
     <?php echo method_field('PUT'); ?>
+
     <div class="mb-3">
-        <label for="name_edit_<?php echo e($structure->id); ?>" class="form-label">Nama</label>
-        <input type="text" class="form-control" id="name_edit_<?php echo e($structure->id); ?>" name="name"
-            value="<?php echo e(old('name', $structure->name)); ?>" required>
-        <?php $__errorArgs = ['name'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-            <div class="text-danger"><?php echo e($message); ?></div>
-        <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-    </div>
-    <div class="mb-3">
-        <label for="title_edit_<?php echo e($structure->id); ?>" class="form-label">Jabatan</label>
+        <label for="title_edit_<?php echo e($structure->id); ?>" class="form-label">Jabatan 1</label>
         <input type="text" class="form-control" id="title_edit_<?php echo e($structure->id); ?>" name="title"
             value="<?php echo e(old('title', $structure->title)); ?>" required>
         <?php $__errorArgs = ['title'];
@@ -33,10 +19,26 @@ endif;
 unset($__errorArgs, $__bag); ?>
     </div>
     <div class="mb-3">
-        <label for="degree_edit_<?php echo e($structure->id); ?>" class="form-label">Gelar</label>
+        <label for="degree_edit_<?php echo e($structure->id); ?>" class="form-label">Jabatan 2</label>
         <input type="text" class="form-control" id="degree_edit_<?php echo e($structure->id); ?>" name="degree"
             value="<?php echo e(old('degree', $structure->degree)); ?>">
         <?php $__errorArgs = ['degree'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+            <div class="text-danger"><?php echo e($message); ?></div>
+        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+    </div>
+
+    <div class="mb-3">
+        <label for="name_edit_<?php echo e($structure->id); ?>" class="form-label">Nama</label>
+        <input type="text" class="form-control" id="name_edit_<?php echo e($structure->id); ?>" name="name"
+            value="<?php echo e(old('name', $structure->name)); ?>" required>
+        <?php $__errorArgs = ['name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }

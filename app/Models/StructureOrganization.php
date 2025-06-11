@@ -15,55 +15,36 @@ class StructureOrganization extends Model
         'name',
         'title',
         'degree',
+        'level',
         'parent_id',
         'image',
-        'level',
         'order',
         'is_active',
         'created_by',
         'updated_by',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
-
+    // Relationship with parent structure
     public function parent()
     {
-        return $this->belongsTo(self::class, 'parent_id');
+        return $this->belongsTo(StructureOrganization::class, 'parent_id');
     }
 
+    // Relationship with children structures
     public function children()
     {
-        return $this->hasMany(self::class, 'parent_id')->orderBy('order');
+        return $this->hasMany(StructureOrganization::class, 'parent_id');
     }
 
+    // Relationship with the admin who created the structure
     public function creator()
     {
         return $this->belongsTo(Admin::class, 'created_by');
     }
 
+    // Relationship with the admin who updated the structure
     public function updater()
     {
         return $this->belongsTo(Admin::class, 'updated_by');
-    }
-
-    public static function calculateLevel($parent_id)
-    {
-        if ($parent_id) {
-            $parent = self::find($parent_id);
-            return $parent ? $parent->level + 1 : 0;
-        }
-        return 0;
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    public function scopeByLevel($query, $level)
-    {
-        return $query->where('level', $level);
     }
 }

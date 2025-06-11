@@ -15,10 +15,9 @@ use App\Http\Controllers\Admin\LaboratoryController;
 use App\Http\Controllers\Admin\LecturerController;
 use App\Http\Controllers\Admin\StructureOrganizationController;
 use App\Http\Controllers\Admin\StudentActivityController;
+use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Frontend\NewsController as FrontendNewsController;
-use App\Http\Controllers\Frontend\TestimonialController as FrontendTestimonialController;
-use App\Http\Controllers\Frontend\CollaborateController as FrontendCollaborateController;
 use App\Http\Controllers\Frontend\AchievementController as FrontendAchievementController;
 use App\Http\Controllers\Frontend\MetaProfileController as FrontendMetaProfileController;
 use App\Http\Controllers\Frontend\FacilityController as FrontendFacilityController;
@@ -30,14 +29,9 @@ use App\Http\Controllers\Frontend\CurriculumController as FrontendCurriculumCont
 
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/not-found', function () {
-    return view('not-found');
-})->name('not-found');
 Route::get('/news', [FrontendNewsController::class, 'index'])->name('news');
 Route::get('/news/{id}', [FrontendNewsController::class, 'show'])->name('newsdetail');
 Route::get('/news/search', [FrontendNewsController::class, 'search'])->name('news.search');
-Route::get('/testimoni', [FrontendTestimonialController::class, 'index'])->name('testimoni');
-Route::get('/collaborate', [FrontendCollaborateController::class, 'index'])->name('collaborate');
 Route::get('/prestasi', [FrontendAchievementController::class, 'index'])->name('prestasi');
 Route::get('/metaprofile', [FrontendMetaProfileController::class, 'index'])->name('metaprofile');
 Route::get('/curriculum', [FrontendCurriculumController::class, 'index'])->name('curriculum');
@@ -55,6 +49,13 @@ Route::prefix('student_activity')->name('student_activity.')->group(function () 
 Route::get('/structureorganization', [FrontendStructureOrganizationController::class, 'index'])
     ->name('structureorganization');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::post('/search', [SearchController::class, 'search'])->name('search.post');
+
+// Not Found Route
+Route::get('/not-found', function () {
+    return view('not-found');
+})->name('not-found');
+
 // Admin Authentication Routes
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
@@ -145,8 +146,8 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/lecturer/{id}/edit', [LecturerController::class, 'edit'])->name('lecturer.edit');
     Route::put('/lecturer/{id}', [LecturerController::class, 'update'])->name('lecturer.update');
     Route::delete('/lecturer/{id}', [LecturerController::class, 'destroy'])->name('lecturer.destroy');
-    Route::put('/admin/lecturer/{lecturer}/toggle-status', [LecturerController::class, 'toggleStatus'])
-        ->name('admin.lecturer.toggle-status');
+    Route::put('/lecturer/{lecturer}/toggle-status', [LecturerController::class, 'toggleStatus'])
+        ->name('lecturer.toggle-status');
 
     // Structure Organization Routes
     Route::get('/structure_organization', [StructureOrganizationController::class, 'index'])->name('structure_organization.index');
@@ -165,4 +166,10 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/studentactivities/{studentActivity}/edit', [StudentActivityController::class, 'edit'])->name('studentactivity.edit');
     Route::put('/studentactivities/{studentActivity}', [StudentActivityController::class, 'update'])->name('studentactivity.update');
     Route::delete('/studentactivities/{studentActivity}', [StudentActivityController::class, 'destroy'])->name('studentactivity.destroy');
+
+    // User Inquiry Routes
+    Route::get('/inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
+    Route::get('/inquiries/{inquiry}', [InquiryController::class, 'show'])->name('inquiries.show');
+    Route::post('/inquiries/{inquiry}/respond', [InquiryController::class, 'respond'])->name('inquiries.respond');
+    Route::delete('/inquiries/{inquiry}', [InquiryController::class, 'destroy'])->name('inquiries.destroy');
 });

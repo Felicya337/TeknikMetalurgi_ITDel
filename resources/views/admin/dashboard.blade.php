@@ -8,7 +8,6 @@
 
 @section('content')
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    {{-- Font Awesome for icons --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
@@ -74,7 +73,6 @@
             padding: 2rem;
         }
 
-        /* Modern Small Boxes */
         .data-card {
             border-radius: 12px;
             overflow: hidden;
@@ -142,14 +140,12 @@
             transform: translateX(3px);
         }
 
-        /* Grid Layout */
         .data-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 1.5rem;
         }
 
-        /* Responsive Adjustments */
         @media (max-width: 992px) {
             .data-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -312,9 +308,33 @@
                                     Kelola <i class="fas fa-arrow-right"></i>
                                 </div>
                             </a>
+
+                            <a href="{{ route('admin.inquiries.index') }}" class="data-card"
+                                style="--card-gradient-1: #ef4444; --card-gradient-2: #dc2626;">
+                                <div class="card-content">
+                                    <div class="card-title">Pertanyaan & Ulasan</div>
+                                    <i class="fas fa-envelope card-icon"></i>
+                                </div>
+                                <div class="card-footer">
+                                    Kelola <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="adminNotificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Notifikasi Baru</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Ada <span id="notificationType"></span> baru dari <span id="notificationEmail"></span>!
+                <a href="{{ route('admin.inquiries.index') }}" class="btn btn-sm btn-primary mt-2">Lihat</a>
             </div>
         </div>
     </div>

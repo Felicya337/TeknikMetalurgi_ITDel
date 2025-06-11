@@ -17,10 +17,6 @@
             overflow: hidden;
         }
 
-        .table {
-            margin-bottom: 0;
-        }
-
         .table th {
             background-color: #f8f9fa;
             font-weight: 600;
@@ -92,13 +88,6 @@
             padding: 24px;
         }
 
-        .title-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
         .note-editor.note-frame {
             border-radius: 8px;
         }
@@ -144,22 +133,49 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($facilities as $facility)
+                                    @foreach ($facilities as $index => $facility)
                                         <tr>
-                                            <td></td> <!-- Placeholder for row number -->
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>
                                                 <span
                                                     class="badge {{ $facility->type == 'classroom' ? 'bg-primary' : ($facility->type == 'smartclass' ? 'bg-info' : 'bg-success') }}">
                                                     {{ ucfirst(str_replace('_', ' ', $facility->type)) }}
                                                 </span>
                                             </td>
-                                            <td>{!! Str::limit($facility->description, 100) !!}</td>
-                                            <td>{{ $facility->academic_days ? implode(', ', $facility->academic_days) : '-' }}
+                                            <td>
+                                                @if ($facility->description)
+                                                    {!! Str::limit(strip_tags($facility->description), 100) !!}
+                                                @else
+                                                    <span class="text-muted">Tidak ada deskripsi</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($facility->academic_days && is_array($facility->academic_days))
+                                                    @php
+                                                        $dayTranslations = [
+                                                            'Monday' => 'Senin',
+                                                            'Tuesday' => 'Selasa',
+                                                            'Wednesday' => 'Rabu',
+                                                            'Thursday' => 'Kamis',
+                                                            'Friday' => 'Jumat',
+                                                            'Saturday' => 'Sabtu',
+                                                            'Sunday' => 'Minggu',
+                                                        ];
+                                                        $translatedDays = array_map(function ($day) use (
+                                                            $dayTranslations,
+                                                        ) {
+                                                            return $dayTranslations[$day] ?? $day;
+                                                        }, $facility->academic_days);
+                                                    @endphp
+                                                    {{ implode(', ', $translatedDays) }}
+                                                @else
+                                                    -
+                                                @endif
                                             </td>
                                             <td>{{ $facility->academic_hours ?? '-' }}</td>
                                             <td>{{ $facility->collaborative_hours ?? '-' }}</td>
                                             <td>
-                                                @if ($facility->images && count($facility->images) > 0)
+                                                @if ($facility->images && is_array($facility->images) && count($facility->images) > 0)
                                                     <img src="{{ asset('storage/' . $facility->images[0]) }}"
                                                         class="img-thumbnail" alt="Facility Image">
                                                 @else
@@ -288,92 +304,109 @@
                         last: "Terakhir",
                         next: "Berikutnya",
                         previous: "Sebelumnya"
-                    },
-                    aria: {
-                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
-                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
                     }
                 },
                 dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
-                columns: [{
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1; // Row number starts from 1
-                        },
+                columnDefs: [{
+                        targets: 0,
                         orderable: false,
                         searchable: false
                     },
                     {
-                        data: 'type'
+                        targets: 2,
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return data.length > 100 ? data.substr(0, 100) + '...' : data;
+                            }
+                            return data;
+                        }
                     },
                     {
-                        data: 'description'
-                    },
-                    {
-                        data: 'academic_days'
-                    },
-                    {
-                        data: 'academic_hours'
-                    },
-                    {
-                        data: 'collaborative_hours'
-                    },
-                    {
-                        data: 'images'
-                    },
-                    {
-                        data: 'is_active'
-                    },
-                    {
-                        data: 'action'
+                        targets: 8,
+                        orderable: false,
+                        searchable: false
                     }
                 ],
-                columnDefs: [{
-                    targets: 2, // Description column
-                    render: function(data, type, row) {
-                        return type === 'display' ? data : $('<div/>').html(data).text();
-                    }
-                }],
                 initComplete: function() {
                     $('.dataTables_length select').addClass('form-select form-select-sm');
                     $('.dataTables_filter input').addClass('form-control form-control-sm');
                 }
             });
 
-            // Initialize Summernote for Create Form
-            $('#editor-create').summernote({
-                height: 300,
-                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
-                fontNamesIgnoreCheck: ['Poppins'],
-                fontSizes: ['12', '14', '16', '20', '24', '32'],
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'underline', 'clear']],
-                    ['fontname', ['fontname']],
-                    ['fontsize', ['fontsize']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview', 'help']]
-                ],
-                callbacks: {
-                    onChange: function(contents) {
-                        $('#description-create').val(contents);
-                    },
-                    onInit: function() {
-                        $('#editor-create').summernote('code', $('#description-create').val());
-                    }
+            // Initialize Summernote for CREATE form
+            function initCreateSummernote() {
+                if ($('#editor-create').length && !$('#editor-create').next('.note-editor').length) {
+                    $('#editor-create').summernote({
+                        height: 300,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        callbacks: {
+                            onChange: function(contents) {
+                                $('#description-create').val(contents);
+                            },
+                            onInit: function() {
+                                var initialValue = $('#description-create').val();
+                                if (initialValue) {
+                                    $('#editor-create').summernote('code', initialValue);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Initialize create summernote when modal is shown
+            $('#modal-facility').on('shown.bs.modal', function() {
+                initCreateSummernote();
+            });
+
+            // Destroy summernote when create modal is hidden
+            $('#modal-facility').on('hidden.bs.modal', function() {
+                if ($('#editor-create').next('.note-editor').length) {
+                    $('#editor-create').summernote('destroy');
                 }
             });
 
-            // Initialize Summernote for Edit Forms when modals are shown
+            // Pastikan nilai tersimpan saat form submit
+            $('form').on('submit', function(e) {
+                if ($(this).find('#editor-create').length) {
+                    var editorContent = $('#editor-create').summernote('code');
+                    $('#description-create').val(editorContent);
+                }
+
+                $(this).find('[id^="editor-edit-"]').each(function() {
+                    var editorId = $(this).attr('id');
+                    var facilityId = editorId.replace('editor-edit-', '');
+                    var hiddenInputId = 'description-edit-' + facilityId;
+
+                    if ($(this).next('.note-editor').length) {
+                        var content = $(this).summernote('code');
+                        $('#' + hiddenInputId).val(content);
+                    }
+                });
+            });
+
+            // Initialize Summernote for Edit Forms
             $('div[id^="modal-edit-facility-"]').on('shown.bs.modal', function() {
                 var modalId = $(this).attr('id');
                 var facilityId = modalId.replace('modal-edit-facility-', '');
                 var editorId = 'editor-edit-' + facilityId;
+                var hiddenInputId = 'description-edit-' + facilityId;
+                var existingDescription = $('#' + hiddenInputId).val();
 
-                if (!$('#' + editorId).hasClass('note-editor')) {
+                if (!$('#' + editorId).next('.note-editor').length) {
                     $('#' + editorId).summernote({
                         height: 300,
                         fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
@@ -394,13 +427,15 @@
                         ],
                         callbacks: {
                             onChange: function(contents) {
-                                $('#description-edit-' + facilityId).val(contents);
+                                $('#' + hiddenInputId).val(contents);
+                            },
+                            onInit: function() {
+                                if (existingDescription) {
+                                    $('#' + editorId).summernote('code', existingDescription);
+                                }
                             }
                         }
                     });
-
-                    var description = $('#description-edit-' + facilityId).val();
-                    $('#' + editorId).summernote('code', description);
                 }
             });
 
@@ -410,7 +445,7 @@
                 var facilityId = modalId.replace('modal-edit-facility-', '');
                 var editorId = 'editor-edit-' + facilityId;
 
-                if ($('#' + editorId).hasClass('note-editor')) {
+                if ($('#' + editorId).next('.note-editor').length) {
                     $('#' + editorId).summernote('destroy');
                 }
             });
@@ -454,6 +489,46 @@
                         form.submit();
                     }
                 });
+            });
+
+            // File input validation
+            $('input[type="file"]').on('change', function() {
+                const files = this.files;
+                const maxFiles = 5;
+                const maxSize = 2 * 1024 * 1024; // 2MB
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+
+                if (files.length > maxFiles) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: `Maksimum ${maxFiles} gambar yang diizinkan!`
+                    });
+                    this.value = '';
+                    return;
+                }
+
+                for (let i = 0; i < files.length; i++) {
+                    if (!allowedTypes.includes(files[i].type)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Hanya file gambar (JPEG, PNG, JPG, GIF) yang diizinkan!'
+                        });
+                        this.value = '';
+                        return;
+                    }
+
+                    if (files[i].size > maxSize) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: `Ukuran file ${files[i].name} terlalu besar! Maksimum 2MB per file.`
+                        });
+                        this.value = '';
+                        return;
+                    }
+                }
             });
         });
     </script>

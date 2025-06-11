@@ -2,16 +2,9 @@
     enctype="multipart/form-data">
     @csrf
     @method('PUT')
+
     <div class="mb-3">
-        <label for="name_edit_{{ $structure->id }}" class="form-label">Nama</label>
-        <input type="text" class="form-control" id="name_edit_{{ $structure->id }}" name="name"
-            value="{{ old('name', $structure->name) }}" required>
-        @error('name')
-            <div class="text-danger">{{ $message }}</div>
-        @enderror
-    </div>
-    <div class="mb-3">
-        <label for="title_edit_{{ $structure->id }}" class="form-label">Jabatan</label>
+        <label for="title_edit_{{ $structure->id }}" class="form-label">Jabatan 1</label>
         <input type="text" class="form-control" id="title_edit_{{ $structure->id }}" name="title"
             value="{{ old('title', $structure->title) }}" required>
         @error('title')
@@ -19,10 +12,19 @@
         @enderror
     </div>
     <div class="mb-3">
-        <label for="degree_edit_{{ $structure->id }}" class="form-label">Gelar</label>
+        <label for="degree_edit_{{ $structure->id }}" class="form-label">Jabatan 2</label>
         <input type="text" class="form-control" id="degree_edit_{{ $structure->id }}" name="degree"
             value="{{ old('degree', $structure->degree) }}">
         @error('degree')
+            <div class="text-danger">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="mb-3">
+        <label for="name_edit_{{ $structure->id }}" class="form-label">Nama</label>
+        <input type="text" class="form-control" id="name_edit_{{ $structure->id }}" name="name"
+            value="{{ old('name', $structure->name) }}" required>
+        @error('name')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>

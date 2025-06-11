@@ -66,8 +66,6 @@
                 <label for="education-edit-{{ $lecturer->id }}" class="form-label">Riwayat Pendidikan</label>
                 <textarea id="education-edit-{{ $lecturer->id }}" name="education"
                     class="form-control summernote-editor @error('education') is-invalid @enderror">{{ old('education', $lecturer->education) }}</textarea>
-                <input type="hidden" id="education-edit-input-{{ $lecturer->id }}" name="education_hidden_for_js_init"
-                    value="{{ old('education', $lecturer->education) }}"> {{-- Helper untuk JS --}}
                 @error('education')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
@@ -77,8 +75,6 @@
                 <label for="research-edit-{{ $lecturer->id }}" class="form-label">Bidang Penelitian & Publikasi</label>
                 <textarea id="research-edit-{{ $lecturer->id }}" name="research"
                     class="form-control summernote-editor @error('research') is-invalid @enderror">{{ old('research', $lecturer->research) }}</textarea>
-                <input type="hidden" id="research-edit-input-{{ $lecturer->id }}" name="research_hidden_for_js_init"
-                    value="{{ old('research', $lecturer->research) }}">
                 @error('research')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
@@ -89,13 +85,10 @@
                     Dosen)</label>
                 <textarea id="courses-edit-{{ $lecturer->id }}" name="courses"
                     class="form-control summernote-editor @error('courses') is-invalid @enderror">{{ old('courses', $lecturer->courses) }}</textarea>
-                <input type="hidden" id="courses-edit-input-{{ $lecturer->id }}" name="courses_hidden_for_js_init"
-                    value="{{ old('courses', $lecturer->courses) }}">
                 @error('courses')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
             </div>
-
 
             <div class="mb-3">
                 <label for="image_edit_{{ $lecturer->id }}" class="form-label">Foto</label>
@@ -105,15 +98,14 @@
                     2MB.</small>
                 @if ($lecturer->image)
                     <div class="mt-2">
-                        <img src="{{ asset('storage/' . $lecturer->image) }}" class="img-thumbnail"
-                            alt="Foto saat ini" style="max-width: 100px;">
+                        <img src="{{ asset('storage/' . $lecturer->image) }}" class="img-thumbnail" alt="Foto saat ini"
+                            style="max-width: 100px;">
                     </div>
                 @endif
                 @error('image')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-
 
             <div class="mb-3">
                 <label for="role_edit_{{ $lecturer->id }}" class="form-label">Peran <span
@@ -129,7 +121,6 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-
 
             <div class="mb-3 form-check">
                 <input type="hidden" name="is_active" value="0">

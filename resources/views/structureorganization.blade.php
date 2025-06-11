@@ -84,7 +84,8 @@
         .org-name {
             font-size: clamp(0.75rem, 1.6vw, 0.9rem);
             margin-top: clamp(6px, 1.2vw, 10px);
-            font-weight: 500;
+            font-weight: 700;
+            /* Made name bold */
         }
 
         .org-degree {
@@ -385,7 +386,6 @@
 
     <div class="container org-structure">
         <h1 class="text-center mb-4">STRUKTUR ORGANISASI FAKULTAS TEKNOLOGI INDUSTRI <br>
-
             JURUSAN TEKNIK METALURGI INSTITUT TEKNOLOGI DEL</h1>
 
         @foreach ($levels as $level => $organizations)
@@ -399,10 +399,8 @@
                             <div class="org-connector horizontal-connector"></div>
                         @endif
 
-                        @if ($org->image)
+                        @if ($org->image && file_exists(public_path('storage/' . $org->image)))
                             <img src="{{ asset('storage/' . $org->image) }}" alt="{{ $org->title }}">
-                        @else
-                            <img src="{{ asset('images/default-avatar.png') }}" alt="Default Image">
                         @endif
 
                         <div class="org-title">{{ $org->title }}</div>

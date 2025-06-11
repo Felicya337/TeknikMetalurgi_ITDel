@@ -36,14 +36,16 @@ return [
             'secret' => env('PUSHER_APP_SECRET'),
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
-                'host' => env('PUSHER_HOST') ?: 'api-'.env('PUSHER_APP_CLUSTER', 'mt1').'.pusher.com',
-                'port' => env('PUSHER_PORT', 443),
-                'scheme' => env('PUSHER_SCHEME', 'https'),
-                'encrypted' => true,
-                'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
-            ],
-            'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+                'cluster' => env('PUSHER_CLUSTER'),
+                'useTLS' => true,
+                'curl_options' => [
+                    CURLOPT_SSL_VERIFYHOST => 2,
+                    CURLOPT_SSL_VERIFYPEER => true,
+                    CURLOPT_CAINFO => 'C:\xampp\php\ssl\cacert.pem',
+                ],
+                'client_options' => [
+                    // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+                ],
             ],
         ],
 

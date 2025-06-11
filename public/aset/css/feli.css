@@ -996,6 +996,7 @@ body {
     border-radius: 8px;
     padding: 2rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 .description-box {
@@ -1003,10 +1004,13 @@ body {
 }
 
 .description-text {
-    font-size: 1.05rem;
-    line-height: 1.8;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    /* diperbesar dari 1.05rem */
+    line-height: 2;
     text-align: center;
     margin-bottom: 0;
+    color: white !important;
 }
 
 .separator-line {
@@ -1661,17 +1665,20 @@ body {
 }
 
 .slider-container {
+    position: relative;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 80px;
-    /* Extra padding untuk nav arrows */
-    position: relative;
+    padding: 0 60px;
+    /* Adjusted padding to avoid overlap with arrows */
 }
 
+/* Ensure kerjasama-container doesn't interfere */
 .kerjasama-container {
     display: flex;
     transition: transform 0.5s ease-in-out;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
 }
 
 .kerjasama-row {
@@ -1698,9 +1705,9 @@ body {
 }
 
 .institution-logo {
-    max-width: 100%;
+    max-width: 50%;
     height: auto;
-    max-height: 120px;
+    max-height: 100px;
     margin-bottom: 15px;
     object-fit: contain;
 }
@@ -1734,37 +1741,44 @@ body {
 }
 
 #collaborationModal .modal-header {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ffffff;
     padding: 20px;
 }
 
 #collaborationModal .modal-title {
     font-weight: 600;
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: #333;
 }
 
 /* Ensure the modal body can handle long content */
 #collaborationModal .modal-body {
     max-height: 80vh;
-    /* Adjusted to 80% of viewport height */
     overflow-y: auto;
-    /* Enable vertical scrolling */
     padding: 20px;
+}
+
+/* Style for the section subtitles (Profil Perusahaan and Deskripsi Kerjasama) */
+.section-subtitle {
+    font-weight: bold;
+    /* Make the subheadings bold */
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 10px;
 }
 
 /* Ensure the profil-content sections don't break with long text */
 .profil-content {
     font-size: 1rem;
     line-height: 1.6;
-    color: #555;
+    color: #000000;
     padding: 10px;
     background: #ffffff;
     border-radius: 5px;
     word-wrap: break-word;
-    /* Ensure long words wrap */
     white-space: normal;
-    /* Allow text wrapping */
+    font-weight: normal;
+    /* Ensure content is not bold */
 }
 
 /* Handle lists, paragraphs, and other HTML elements from Summernote */
@@ -1786,23 +1800,26 @@ body {
     margin: 10px 0;
 }
 
+/* Handle tables from Summernote */
+.profil-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+.profil-content table td,
+.profil-content table th {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: left;
+}
+
+.profil-content table th {
+    background-color: #f8f9fa;
+}
+
 /* ============ RESPONSIVE STYLES ============ */
 @media (max-width: 1200px) {
-
-    .testimonial-wrapper,
-    .slider-container {
-        padding: 0 60px;
-    }
-
-    .nav-arrow svg {
-        width: 36px;
-        height: 36px;
-    }
-
-    .testimonial-card {
-        flex: 0 0 33.333%;
-    }
-
     .kerjasama-item {
         flex: 0 0 calc(50% - 20px);
         max-width: calc(50% - 20px);
@@ -1810,29 +1827,8 @@ body {
 }
 
 @media (max-width: 768px) {
-
-    .testimonial-wrapper,
     .slider-container {
         padding: 0 50px;
-    }
-
-    .nav-arrow svg {
-        width: 32px;
-        height: 32px;
-    }
-
-    .testimonial-section .nav-arrow.left,
-    .kerjasama-section .nav-arrow.left {
-        left: 5px;
-    }
-
-    .testimonial-section .nav-arrow.right,
-    .kerjasama-section .nav-arrow.right {
-        right: 5px;
-    }
-
-    .testimonial-card {
-        flex: 0 0 50%;
     }
 
     .kerjasama-item {
@@ -1846,43 +1842,20 @@ body {
 }
 
 @media (max-width: 480px) {
-
-    .testimonial-wrapper,
     .slider-container {
         padding: 0 40px;
     }
 
-    .nav-arrow svg {
-        width: 28px;
-        height: 28px;
-    }
-
-    .testimonial-section .nav-arrow.left,
-    .kerjasama-section .nav-arrow.left {
-        left: 5px;
-    }
-
-    .testimonial-section .nav-arrow.right,
-    .kerjasama-section .nav-arrow.right {
-        right: 5px;
-    }
-
-    .testimonial-card {
-        flex: 0 0 100%;
-    }
-
-    .testimonial-section h3 {
-        font-size: 1.5rem;
+    .section-title {
+        font-size: 1.2rem;
     }
 }
 
-/* Existing styles remain unchanged, add or update the following */
 .no-collaborations {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100px;
-    /* Ensure enough space for vertical centering */
     text-align: center;
 }
 
@@ -2247,6 +2220,367 @@ body {
     justify-content: center;
     gap: 80px;
     flex-wrap: wrap;
+}
+
+/* ============ MODERN CHAT & REVIEW MODAL STYLES ============ */
+#chatModal .modal-dialog,
+#reviewModal .modal-dialog {
+    max-width: 800px;
+    margin: 1.75rem auto;
+    width: 90%;
+}
+
+#chatModal .modal-content,
+#reviewModal .modal-content {
+    border: none;
+    border-radius: 12px;
+    background-color: #f8fafc;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+}
+
+#chatModal .modal-header,
+#reviewModal .modal-header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: #fff;
+    border-bottom: none;
+    padding: 1.5rem;
+    position: relative;
+}
+
+#chatModal .modal-title,
+#reviewModal .modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+#chatModal .modal-title i,
+#reviewModal .modal-title i {
+    margin-right: 10px;
+    font-size: 1.5rem;
+}
+
+#chatModal .btn-close,
+#reviewModal .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+#chatModal .btn-close:hover,
+#reviewModal .btn-close:hover {
+    opacity: 1;
+}
+
+#chatModal .modal-body,
+#reviewModal .modal-body {
+    padding: 2rem;
+    background-color: #fff;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Tab Navigation */
+#chatTabs.nav-tabs,
+#reviewTabs.nav-tabs {
+    border-bottom: none;
+    background-color: #eff6ff;
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+#chatTabs .nav-link,
+#reviewTabs .nav-link {
+    color: #1e40af;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+#chatTabs .nav-link i,
+#reviewTabs .nav-link i {
+    margin-right: 6px;
+}
+
+#chatTabs .nav-link:hover,
+#reviewTabs .nav-link:hover {
+    background-color: #dbeafe;
+    color: #1e3a8a;
+}
+
+#chatTabs .nav-link.active,
+#reviewTabs .nav-link.active {
+    background-color: #3b82f6;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Description Text */
+.description-text {
+    font-size: 0.95rem;
+    color: #1f2937;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.description-text strong {
+    color: #1e40af;
+    font-weight: 600;
+}
+
+/* Form Styling */
+#questionForm,
+#reviewForm,
+#questionFormReview,
+#reviewFormReview {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1e40af;
+    margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    color: #1f2937;
+    background-color: #f8fafc;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background-color: #fff;
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 1px solid #bfdbfe;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    color: #1f2937;
+    margin-left: 0.5rem;
+}
+
+/* Textarea */
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+    max-height: 200px;
+}
+
+/* Buttons */
+.d-flex.gap-2 {
+    gap: 0.75rem !important;
+}
+
+.btn-secondary,
+.btn-primary {
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    border: none;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #4b5563;
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    border: none;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary i {
+    margin-right: 6px;
+}
+
+.btn-primary:hover {
+    background-color: #1e40af;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:active,
+.btn-primary:focus {
+    background-color: #1e3a8a;
+    transform: translateY(0);
+}
+
+/* Toast Styling */
+.toast-container {
+    z-index: 1055;
+}
+
+#successToast {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#successToast .toast-header {
+    background-color: #1e40af;
+    color: #fff;
+    font-weight: 500;
+}
+
+#successToast .toast-body {
+    font-size: 0.9rem;
+    color: #1f2937;
+    background-color: #fff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+
+    #chatModal .modal-dialog,
+    #reviewModal .modal-dialog {
+        margin: 1rem;
+    }
+
+    #chatModal .modal-content,
+    #reviewModal .modal-content {
+        border-radius: 10px;
+    }
+
+    #chatModal .modal-header,
+    #reviewModal .modal-header {
+        padding: 1rem;
+    }
+
+    #chatModal .modal-title,
+    #reviewModal .modal-title {
+        font-size: 1.25rem;
+    }
+
+    #chatModal .modal-body,
+    #reviewModal .modal-body {
+        padding: 1.5rem;
+    }
+
+    #chatTabs.nav-tabs,
+    #reviewTabs.nav-tabs {
+        flex-direction: column;
+        padding: 0.25rem;
+    }
+
+    #chatTabs .nav-link,
+    #reviewTabs .nav-link {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .form-control,
+    .form-select {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+    }
+
+    .btn-secondary,
+    .btn-primary {
+        font-size: 0.85rem;
+        padding: 0.6rem 1.2rem;
+    }
+}
+
+/* Confirmation Message Styling */
+.confirmation-message {
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-message h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 1rem;
+}
+
+.confirmation-message .description-text {
+    font-size: 0.95rem;
+    color: #1f2937;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.confirmation-message .description-text strong {
+    color: #1e40af;
+    font-weight: 600;
+}
+
+.confirmation-message .btn-primary {
+    background-color: #3b82f6;
+    border: none;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.confirmation-message .btn-primary:hover {
+    background-color: #1e40af;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.confirmation-message .btn-primary:active,
+.confirmation-message .btn-primary:focus {
+    background-color: #1e3a8a;
+    transform: translateY(0);
 }
 
 /* Import Font */

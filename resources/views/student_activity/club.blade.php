@@ -13,7 +13,7 @@
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
-                background-color: #f8f9fa;
+                background-color: #ffffff;
                 line-height: 1.6;
                 margin: 0;
                 padding: 0;
@@ -320,34 +320,6 @@
                 font-size: 1rem;
             }
 
-            /* Breadcrumb */
-            .breadcrumbs {
-                display: flex;
-                list-style: none;
-                padding: 0;
-                margin: 20px 0;
-                font-size: 0.9rem;
-            }
-
-            .breadcrumbs li {
-                margin-right: 10px;
-            }
-
-            .breadcrumbs li:not(:last-child)::after {
-                content: ' / ';
-                margin-left: 10px;
-                color: #6c757d;
-            }
-
-            .breadcrumbs a {
-                color: #2196F3;
-                text-decoration: none;
-            }
-
-            .breadcrumbs .current-page {
-                color: #6c757d;
-            }
-
             /* Responsive Design */
             @media (max-width: 768px) {
                 .header h1 {
@@ -536,6 +508,7 @@
                             <div class="club-card" onclick="openModal('modal-{{ $activity->id }}')">
                                 <h3 class="club-title">{{ $activity->title }}</h3>
                                 @if ($activity->description)
+                                    {{-- Menggunakan strip_tags dan Str::limit untuk preview teks bersih --}}
                                     <p class="club-subtitle">{!! Str::limit(strip_tags($activity->description), 50) !!}</p>
                                 @endif
                             </div>
@@ -559,7 +532,7 @@
                                         @endif
                                         <div class="modal-content">
                                             <div class="modal-content-text">
-                                                {!! $activity->description !!}
+                                                {!! $activity->description !!} {{-- Sudah benar menggunakan {!! !!} --}}
                                             </div>
                                         </div>
                                     </div>
@@ -644,7 +617,9 @@
                     });
 
                     // Add smooth scroll behavior
-                    body.style.scrollBehavior = 'smooth';
+                    if (body) { // Check if body exists
+                        body.style.scrollBehavior = 'smooth';
+                    }
                 });
 
                 // Add focus trap for accessibility
@@ -654,6 +629,8 @@
                         const focusableElements = activeModal.querySelectorAll(
                             'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
                         );
+                        if (focusableElements.length === 0) return; // No focusable elements
+
                         const firstElement = focusableElements[0];
                         const lastElement = focusableElements[focusableElements.length - 1];
 

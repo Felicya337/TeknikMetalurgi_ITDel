@@ -107,51 +107,6 @@
                 {{ $news->links() }}
             </div>
         </div>
-
-        <style>
-            .search-container {
-                position: relative;
-            }
-
-            .clear-btn {
-                position: absolute;
-                right: 50px;
-                top: 50%;
-                transform: translateY(-50%);
-                background: none;
-                border: none;
-                color: #6c757d;
-                cursor: pointer;
-                padding: 5px;
-            }
-
-            .clear-btn:hover {
-                color: #dc3545;
-            }
-
-            .search-info {
-                margin: 15px 0;
-                font-style: italic;
-                color: #6c757d;
-            }
-
-            .highlight {
-                background-color: #fff3cd;
-                padding: 2px 4px;
-                border-radius: 3px;
-            }
-
-            .no-news-message {
-                text-align: center;
-                padding: 40px 20px;
-                color: #6c757d;
-                font-size: 16px;
-                background: #f8f9fa;
-                border-radius: 8px;
-                margin: 20px 0;
-            }
-        </style>
-
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(document).ready(function() {
@@ -185,6 +140,15 @@
                     return text.replace(regex, '<span class="highlight">$1</span>');
                 }
 
+                // Format tanggal untuk tampilan
+                function formatDate(dateStr) {
+                    return new Date(dateStr).toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+
                 // Perform AJAX search
                 function performSearch(query) {
                     if (!query.trim()) {
@@ -209,13 +173,13 @@
                             $loadingSpinner.hide();
                             displaySearchResults(response, query);
                         },
-                        error: function() {
+                        error: function(xhr) {
                             $loadingSpinner.hide();
                             $newsContainer.html(`
-                                <div class="no-news-message">
-                                    Terjadi kesalahan saat mencari berita. Silakan coba lagi.
-                                </div>
-                            `);
+                        <div class="no-news-message">
+                            Terjadi kesalahan saat mencari berita. Silakan coba lagi. (Status: ${xhr.status})
+                        </div>
+                    `);
                         }
                     });
                 }
@@ -229,32 +193,28 @@
                             const highlightedTitle = highlightText(item.title, query);
                             const highlightedDescription = highlightText(item.description ? item.description
                                 .substring(0, 120) : '', query);
-                            const formattedDate = new Date(item.date).toLocaleDateString('id-ID', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                            });
+                            const formattedDate = formatDate(item.date);
 
                             newsHtml += `
-                                <div class="news-item">
-                                    <div class="news-item-image-container">
-                                        ${item.image ?
-                                            `<img src="{{ asset('storage/') }}/${item.image}" alt="${item.title}" class="news-item-image" loading="lazy">` :
-                                            `<img src="https://via.placeholder.com/120x90/6c757d/ffffff?text=No+Image" alt="${item.title}" class="news-item-image" loading="lazy">`
-                                        }
-                                    </div>
-                                    <div class="news-item-details">
-                                        <a href="{{ url('newsdetail') }}/${item.id}" class="news-item-title">
-                                            ${highlightedTitle}
-                                        </a>
-                                        <p class="news-item-excerpt">${highlightedDescription}</p>
-                                        <div class="news-item-meta">
-                                            <span><i class="fas fa-calendar-alt"></i> ${formattedDate}</span>
-                                            <span><i class="fas fa-user"></i> ${item.author || 'Admin'}</span>
-                                        </div>
-                                    </div>
+                        <div class="news-item">
+                            <div class="news-item-image-container">
+                                ${item.image ?
+                                    `<img src="${item.image}" alt="${item.title}" class="news-item-image" loading="lazy">` :
+                                    `<img src="https://via.placeholder.com/120x90/6c757d/ffffff?text=No+Image" alt="${item.title}" class="news-item-image" loading="lazy">`
+                                }
+                            </div>
+                            <div class="news-item-details">
+                                <a href="{{ url('newsdetail') }}/${item.id}" class="news-item-title">
+                                    ${highlightedTitle}
+                                </a>
+                                <p class="news-item-excerpt">${highlightedDescription}</p>
+                                <div class="news-item-meta">
+                                    <span><i class="fas fa-calendar-alt"></i> ${formattedDate}</span>
+                                    <span><i class="fas fa-user"></i> ${item.author}</span>
                                 </div>
-                            `;
+                            </div>
+                        </div>
+                    `;
                         });
 
                         newsHtml += '</div></div>';
@@ -264,10 +224,10 @@
                         $searchCount.text(`Ditemukan ${response.count} berita untuk pencarian "${query}"`);
                     } else {
                         $newsContainer.html(`
-                            <div class="no-news-message">
-                                Maaf, berita tidak ditemukan untuk pencarian "${query}".
-                            </div>
-                        `);
+                    <div class="no-news-message">
+                        Maaf, berita tidak ditemukan untuk pencarian "${query}".
+                    </div>
+                `);
                         $searchResults.show();
                         $searchCount.text(`Tidak ada hasil untuk pencarian "${query}"`);
                     }
@@ -312,6 +272,7 @@
                 @if (isset($query) && $query)
                     $searchResults.show();
                     $searchCount.text(`Hasil pencarian untuk "${!! $query !!}"`);
+                    performSearch("{{ $query }}");
                 @endif
             });
         </script>

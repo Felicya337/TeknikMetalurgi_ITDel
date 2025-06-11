@@ -298,7 +298,7 @@
                 columns: [{
                         data: null,
                         render: function(data, type, row, meta) {
-                            return meta.row + 1; // Row number starts from 1
+                            return meta.row + 1;
                         },
                         orderable: false,
                         searchable: false
@@ -329,7 +329,7 @@
                     }
                 ],
                 columnDefs: [{
-                    targets: [0, 5, 6, 8], // No urut, Peran, Foto, Aksi tidak bisa di-sort
+                    targets: [0, 5, 6, 8],
                     orderable: false
                 }],
                 initComplete: function() {
@@ -338,8 +338,8 @@
                 }
             });
 
-            // Initialize Summernote for Create Form
-            $('#education-create, #research-create, #courses-create').summernote({
+            // Summernote Configuration
+            const summernoteConfig = {
                 height: 300,
                 fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
                 fontNamesIgnoreCheck: ['Poppins'],
@@ -354,67 +354,123 @@
                     ['table', ['table']],
                     ['insert', ['link', 'picture', 'video']],
                     ['view', ['fullscreen', 'codeview', 'help']]
-                ],
-                callbacks: {
-                    onChange: function(contents) {
-                        $(this).closest('form').find('input[id$="-create"]').val(contents);
-                    },
-                    onInit: function() {
-                        $(this).summernote('code', $(this).closest('form').find('input[id$="-create"]')
-                            .val());
+                ]
+            };
+
+            // Initialize Summernote for Create Form (only once when page loads)
+            function initCreateSummernote() {
+                $('#education-create, #research-create, #courses-create').each(function() {
+                    if (!$(this).hasClass('note-editor')) {
+                        $(this).summernote(summernoteConfig);
                     }
-                }
-            });
+                });
+            }
 
-            // Initialize Summernote for Edit Forms when modals are shown
-            $('div[id^="modal-edit-lecturer-"]').on('shown.bs.modal', function() {
-                var modalId = $(this).attr('id');
-                var lecturerId = modalId.replace('modal-edit-lecturer-', '');
+            // Initialize Summernote for Edit Forms
+            function initEditSummernote(lecturerId) {
+                const fields = ['education', 'research', 'courses'];
 
-                ['education', 'research', 'courses'].forEach(field => {
-                    var editorId = field + '-edit-' + lecturerId;
-                    var inputId = '#' + field + '-edit-input-' + lecturerId;
+                fields.forEach(field => {
+                    const editorId = '#' + field + '-edit-' + lecturerId;
+                    const $editor = $(editorId);
 
-                    if (!$('#' + editorId).hasClass('note-editor')) {
-                        $('#' + editorId).summernote({
-                            height: 300,
-                            fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
-                                'Courier New'
-                            ],
-                            fontNamesIgnoreCheck: ['Poppins'],
-                            fontSizes: ['12', '14', '16', '20', '24', '32'],
-                            toolbar: [
-                                ['style', ['style']],
-                                ['font', ['bold', 'underline', 'clear']],
-                                ['fontname', ['fontname']],
-                                ['fontsize', ['fontsize']],
-                                ['color', ['color']],
-                                ['para', ['ul', 'ol', 'paragraph']],
-                                ['table', ['table']],
-                                ['insert', ['link', 'picture', 'video']],
-                                ['view', ['fullscreen', 'codeview', 'help']]
-                            ],
+                    if ($editor.length && !$editor.hasClass('note-editor')) {
+                        // Get initial content
+                        const initialContent = $editor.val() || '';
+
+                        // Initialize summernote
+                        $editor.summernote({
+                            ...summernoteConfig,
                             callbacks: {
-                                onChange: function(contents) {
-                                    $(inputId).val(contents);
+                                onChange: function(contents, $editable) {
+                                    // Update the textarea value when content changes
+                                    $editor.val(contents);
                                 }
                             }
                         });
 
-                        var content = $(inputId).val();
-                        $('#' + editorId).summernote('code', content);
+                        // Set initial content
+                        if (initialContent) {
+                            $editor.summernote('code', initialContent);
+                        }
+                    }
+                });
+            }
+
+            // Destroy Summernote instances
+            function destroyEditSummernote(lecturerId) {
+                const fields = ['education', 'research', 'courses'];
+
+                fields.forEach(field => {
+                    const editorId = '#' + field + '-edit-' + lecturerId;
+                    const $editor = $(editorId);
+
+                    if ($editor.length && $editor.hasClass('note-editor')) {
+                        $editor.summernote('destroy');
+                    }
+                });
+            }
+
+            // Initialize create form summernote on page load
+            initCreateSummernote();
+
+            // Handle Create Modal Events
+            $('#modal-lecturer-create').on('shown.bs.modal', function() {
+                // Reinitialize if needed (in case they were destroyed)
+                initCreateSummernote();
+            });
+
+            $('#modal-lecturer-create').on('hidden.bs.modal', function() {
+                // Optional: Reset form when modal is closed
+                $('#lecturer-create-form')[0].reset();
+                // Reinitialize summernote to clear content
+                $('#education-create, #research-create, #courses-create').each(function() {
+                    if ($(this).hasClass('note-editor')) {
+                        $(this).summernote('code', '');
                     }
                 });
             });
 
-            // Destroy Summernote instances when edit modals are hidden
+            // Handle Edit Modal Events
+            $('div[id^="modal-edit-lecturer-"]').on('shown.bs.modal', function() {
+                const modalId = $(this).attr('id');
+                const lecturerId = modalId.replace('modal-edit-lecturer-', '');
+
+                // Small delay to ensure modal is fully rendered
+                setTimeout(() => {
+                    initEditSummernote(lecturerId);
+                }, 100);
+            });
+
             $('div[id^="modal-edit-lecturer-"]').on('hidden.bs.modal', function() {
-                var modalId = $(this).attr('id');
-                var lecturerId = modalId.replace('modal-edit-lecturer-', '');
-                ['education', 'research', 'courses'].forEach(field => {
-                    var editorId = field + '-edit-' + lecturerId;
-                    if ($('#' + editorId).hasClass('note-editor')) {
-                        $('#' + editorId).summernote('destroy');
+                const modalId = $(this).attr('id');
+                const lecturerId = modalId.replace('modal-edit-lecturer-', '');
+                destroyEditSummernote(lecturerId);
+            });
+
+            // Form submission handlers to ensure summernote content is saved
+            $('#lecturer-create-form').on('submit', function() {
+                $('#education-create, #research-create, #courses-create').each(function() {
+                    if ($(this).hasClass('note-editor')) {
+                        const content = $(this).summernote('code');
+                        $(this).val(content);
+                    }
+                });
+            });
+
+            // Handle edit form submissions
+            $('form[id^="lecturer-edit-form-"]').on('submit', function() {
+                const formId = $(this).attr('id');
+                const lecturerId = formId.replace('lecturer-edit-form-', '');
+                const fields = ['education', 'research', 'courses'];
+
+                fields.forEach(field => {
+                    const editorId = '#' + field + '-edit-' + lecturerId;
+                    const $editor = $(editorId);
+
+                    if ($editor.length && $editor.hasClass('note-editor')) {
+                        const content = $editor.summernote('code');
+                        $editor.val(content);
                     }
                 });
             });

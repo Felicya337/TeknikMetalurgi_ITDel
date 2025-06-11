@@ -32,6 +32,15 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a href="<?php echo e(route('admin.inquiries.index')); ?>"
+                    class="nav-link <?php echo e(request()->routeIs('admin.inquiries.*') ? 'active' : ''); ?>">
+                    <i class="nav-icon fas fa-comments"></i>
+                    <p>Pertanyaan & Review</p>
+                </a>
+            </li>
+
+
             <!-- Berita -->
             <li class="nav-item">
                 <a href="<?php echo e(route('admin.news.index')); ?>"
@@ -109,7 +118,7 @@
                 <a href="<?php echo e(route('admin.lecturer.index')); ?>"
                     class="nav-link <?php echo e(request()->routeIs('admin.lecturer.*') ? 'active' : ''); ?>">
                     <i class="nav-icon fas fa-user-tie"></i>
-                    <p>Dosen</p>
+                    <p>Dosen & Staff</p>
                 </a>
             </li>
 
@@ -131,7 +140,6 @@
                 </a>
             </li>
         </ul>
-
     </nav>
 </aside>
 <?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/layouts/sidebar.blade.php ENDPATH**/ ?>

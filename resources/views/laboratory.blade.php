@@ -23,14 +23,11 @@
             background: #fff;
             box-shadow:
                 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                /* bayangan bawah */
                 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
-            /* bayangan atas */
             border-radius: 8px;
             margin-bottom: 3rem;
             overflow: hidden;
         }
-
 
         .laboratory-header {
             padding: 1.5rem;
@@ -126,7 +123,6 @@
             padding: 2.5rem 0;
         }
 
-        /* Responsive Design */
         @media (max-width: 992px) {
             .laboratory-content {
                 flex-direction: column;
@@ -207,7 +203,7 @@
                                     Informasi Umum
                                 </h4>
                                 <p class="laboratory-description">
-                                    {{ $laboratory->description ?? 'Tidak ada deskripsi yang tersedia.' }}
+                                    {!! $laboratory->description ?? 'Tidak ada deskripsi yang tersedia.' !!}
                                 </p>
 
                                 <h4 class="info-title">

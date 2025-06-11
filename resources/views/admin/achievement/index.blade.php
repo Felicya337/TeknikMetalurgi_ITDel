@@ -63,6 +63,9 @@
         .img-thumbnail {
             border-radius: 8px;
             max-width: 80px;
+            /* Disesuaikan agar tidak terlalu besar */
+            max-height: 60px;
+            /* Disesuaikan agar tidak terlalu besar */
             object-fit: cover;
         }
 
@@ -112,6 +115,11 @@
                 padding: 4px 8px;
                 font-size: 0.8rem;
             }
+
+            .img-thumbnail {
+                max-width: 60px;
+                max-height: 45px;
+            }
         }
     </style>
 
@@ -132,7 +140,7 @@
                             <table class="table table-striped table-bordered text-center" id="achievementTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" style="width: 5%;">Nomor</th>
+                                        {{-- NOMOR DIHAPUS --}}
                                         <th scope="col" style="width: 10%;">Jenis</th>
                                         <th scope="col" style="width: 10%;">Tipe</th>
                                         <th scope="col" style="width: 15%;">Judul</th>
@@ -147,11 +155,11 @@
                                 <tbody>
                                     @foreach ($achievements as $achievement)
                                         <tr>
-                                            <td></td> <!-- Placeholder for row number -->
+                                            {{-- NOMOR DIHAPUS --}}
                                             <td>
                                                 <span
                                                     class="badge {{ $achievement->type == 'publikasi' ? 'bg-primary' : ($achievement->type == 'penelitian' ? 'bg-info' : 'bg-success') }}">
-                                                    {{ $achievement->type }}
+                                                    {{ ucfirst($achievement->type) }} {{-- ucfirst untuk kapitalisasi --}}
                                                 </span>
                                             </td>
                                             <td>
@@ -161,31 +169,32 @@
                                                     <span class="text-muted">-</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $achievement->title }}</td>
-                                            <td>{!! Str::limit($achievement->description, 100) !!}</td>
-                                            <td>{{ $achievement->date ? $achievement->date->format('d-m-Y') : '-' }}</td>
+                                            <td class="text-start">{{ $achievement->title }}</td>
+                                            <td class="text-start">{!! Str::limit(strip_tags($achievement->description), 70) !!}</td> {{-- strip_tags ditambahkan --}}
+                                            <td>{{ $achievement->date ? \Carbon\Carbon::parse($achievement->date)->format('d-m-Y') : '-' }}
+                                            </td>
                                             <td>
                                                 @if ($achievement->image)
                                                     <img src="{{ asset('storage/' . $achievement->image) }}"
                                                         class="img-thumbnail" alt="Achievement Image">
                                                 @else
-                                                    <span class="text-muted">Tidak ada gambar</span>
+                                                    <span class="text-muted small">N/A</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 @if ($achievement->file)
                                                     <a href="{{ asset('storage/' . $achievement->file) }}" target="_blank"
                                                         class="btn btn-sm btn-outline-info">
-                                                        <i class="fas fa-file"></i> Lihat
+                                                        <i class="fas fa-file-alt"></i> {{-- Icon diubah --}}
                                                     </a>
                                                 @else
-                                                    <span class="text-muted">Tidak ada file</span>
+                                                    <span class="text-muted small">N/A</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 <span
                                                     class="badge {{ $achievement->is_active ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ $achievement->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                                    {{ $achievement->is_active ? 'Aktif' : 'Nonaktif' }}
                                                 </span>
                                             </td>
                                             <td>
@@ -193,12 +202,12 @@
                                                     <button type="button" class="btn btn-info btn-sm mx-1"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modal-read-achievement-{{ $achievement->id }}">
-                                                        <i class="fas fa-eye"></i> Lihat
+                                                        <i class="fas fa-eye"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-warning btn-sm mx-1"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modal-edit-achievement-{{ $achievement->id }}">
-                                                        <i class="fas fa-edit"></i> Edit
+                                                        <i class="fas fa-edit"></i>
                                                     </button>
                                                     <form
                                                         action="{{ route('admin.achievement.destroy', $achievement->id) }}"
@@ -206,7 +215,7 @@
                                                         @csrf @method('DELETE')
                                                         <button type="submit"
                                                             class="btn btn-danger btn-sm mx-1 delete-btn">
-                                                            <i class="fas fa-trash"></i> Hapus
+                                                            <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
                                                 </div>
@@ -221,7 +230,8 @@
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Detail Prestasi</h5>
+                                                        <h5 class="modal-title">Detail Prestasi: {{ $achievement->title }}
+                                                        </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -242,7 +252,8 @@
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Prestasi</h5>
+                                                        <h5 class="modal-title">Edit Prestasi: {{ $achievement->title }}
+                                                        </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -257,6 +268,9 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="mt-3">
+                            {{ $achievements->links() }}
                         </div>
                     </div>
                 </div>
@@ -297,6 +311,9 @@
                 pageLength: 10,
                 searching: true,
                 lengthChange: true,
+                processing: true, // Tambahkan ini jika ada proses loading data
+                // serverSide: true, // Aktifkan jika Anda menggunakan server-side processing
+                // ajax: "{{-- route('admin.achievements.data') --}}", // Contoh jika pakai server-side
                 language: {
                     search: "Cari:",
                     lengthMenu: "Tampilkan _MENU_ entri per halaman",
@@ -310,101 +327,75 @@
                         next: "Berikutnya",
                         previous: "Sebelumnya"
                     },
-                    aria: {
-                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
-                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
-                    }
+                    processing: "Memuat..." // Pesan saat loading
                 },
-                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
-                columns: [{
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1; // Row number starts from 1
-                        },
+                dom: '<"top"<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>>rt<"bottom"<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>>', // Dom yang lebih standar
+                // --- AWAL PERUBAHAN ---
+                // Karena kolom nomor dihilangkan dari HTML, konfigurasi 'columns' juga disesuaikan
+                // Sekarang ada 9 kolom yang terlihat di HTML
+                columns: [
+                    null, // Kolom 0: Jenis (Indeks asli 1, sekarang 0)
+                    null, // Kolom 1: Tipe
+                    null, // Kolom 2: Judul
+                    { // Kolom 3: Deskripsi
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return data;
+                            }
+                            var tempDiv = document.createElement("div");
+                            tempDiv.innerHTML = data;
+                            return tempDiv.textContent || tempDiv.innerText || "";
+                        }
+                    },
+                    null, // Kolom 4: Tanggal
+                    {
                         orderable: false,
                         searchable: false
-                    },
+                    }, // Kolom 5: Gambar
                     {
-                        data: 'type'
-                    },
+                        orderable: false,
+                        searchable: false
+                    }, // Kolom 6: File
                     {
-                        data: 'subtype'
-                    },
+                        orderable: false
+                    }, // Kolom 7: Aktif
                     {
-                        data: 'title'
-                    },
-                    {
-                        data: 'description'
-                    },
-                    {
-                        data: 'date'
-                    },
-                    {
-                        data: 'image'
-                    },
-                    {
-                        data: 'file'
-                    },
-                    {
-                        data: 'is_active'
-                    },
-                    {
-                        data: 'action'
-                    }
+                        orderable: false,
+                        searchable: false
+                    } // Kolom 8: Aksi
                 ],
+                // columnDefs tidak lagi diperlukan untuk render deskripsi karena sudah di 'columns'
+                // Anda bisa menambahkan columnDefs lain jika perlu
+                // Contoh:
                 columnDefs: [{
-                    targets: 4, // Description column
-                    render: function(data, type, row) {
-                        return type === 'display' ? data : $('<div/>').html(data).text();
-                    }
-                }],
+                        targets: [5, 6, 8],
+                        orderable: false,
+                        searchable: false
+                    }, // Gambar, File, Aksi
+                    {
+                        targets: [7],
+                        orderable: false
+                    } // Status Aktif mungkin tidak perlu searchable
+                ],
+                // --- AKHIR PERUBAHAN ---
+                order: [], // Tidak ada pengurutan awal default
                 initComplete: function() {
+                    // Menyesuaikan kelas form control Bootstrap pada elemen DataTables
                     $('.dataTables_length select').addClass('form-select form-select-sm');
                     $('.dataTables_filter input').addClass('form-control form-control-sm');
                 }
             });
 
-            // Initialize Summernote for Create Form
-            $('#editor-create').summernote({
-                height: 300,
-                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
-                fontNamesIgnoreCheck: ['Poppins'],
-                fontSizes: ['12', '14', '16', '20', '24', '32'],
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'underline', 'clear']],
-                    ['fontname', ['fontname']],
-                    ['fontsize', ['fontsize']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview', 'help']]
-                ],
-                callbacks: {
-                    onChange: function(contents) {
-                        $('#description-create').val(contents);
-                    },
-                    onInit: function() {
-                        $('#editor-create').summernote('code', $('#description-create').val());
-                    }
-                }
-            });
-
-            // Initialize Summernote for Edit Forms when modals are shown
-            $('div[id^="modal-edit-achievement-"]').on('shown.bs.modal', function() {
-                var modalId = $(this).attr('id');
-                var achievementId = modalId.replace('modal-edit-achievement-', '');
-                var editorId = 'editor-edit-' + achievementId;
-
-                if (!$('#' + editorId).hasClass('note-editor')) {
-                    $('#' + editorId).summernote({
-                        height: 300,
+            // Initialize Summernote for Create Form in Modal
+            $('#modal-achievement').on('shown.bs.modal', function() {
+                if (!$('#editor-create').data('summernote')) { // Cek apakah sudah diinisialisasi
+                    $('#editor-create').summernote({
+                        height: 250, // Tinggi disesuaikan
                         fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
                             'Courier New'
                         ],
                         fontNamesIgnoreCheck: ['Poppins'],
-                        fontSizes: ['12', '14', '16', '20', '24', '32'],
+                        fontSizes: ['10', '12', '14', '16', '18', '20', '24'],
                         toolbar: [
                             ['style', ['style']],
                             ['font', ['bold', 'underline', 'clear']],
@@ -418,23 +409,68 @@
                         ],
                         callbacks: {
                             onChange: function(contents) {
-                                $('#description-edit-' + achievementId).val(contents);
+                                $('#description-create').val(contents);
+                            },
+                            onInit: function() {
+                                // Set initial content if any (e.g. from old input after validation error)
+                                var oldDescription = $('#description-create').val();
+                                if (oldDescription) {
+                                    $('#editor-create').summernote('code', oldDescription);
+                                }
                             }
                         }
                     });
-
-                    var description = $('#description-edit-' + achievementId).val();
-                    $('#' + editorId).summernote('code', description);
+                }
+            }).on('hidden.bs.modal', function() {
+                // Opsional: Hancurkan instance Summernote saat modal ditutup untuk menghindari masalah
+                if ($('#editor-create').data('summernote')) {
+                    $('#editor-create').summernote('destroy');
                 }
             });
 
-            // Destroy Summernote instances when edit modals are hidden
-            $('div[id^="modal-edit-achievement-"]').on('hidden.bs.modal', function() {
+
+            // Initialize Summernote for Edit Forms when modals are shown
+            $('div[id^="modal-edit-achievement-"]').on('shown.bs.modal', function() {
                 var modalId = $(this).attr('id');
                 var achievementId = modalId.replace('modal-edit-achievement-', '');
                 var editorId = 'editor-edit-' + achievementId;
+                var descriptionInputId = 'description-edit-' + achievementId;
 
-                if ($('#' + editorId).hasClass('note-editor')) {
+                if (!$('#' + editorId).data('summernote')) { // Cek apakah sudah diinisialisasi
+                    $('#' + editorId).summernote({
+                        height: 250,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                            'Courier New'
+                        ],
+                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontSizes: ['10', '12', '14', '16', '18', '20', '24'],
+                        toolbar: [
+                            ['style', ['style']],
+                            ['font', ['bold', 'underline', 'clear']],
+                            ['fontname', ['fontname']],
+                            ['fontsize', ['fontsize']],
+                            ['color', ['color']],
+                            ['para', ['ul', 'ol', 'paragraph']],
+                            ['table', ['table']],
+                            ['insert', ['link', 'picture', 'video']],
+                            ['view', ['fullscreen', 'codeview', 'help']]
+                        ],
+                        callbacks: {
+                            onChange: function(contents) {
+                                $('#' + descriptionInputId).val(contents);
+                            }
+                        }
+                    });
+                    // Set initial content from hidden input
+                    var description = $('#' + descriptionInputId).val();
+                    $('#' + editorId).summernote('code', description);
+                }
+            }).on('hidden.bs.modal', function() {
+                var modalId = $(this).attr('id');
+                var achievementId = modalId.replace('modal-edit-achievement-', '');
+                var editorId = 'editor-edit-' + achievementId;
+                // Opsional: Hancurkan instance Summernote saat modal ditutup
+                if ($('#' + editorId).data('summernote')) {
                     $('#' + editorId).summernote('destroy');
                 }
             });
@@ -460,8 +496,36 @@
                 });
             @endif
 
+            // SweetAlert2 for Validation Errors (jika ada dari $errors)
+            @if ($errors->any())
+                let errorMessages = '';
+                @foreach ($errors->all() as $error)
+                    errorMessages += `<li>{{ $error }}</li>`;
+                @endforeach
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops, terjadi kesalahan!',
+                    html: `<ul class="text-start">${errorMessages}</ul>`,
+                });
+
+                // Jika error terjadi pada form tambah, buka modal tambah
+                @if (old('form_type') == 'create_achievement' || (isset($errors) && $errors->hasBag('createAchievement')))
+                    $('#modal-achievement').modal('show');
+                @endif
+
+                // Jika error terjadi pada form edit, buka modal edit yang sesuai
+                @if (old('form_type') == 'edit_achievement' ||
+                        (isset($errors) && $errors->hasBag('editAchievement' . old('achievement_id_error'))))
+                    var achievementIdError = "{{ old('achievement_id_error') }}";
+                    if (achievementIdError) {
+                        $('#modal-edit-achievement-' + achievementIdError).modal('show');
+                    }
+                @endif
+            @endif
+
+
             // SweetAlert2 for Delete Confirmation
-            $('.delete-btn').on('click', function(e) {
+            $(document).on('click', '.delete-btn', function(e) { // Gunakan event delegation
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
@@ -470,9 +534,9 @@
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal'
+                    cancelButtonColor: '#6c757d', // Warna cancel diubah
+                    confirmButtonText: '<i class="fas fa-trash-alt"></i> Ya, Hapus!',
+                    cancelButtonText: '<i class="fas fa-times"></i> Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit();

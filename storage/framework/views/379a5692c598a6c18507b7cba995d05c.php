@@ -117,10 +117,10 @@
         <div class="row">
             <div class="col-md-10 offset-md-1">
                 <div class="mb-3">
-                    <h2 class="mb-0 fw-bold text-dark">Kolaborasi</h2>
+                    <h2 class="mb-0 fw-bold text-dark">Kerjasama</h2>
                     <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal"
                         data-bs-target="#modal-collaborate">
-                        <i class="fas fa-plus me-2"></i>Tambah Kolaborasi
+                        <i class="fas fa-plus me-2"></i>Tambah Kerjasama
                     </button>
                 </div>
 
@@ -195,7 +195,7 @@
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Detail Kolaborasi</h5>
+                                                        <h5 class="modal-title">Detail Kerjasama</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -215,7 +215,7 @@
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Kolaborasi</h5>
+                                                        <h5 class="modal-title">Edit Kerjasama</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -242,7 +242,7 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Kolaborasi</h5>
+                    <h5 class="modal-title">Tambah Kerjasama</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -375,7 +375,8 @@
                     ['insert', ['link', 'picture', 'video']],
                     ['view', ['fullscreen', 'codeview', 'help']]
                 ],
-                maximumMessageLength: 1000000, // Increase the character limit
+                maximumMessageLength: 1000000,
+                disableHtmlSanitizer: false, // Increase the character limit
                 callbacks: {
                     onChange: function(contents) {
                         $('#company-profile-create').val(contents);
@@ -500,7 +501,7 @@
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Hapus Kolaborasi?',
+                    title: 'Hapus Kerjasama?',
                     text: "Tindakan ini tidak dapat dibatalkan!",
                     icon: 'warning',
                     showCancelButton: true,

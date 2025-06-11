@@ -118,9 +118,9 @@
                             <table class="table table-striped table-bordered text-center" id="structureTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" style="width: 15%;">Nama</th>
-                                        <th scope="col" style="width: 15%;">Jabatan</th>
-                                        <th scope="col" style="width: 15%;">Gelar</th>
+                                        <th scope="col" style="width: 15%;">Jabatan 1</th>
+                                        <th scope="col" style="width: 15%;">Jabatan 2</th>
+                                        <th scope="col" style="width: 15%;">nama</th>
                                         <th scope="col" style="width: 10%;">Level</th>
                                         <th scope="col" style="width: 10%;">Status</th>
                                         <th scope="col" style="width: 15%;">Foto</th>
@@ -129,14 +129,15 @@
                                 </thead>
                                 <tbody>
                                     <?php $__currentLoopData = $structures; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $structure): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <tr>
+                                        <tr data-structure-id="<?php echo e($structure->id); ?>">
                                             <td><?php echo e($structure->name); ?></td>
                                             <td><?php echo e($structure->title); ?></td>
                                             <td><?php echo e($structure->degree ?? '-'); ?></td>
                                             <td><?php echo e($structure->level); ?></td>
                                             <td>
                                                 <span
-                                                    class="badge <?php echo e($structure->is_active ? 'bg-success' : 'bg-danger'); ?>">
+                                                    class="badge status-badge <?php echo e($structure->is_active ? 'bg-success' : 'bg-danger'); ?>"
+                                                    data-status="<?php echo e($structure->is_active ? '1' : '0'); ?>">
                                                     <?php echo e($structure->is_active ? 'Aktif' : 'Tidak Aktif'); ?>
 
                                                 </span>
@@ -277,21 +278,12 @@
                         }
                     },
                     {
-                        targets: 4, // Status
-                        render: function(data, type, row) {
-                            return data ?
-                                '<span class="badge bg-success">Aktif</span>' :
-                                '<span class="badge bg-danger">Tidak Aktif</span>';
-                        }
+                        targets: 4, // Status - HAPUS RENDER CUSTOM INI
+                        orderable: true,
+                        searchable: true
                     },
                     {
                         targets: 5, // Foto
-                        render: function(data, type, row) {
-                            return data ?
-                                '<img src="' + '<?php echo e(asset('storage/')); ?>' + data +
-                                '" class="img-thumbnail" alt="Structure Image">' :
-                                '<span class="text-muted">Tidak ada foto</span>';
-                        },
                         orderable: false,
                         searchable: false
                     },
@@ -323,6 +315,63 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit();
+                    }
+                });
+            });
+
+            // Handle form submissions for edit modal
+            $('form[action*="structure_organization.update"]').on('submit', function(e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const formData = new FormData(this);
+                const actionUrl = form.attr('action');
+                const structureId = actionUrl.split('/').pop();
+
+                $.ajax({
+                    url: actionUrl,
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        // Close modal
+                        $('#modal-edit-structure-' + structureId).modal('hide');
+
+                        // Update status in table without refresh
+                        const isActive = form.find('input[name="is_active"]').is(':checked');
+                        const statusBadge = $('tr[data-structure-id="' + structureId +
+                            '"] .status-badge');
+
+                        statusBadge.removeClass('bg-success bg-danger')
+                            .addClass(isActive ? 'bg-success' : 'bg-danger')
+                            .text(isActive ? 'Aktif' : 'Tidak Aktif')
+                            .attr('data-status', isActive ? '1' : '0');
+
+                        // Update other fields if needed
+                        const row = $('tr[data-structure-id="' + structureId + '"]');
+                        row.find('td:eq(0)').text(form.find('input[name="name"]').val());
+                        row.find('td:eq(1)').text(form.find('input[name="title"]').val());
+                        row.find('td:eq(2)').text(form.find('input[name="degree"]').val() ||
+                            '-');
+                        row.find('td:eq(3)').text(form.find('select[name="level"]').val());
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Data struktur organisasi berhasil diperbarui',
+                            timer: 2500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat memperbarui data',
+                            timer: 2500,
+                            showConfirmButton: false
+                        });
                     }
                 });
             });

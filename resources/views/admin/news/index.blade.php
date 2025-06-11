@@ -17,10 +17,6 @@
             overflow: hidden;
         }
 
-        .table {
-            margin-bottom: 0;
-        }
-
         .table th {
             background-color: #f8f9fa;
             font-weight: 600;
@@ -108,7 +104,6 @@
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 3;
-            /* Limit to 3 lines for preview */
             -webkit-box-orient: vertical;
         }
 
@@ -163,7 +158,7 @@
                                 <tbody>
                                     @foreach ($news as $item)
                                         <tr>
-                                            <td></td> <!-- Placeholder for row number -->
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item->title }}</td>
                                             <td>
                                                 <div class="description-preview">
@@ -201,7 +196,8 @@
                                                     </button>
                                                     <form action="{{ route('admin.news.destroy', $item->id) }}"
                                                         method="POST" class="d-inline">
-                                                        @csrf @method('DELETE')
+                                                        @csrf
+                                                        @method('DELETE')
                                                         <button type="submit"
                                                             class="btn btn-danger btn-sm mx-1 delete-btn">
                                                             <i class="fas fa-trash"></i> Hapus
@@ -211,6 +207,7 @@
                                             </td>
                                         </tr>
 
+                                        <!-- Read Modal -->
                                         <div class="modal fade" id="modal-read-news-{{ $item->id }}" tabindex="-1"
                                             aria-labelledby="modal-read-newsLabel-{{ $item->id }}" aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -221,12 +218,21 @@
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        @include('admin.news.read', ['news' => $item])
+                                                        <h4>{{ $item->title }}</h4>
+                                                        <p><strong>Tanggal:</strong> {{ $item->date->format('d-m-Y') }}</p>
+                                                        <p><strong>Penulis:</strong> {{ $item->author }}</p>
+                                                        <div>{!! $item->description !!}</div>
+                                                        @if ($item->image)
+                                                            <img src="{{ asset('storage/' . $item->image) }}"
+                                                                class="img-thumbnail mt-3" alt="News Image"
+                                                                style="max-width: 300px;">
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
+                                        <!-- Edit Modal -->
                                         <div class="modal fade" id="modal-edit-news-{{ $item->id }}" tabindex="-1"
                                             aria-labelledby="modal-edit-newsLabel-{{ $item->id }}" aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -237,303 +243,353 @@
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        @include('admin.news.edit', ['news' => $item])
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                        <form action="{{ route('admin.news.update', $item->id) }}"
+                                                            method="POST" enctype="multipart/form-data">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="mb-3">
+                                                                <label for="title" class="form-label">Judul</label>
+                                                                <input type="text" class="form-control" id="title"
+                                                                    name="title"
+                                                                    value="{{ old('title', $item->title) }}" required>
+                                                                @error('title')
+                                                                    <div class="text-danger">{{ $message }}</div>
+                                                                @enderror
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="description-edit-{{ $item->id }}"
+                                                                    class="form-label">Deskripsi</label>
+                                                                <div id="editor-edit-{{ $item->id }}"></div>
+                                                                <input type="hidden"
+                                                                    id="description-edit-{{ $item->id }}"
+                                                                    name="description"
+                                                                    value="{{ old('description', $item->description) }}">
+                                                                @error('description')
+                                                                    <div class="text-danger">{{ $message }}</div>
+                                        @endif
+                            </div>
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Tanggal</label>
+                                <input type="date" class="form-control" id="date" name="date"
+                                    value="{{ old('date', $item->date->format('Y-m-d')) }}" required>
+                                @error('date')
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @endif
+                                </div>
+                                <div class="mb-3">
+                                    <label for="author" class="form-label">Penulis</label>
+                                    <input type="text" class="form-control" id="author" name="author"
+                                        value="{{ old('author', $item->author) }}" required>
+                                    @error('author')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @endif
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="image" class="form-label">Gambar</label>
+                                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                        @if ($item->image)
+                                            <img src="{{ asset('storage/' . $item->image) }}" class="img-thumbnail mt-2"
+                                                alt="Current News Image">
+                                        @endif
+                                        @error('image')
+                                            <div class="text-danger">{{ $message }}</div>
+                                            @endif
                                         </div>
-                                    @endforeach
-                                </tbody>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                                                value="1" {{ old('is_active', $item->is_active) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
+                                            @error('is_active')
+                                                <div class="text-danger">{{ $message }}</div>
+                                                @endif
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Simpan</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                            </tbody>
                             </table>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modal-news" tabindex="-1" aria-labelledby="modal-newsLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Berita</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Judul</label>
-                            <input type="text" class="form-control" id="title" name="title" required
-                                value="{{ old('title') }}">
-                            @error('title')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
                         </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Deskripsi</label>
-                            <div id="editor-create" style="height: 300px;"></div>
-                            <input type="hidden" id="description-create" name="description"
-                                value="{{ old('description') }}">
-                            @error('description')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
                         </div>
-                        <div class="mb-3">
-                            <label for="date" class="form-label">Tanggal</label>
-                            <input type="date" class="form-control" id="date" name="date" required
-                                value="{{ old('date') }}">
-                            @error('date')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
                         </div>
-                        <div class="mb-3">
-                            <label for="author" class="form-label">Penulis</label>
-                            <input type="text" class="form-control" id="author" name="author" required
-                                value="{{ old('author') }}">
-                            @error('author')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
                         </div>
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Gambar</label>
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                            @error('image')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
                         </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
-                                value="1" {{ old('is_active', 1) ? 'checked' : '' }}>
-                            <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
-                            @error('is_active')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
-@push('scripts')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        $(document).ready(function() {
-            // DataTables Initialization (unchanged)
-            $('#newsTable').DataTable({
-                responsive: true,
-                pageLength: 10,
-                searching: true,
-                lengthChange: true,
-                language: {
-                    search: "Cari:",
-                    lengthMenu: "Tampilkan _MENU_ entri per halaman",
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
-                    infoFiltered: "(disaring dari _MAX_ total entri)",
-                    zeroRecords: "Tidak ada data yang ditemukan",
-                    paginate: {
-                        first: "Pertama",
-                        last: "Terakhir",
-                        next: "Berikutnya",
-                        previous: "Sebelumnya"
-                    },
-                    aria: {
-                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
-                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
-                    }
-                },
-                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
-                columns: [{
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1;
-                        },
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'title'
-                    },
-                    {
-                        data: 'description'
-                    },
-                    {
-                        data: 'date'
-                    },
-                    {
-                        data: 'author'
-                    },
-                    {
-                        data: 'image'
-                    },
-                    {
-                        data: 'is_active'
-                    },
-                    {
-                        data: 'action'
-                    }
-                ],
-                columnDefs: [{
-                    targets: 2,
-                    render: function(data, type, row) {
-                        return type === 'display' ? data : $('<div/>').html(data).text();
-                    }
-                }],
-                initComplete: function() {
-                    $('.dataTables_length select').addClass('form-select form-select-sm');
-                    $('.dataTables_filter input').addClass('form-control form-control-sm');
-                }
-            });
+                        <!-- Create Modal -->
+                        <div class="modal fade" id="modal-news" tabindex="-1" aria-labelledby="modal-newsLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Tambah Berita</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="mb-3">
+                                                <label for="title" class="form-label">Judul</label>
+                                                <input type="text" class="form-control" id="title" name="title" required
+                                                    value="{{ old('title') }}">
+                                                @error('title')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                    @endif
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="description-create" class="form-label">Deskripsi</label>
+                                                    <div id="editor-create"></div>
+                                                    <input type="hidden" id="description-create" name="description"
+                                                        value="{{ old('description') }}">
+                                                    @error('description')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                        @endif
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="date" class="form-label">Tanggal</label>
+                                                        <input type="date" class="form-control" id="date" name="date" required
+                                                            value="{{ old('date') }}">
+                                                        @error('date')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                            @endif
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="author" class="form-label">Penulis</label>
+                                                            <input type="text" class="form-control" id="author" name="author" required
+                                                                value="{{ old('author') }}">
+                                                            @error('author')
+                                                                <div class="text-danger">{{ $message }}</div>
+                                                                @endif
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="image" class="form-label">Gambar</label>
+                                                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                                                @error('image')
+                                                                    <div class="text-danger">{{ $message }}</div>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="mb-3 form-check">
+                                                                    <input type="checkbox" class="form-check-input" id="is_active" name="is_active"
+                                                                        value="1" {{ old('is_active', 1) ? 'checked' : '' }}>
+                                                                    <label class="form-check-label" for="is_active">Aktifkan (Tampil di Halaman User)</label>
+                                                                    @error('is_active')
+                                                                        <div class="text-danger">{{ $message }}</div>
+                                                                        @endif
+                                                                    </div>
+                                                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endsection
 
-            // Initialize Summernote for Create Form
-            $('#editor-create').summernote({
-                height: 400, // Increased height for better usability
-                minHeight: 300,
-                maxHeight: 600,
-                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
-                fontNamesIgnoreCheck: ['Poppins'],
-                fontSizes: ['12', '14', '16', '20', '24', '32'],
-                maximumMessageLength: 1000000, // Already sufficient
-                disableResizeEditor: true, // Prevent resizing
-                toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'italic', 'underline', 'clear']],
-                    ['fontname', ['fontname']],
-                    ['fontsize', ['fontsize']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview', 'help']]
-                ],
-                callbacks: {
-                    onChange: function(contents) {
-                        $('#description-create').val(contents);
-                    },
-                    onInit: function() {
-                        $('#editor-create').summernote('code', $('#description-create').val());
-                    },
-                    onPaste: function(e) {
-                        // Prevent large pastes from causing issues
-                        var bufferText = ((e.originalEvent || e).clipboardData || window.clipboardData)
-                            .getData('Text');
-                        if (bufferText.length > 1000000) {
-                            e.preventDefault();
-                            alert('Konten yang ditempel melebihi batas 1 juta karakter.');
-                        }
-                    }
-                }
-            });
+                                            @push('scripts')
+                                                <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+                                                <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+                                                <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+                                                <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+                                                <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+                                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                                <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 
-            // Initialize Summernote for Edit Forms
-            $('div[id^="modal-edit-news-"]').on('shown.bs.modal', function() {
-                var modalId = $(this).attr('id');
-                var newsId = modalId.replace('modal-edit-news-', '');
-                var editorId = 'editor-edit-' + newsId;
+                                                <script>
+                                                    $(document).ready(function() {
+                                                        // DataTables Initialization
+                                                        $('#newsTable').DataTable({
+                                                            responsive: true,
+                                                            pageLength: 10,
+                                                            searching: true,
+                                                            lengthChange: true,
+                                                            language: {
+                                                                search: "Cari:",
+                                                                lengthMenu: "Tampilkan _MENU_ entri per halaman",
+                                                                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                                                                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                                                                infoFiltered: "(disaring dari _MAX_ total entri)",
+                                                                zeroRecords: "Tidak ada data yang ditemukan",
+                                                                paginate: {
+                                                                    first: "Pertama",
+                                                                    last: "Terakhir",
+                                                                    next: "Berikutnya",
+                                                                    previous: "Sebelumnya"
+                                                                },
+                                                                aria: {
+                                                                    sortAscending: ": aktifkan untuk mengurutkan kolom naik",
+                                                                    sortDescending: ": aktifkan untuk mengurutkan kolom turun"
+                                                                }
+                                                            },
+                                                            dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                                                            columns: [{
+                                                                    data: null,
+                                                                    render: function(data, type, row, meta) {
+                                                                        return meta.row + 1;
+                                                                    },
+                                                                    orderable: false,
+                                                                    searchable: false
+                                                                },
+                                                                {
+                                                                    data: 'title'
+                                                                },
+                                                                {
+                                                                    data: 'description'
+                                                                },
+                                                                {
+                                                                    data: 'date'
+                                                                },
+                                                                {
+                                                                    data: 'author'
+                                                                },
+                                                                {
+                                                                    data: 'image'
+                                                                },
+                                                                {
+                                                                    data: 'is_active'
+                                                                },
+                                                                {
+                                                                    data: 'action'
+                                                                }
+                                                            ],
+                                                            columnDefs: [{
+                                                                targets: 2,
+                                                                render: function(data, type, row) {
+                                                                    return type === 'display' ? data : $('<div/>').html(data).text();
+                                                                }
+                                                            }],
+                                                            initComplete: function() {
+                                                                $('.dataTables_length select').addClass('form-select form-select-sm');
+                                                                $('.dataTables_filter input').addClass('form-control form-control-sm');
+                                                            }
+                                                        });
 
-                if (!$('#' + editorId).hasClass('note-editor')) {
-                    $('#' + editorId).summernote({
-                        height: 400,
-                        minHeight: 300,
-                        maxHeight: 600,
-                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
-                            'Courier New'
-                        ],
-                        fontNamesIgnoreCheck: ['Poppins'],
-                        fontSizes: ['12', '14', '16', '20', '24', '32'],
-                        maximumMessageLength: 1000000,
-                        disableResizeEditor: true,
-                        toolbar: [
-                            ['style', ['style']],
-                            ['font', ['bold', 'italic', 'underline', 'clear']],
-                            ['fontname', ['fontname']],
-                            ['fontsize', ['fontsize']],
-                            ['color', ['color']],
-                            ['para', ['ul', 'ol', 'paragraph']],
-                            ['table', ['table']],
-                            ['insert', ['link', 'picture', 'video']],
-                            ['view', ['fullscreen', 'codeview', 'help']]
-                        ],
-                        callbacks: {
-                            onChange: function(contents) {
-                                $('#description-edit-' + newsId).val(contents);
-                            },
-                            onPaste: function(e) {
-                                var bufferText = ((e.originalEvent || e).clipboardData || window
-                                    .clipboardData).getData('Text');
-                                if (bufferText.length > 1000000) {
-                                    e.preventDefault();
-                                    alert(
-                                        'Konten yang ditempel melebihi batas 1 juta karakter.');
-                                }
-                            }
-                        }
-                    });
-                    var description = $('#description-edit-' + newsId).val();
-                    $('#' + editorId).summernote('code', description);
-                }
-            });
+                                                        // Initialize Summernote for Create Form
+                                                        $('#editor-create').summernote({
+                                                            height: 400,
+                                                            minHeight: 300,
+                                                            maxHeight: 600,
+                                                            fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                                                            fontNamesIgnoreCheck: ['Poppins'],
+                                                            fontSizes: ['12', '14', '16', '20', '24', '32'],
+                                                            disableResizeEditor: true,
+                                                            toolbar: [
+                                                                ['style', ['style']],
+                                                                ['font', ['bold', 'italic', 'underline', 'clear']],
+                                                                ['fontname', ['fontname']],
+                                                                ['fontsize', ['fontsize']],
+                                                                ['color', ['color']],
+                                                                ['para', ['ul', 'ol', 'paragraph']],
+                                                                ['table', ['table']],
+                                                                ['insert', ['link', 'picture', 'video']],
+                                                                ['view', ['fullscreen', 'codeview', 'help']]
+                                                            ],
+                                                            callbacks: {
+                                                                onChange: function(contents) {
+                                                                    $('#description-create').val(contents);
+                                                                },
+                                                                onInit: function() {
+                                                                    $('#editor-create').summernote('code', $('#description-create').val() || '');
+                                                                }
+                                                            }
+                                                        });
 
-            // Destroy Summernote instances when modals are hidden
-            $('div[id^="modal-edit-news-"]').on('hidden.bs.modal', function() {
-                var modalId = $(this).attr('id');
-                var newsId = modalId.replace('modal-edit-news-', '');
-                var editorId = 'editor-edit-' + newsId;
+                                                        // Initialize Summernote for Edit Forms
+                                                        $('div[id^="modal-edit-news-"]').on('shown.bs.modal', function() {
+                                                            var modalId = $(this).attr('id');
+                                                            var newsId = modalId.replace('modal-edit-news-', '');
+                                                            var editorId = 'editor-edit-' + newsId;
+                                                            var descriptionId = 'description-edit-' + newsId;
 
-                if ($('#' + editorId).hasClass('note-editor')) {
-                    $('#' + editorId).summernote('destroy');
-                }
-            });
+                                                            if (!$('#' + editorId).hasClass('note-editor')) {
+                                                                $('#' + editorId).summernote({
+                                                                    height: 400,
+                                                                    minHeight: 300,
+                                                                    maxHeight: 600,
+                                                                    fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                                                                        'Courier New'
+                                                                    ],
+                                                                    fontNamesIgnoreCheck: ['Poppins'],
+                                                                    fontSizes: ['12', '14', '16', '20', '24', '32'],
+                                                                    disableResizeEditor: true,
+                                                                    toolbar: [
+                                                                        ['style', ['style']],
+                                                                        ['font', ['bold', 'italic', 'underline', 'clear']],
+                                                                        ['fontname', ['fontname']],
+                                                                        ['fontsize', ['fontsize']],
+                                                                        ['color', ['color']],
+                                                                        ['para', ['ul', 'ol', 'paragraph']],
+                                                                        ['table', ['table']],
+                                                                        ['insert', ['link', 'picture', 'video']],
+                                                                        ['view', ['fullscreen', 'codeview', 'help']]
+                                                                    ],
+                                                                    callbacks: {
+                                                                        onChange: function(contents) {
+                                                                            $('#' + descriptionId).val(contents);
+                                                                        },
+                                                                        onInit: function() {
+                                                                            var description = $('#' + descriptionId).val() || '';
+                                                                            $('#' + editorId).summernote('code', description);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            } else {
+                                                                var description = $('#' + descriptionId).val() || '';
+                                                                $('#' + editorId).summernote('code', description);
+                                                            }
+                                                        });
 
-            // SweetAlert2 for Notifications (unchanged)
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    timer: 2500,
-                    showConfirmButton: false
-                });
-            @endif
+                                                        // Destroy Summernote instances when modals are hidden
+                                                        $('div[id^="modal-edit-news-"]').on('hidden.bs.modal', function() {
+                                                            var modalId = $(this).attr('id');
+                                                            var newsId = modalId.replace('modal-edit-news-', '');
+                                                            var editorId = 'editor-edit-' + newsId;
 
-            @if (session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: '{{ session('error') }}',
-                    timer: 2500,
-                    showConfirmButton: false
-                });
-            @endif
+                                                            if ($('#' + editorId).hasClass('note-editor')) {
+                                                                $('#' + editorId).summernote('destroy');
+                                                            }
+                                                        });
 
-            // SweetAlert2 for Delete Confirmation (unchanged)
-            $('.delete-btn').on('click', function(e) {
-                e.preventDefault();
-                const form = $(this).closest('form');
-                Swal.fire({
-                    title: 'Hapus Berita?',
-                    text: "Tindakan ini tidak dapat dibatalkan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
-        });
-    </script>
-@endpush
+                                                        // SweetAlert2 for Notifications
+                                                        @if (session('success'))
+                                                            Swal.fire({
+                                                                icon: 'success',
+                                                                title: 'Berhasil!',
+                                                                text: '{{ session('success') }}',
+                                                                timer: 2500,
+                                                                showConfirmButton: false
+                                                            });
+                                                        @endif
+
+                                                        @if (session('error'))
+                                                            Swal.fire({
+                                                                icon: 'error',
+                                                                title: 'Error!',
+                                                                text: '{{ session('error') }}',
+                                                                timer: 2500,
+                                                                showConfirmButton: false
+                                                            });
+                                                        @endif
+
+                                                        // SweetAlert2 for Delete Confirmation
+                                                        $('.delete-btn').on('click', function(e) {
+                                                            e.preventDefault();
+                                                            const form = $(this).closest('form');
+                                                            Swal.fire({
+                                                                title: 'Hapus Berita?',
+                                                                text: "Tindakan ini tidak dapat dibatalkan!",
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: '#d33',
+                                                                cancelButtonColor: '#3085d6',
+                                                                confirmButtonText: 'Ya, Hapus!',
+                                                                cancelButtonText: 'Batal'
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {
+                                                                    form.submit();
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
+                                            @endpush

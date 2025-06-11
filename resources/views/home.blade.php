@@ -152,6 +152,7 @@
             </div>
         </div>
     </section>
+
     <!-- News Section -->
     <div class="news-container" id="news-section">
         <h3 class="my-4 mb-5 text-center"><strong>BERITA TERBARU</strong></h3>
@@ -228,15 +229,14 @@
                 <!-- Navigation Arrows - OUTSIDE carousel container -->
                 <button class="nav-arrow left" onclick="moveKerjasama(-1)">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <polygon points="15,6 9,12 15,18" fill="#333" />
+                        <polygon points="15,6 9,12 15,18" fill="#000000" />
                     </svg>
                 </button>
                 <button class="nav-arrow right" onclick="moveKerjasama(1)">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <polygon points="9,6 15,12 9,18" fill="#333" />
+                        <polygon points="9,6 15,12 9,18" fill="#000000" />
                     </svg>
                 </button>
-
                 <div class="kerjasama-container">
                     @php
                         // Split collaborations into chunks of 3 for each row
@@ -247,8 +247,8 @@
                         <div class="kerjasama-row">
                             @foreach ($row as $data)
                                 <div class="kerjasama-item" data-title="{{ addslashes($data->institution_name) }}"
-                                    data-company-profile='{!! json_encode($data->company_profile, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!}'
-                                    data-description='{!! json_encode($data->institution_description, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) !!}'
+                                    data-company-profile="{{ json_encode($data->company_profile) }}"
+                                    data-description="{{ json_encode($data->institution_description) }}"
                                     onclick="showCollaborationModal(this.getAttribute('data-title'), this.getAttribute('data-company-profile'), this.getAttribute('data-description'))">
                                     @if ($data->logo)
                                         <img src="{{ asset('storage/' . $data->logo) }}"
@@ -266,7 +266,7 @@
             </div>
         @else
             <div class="no-collaborations">
-                <p>Tidak ada kerjasama </p>
+                <p>Tidak ada kerjasama</p>
             </div>
         @endif
     </section>
@@ -294,34 +294,11 @@
         </div>
     </div>
 
-    <!-- Modal for Collaboration Details -->
-    <div class="modal fade" id="collaborationModal" tabindex="-1" aria-labelledby="collaborationModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="collaborationModalLabel"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-4">
-                        <h6 class="section-subtitle">Profil Perusahaan</h6>
-                        <div id="modalCompanyProfile" class="profil-content"></div>
-                    </div>
-                    <div>
-                        <h6 class="section-subtitle">Deskripsi Kerjasama</h6>
-                        <div id="modalInstitutionDescription" class="profil-content"></div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!-- Footer -->
+    <!-- Footer Section -->
     <footer id="footer-section">
         <div class="footer-top">
             <div class="footer-info">
-                <div class="footer-item">
+                <div class="footer-item" data-bs-toggle="modal" data-bs-target="#chatModal">
                     <div class="img-container">
                         <img src="{{ asset('aset/img/help circle.PNG') }}" alt="Chat Box Icon">
                     </div>
@@ -339,7 +316,7 @@
                         <p>08.00 am – 05.00 pm</p>
                     </div>
                 </div>
-                <div class="footer-item">
+                <div class="footer-item" data-bs-toggle="modal" data-bs-target="#chatModal" data-bs-tab="review">
                     <div class="img-container">
                         <img src="{{ asset('aset/img/Pen tool.PNG') }}" alt="Review Icon">
                     </div>
@@ -347,10 +324,11 @@
                         <h4>Review</h4>
                         <p>Kami membutuhkan tanggapan anda<br>terhadap website kami</p>
                     </div>
-                </div>
-                <div class="footer-item arrow-up" id="arrowUp">
-                    <div class="img-container">
-                        <img src="{{ asset('aset/img/Icon.png') }}" alt="Arrow Up Icon" onclick="scrollToTop()">
+
+                    <div class="footer-item arrow-up" id="arrowUp">
+                        <div class="img-container">
+                            <img src="{{ asset('aset/img/Icon.png') }}" alt="Arrow Up Icon" onclick="scrollToTop()">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -401,6 +379,170 @@
             Dibuat oleh: Felicya, Joy, Kesia, Ellysabeth dan Nathaly (Mahasiswa D3TI 2024 & S1 MR 2021)
         </div>
     </footer>
+
+
+    <!-- Chat Modal (Sekaligus untuk Review) -->
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalLabel">
+                        <i class="fas fa-comments me-2"></i>
+                        Layanan Pengguna
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tab Navigation -->
+                    <ul class="nav nav-tabs" id="chatTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="question-tab" data-bs-toggle="tab"
+                                data-bs-target="#question-pane" type="button" role="tab">
+                                <i class="fas fa-question-circle me-1"></i>
+                                PERTANYAAN
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="review-tab" data-bs-toggle="tab"
+                                data-bs-target="#review-pane" type="button" role="tab">
+                                <i class="fas fa-star me-1"></i>
+                                REVIEW
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="chatTabContent">
+                        <!-- Question Tab -->
+                        <div class="tab-pane fade show active" id="question-pane" role="tabpanel">
+                            <div class="description-text">
+                                <strong>PERTANYAAN PENGGUNA WEBSITE PRODI TEKNIK METALURGI IT DEL</strong><br>
+                                Layanan ini disediakan untuk mengumpulkan informasi tentang permasalahan-permasalahan
+                                dan pertanyaan seputar informasi Program Studi Teknik Metalurgi IT Del.
+                            </div>
+
+                            <form id="questionForm">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email"
+                                        placeholder="Masukkan email Anda" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Anda adalah:</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="userType"
+                                            id="internal" value="internal" required>
+                                        <label class="form-check-label" for="internal">
+                                            Mahasiswa/Dosen/Staff IT Del
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="userType"
+                                            id="masyarakat" value="masyarakat" required>
+                                        <label class="form-check-label" for="masyarakat">
+                                            Masyarakat Umum
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="question" class="form-label">Pertanyaan</label>
+                                    <textarea class="form-control" id="question"
+                                        placeholder="Mohon tulis pertanyaan dengan lengkap beserta data tambahan yang diperlukan." required></textarea>
+                                </div>
+
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-1"></i>
+                                        KIRIM
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Confirmation Message -->
+                            <div id="questionConfirmation" class="confirmation-message text-center d-none"
+                                role="alert">
+                                <h4 class="text-primary">TERIMA KASIH ATAS PERTANYAAN ANDA!</h4>
+                                <p class="description-text">Pertanyaan Anda akan segera diproses oleh admin.</p>
+                                <p class="description-text">Jawaban akan dikirim melalui email yang Anda masukkan.</p>
+                                <button type="button" class="btn btn-primary mt-3"
+                                    data-bs-dismiss="modal">TUTUP</button>
+                            </div>
+                        </div>
+
+                        <!-- Review Tab -->
+                        <div class="tab-pane fade" id="review-pane" role="tabpanel">
+                            <div class="description-text">
+                                <strong>REVIEW WEBSITE PRODI TEKNIK METALURGI IT DEL</strong><br>
+                                Berikan review dan masukan Anda untuk membantu kami meningkatkan layanan website.
+                            </div>
+
+                            <form id="reviewForm">
+                                <div class="mb-3">
+                                    <label for="reviewEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="reviewEmail"
+                                        placeholder="Masukkan email Anda" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="rating" class="form-label">Rating Website</label>
+                                    <select class="form-select" id="rating" required>
+                                        <option value="">Pilih rating...</option>
+                                        <option value="5">⭐⭐⭐⭐⭐ Sangat Baik</option>
+                                        <option value="4">⭐⭐⭐⭐ Baik</option>
+                                        <option value="3">⭐⭐⭐ Cukup</option>
+                                        <option value="2">⭐⭐ Kurang</option>
+                                        <option value="1">⭐ Sangat Kurang</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="reviewText" class="form-label">Review & Saran</label>
+                                    <textarea class="form-control" id="reviewText"
+                                        placeholder="Berikan review dan saran Anda untuk perbaikan website ini..." required></textarea>
+                                </div>
+
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-star me-1"></i>
+                                        KIRIM REVIEW
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Confirmation Message -->
+                            <div id="reviewConfirmation" class="confirmation-message text-center d-none"
+                                role="alert">
+                                <h4 class="text-primary">TERIMA KASIH ATAS REVIEW ANDA!</h4>
+                                <p class="description-text">Masukan Anda sangat berharga bagi kami.</p>
+                                <button type="button" class="btn btn-primary mt-3"
+                                    data-bs-dismiss="modal">TUTUP</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Notifikasi</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Formulir berhasil dikirim! Terima kasih atas masukan Anda.
+            </div>
+        </div>
+    </div>
+
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

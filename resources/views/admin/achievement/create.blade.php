@@ -27,8 +27,9 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
+    <!-- Pastikan ini ada di form tambah -->
     <div class="mb-3">
-        <label for="description" class="form-label">Deskripsi</label>
+        <label for="editor-create" class="form-label">Deskripsi</label>
         <div id="editor-create" style="height: 300px;"></div>
         <input type="hidden" id="description-create" name="description" value="{{ old('description') }}">
         @error('description')

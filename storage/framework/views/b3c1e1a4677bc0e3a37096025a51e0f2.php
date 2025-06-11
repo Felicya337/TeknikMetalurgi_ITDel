@@ -82,7 +82,8 @@
         .org-name {
             font-size: clamp(0.75rem, 1.6vw, 0.9rem);
             margin-top: clamp(6px, 1.2vw, 10px);
-            font-weight: 500;
+            font-weight: 700;
+            /* Made name bold */
         }
 
         .org-degree {
@@ -383,7 +384,6 @@
 
     <div class="container org-structure">
         <h1 class="text-center mb-4">STRUKTUR ORGANISASI FAKULTAS TEKNOLOGI INDUSTRI <br>
-
             JURUSAN TEKNIK METALURGI INSTITUT TEKNOLOGI DEL</h1>
 
         <?php $__currentLoopData = $levels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $level => $organizations): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -397,10 +397,8 @@
                             <div class="org-connector horizontal-connector"></div>
                         <?php endif; ?>
 
-                        <?php if($org->image): ?>
+                        <?php if($org->image && file_exists(public_path('storage/' . $org->image))): ?>
                             <img src="<?php echo e(asset('storage/' . $org->image)); ?>" alt="<?php echo e($org->title); ?>">
-                        <?php else: ?>
-                            <img src="<?php echo e(asset('images/default-avatar.png')); ?>" alt="Default Image">
                         <?php endif; ?>
 
                         <div class="org-title"><?php echo e($org->title); ?></div>

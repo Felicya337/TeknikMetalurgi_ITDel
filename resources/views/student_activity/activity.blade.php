@@ -81,11 +81,11 @@
             font-size: 16px;
             text-transform: uppercase;
             text-align: center;
-            /* Corrected from text-transform: center */
             padding: 12px 20px;
             margin: 0;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            /* Changed to a visible color */
         }
 
         .activity-body {
@@ -95,6 +95,7 @@
         .activity-row {
             display: flex;
             align-items: center;
+            /* Vertically center items in the row */
             gap: 20px;
         }
 
@@ -113,8 +114,8 @@
 
         .activity-content {
             flex: 1;
-            display: flex;
-            align-items: center;
+            /* display: flex; This might not be needed if p is block */
+            /* align-items: center; This aligns the p tag itself, not its content */
         }
 
         .activity-description {
@@ -269,10 +270,12 @@
                                     <img src="{{ asset('storage/' . $activity->image) }}" alt="{{ $activity->title }}">
                                 @else
                                     <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
+                                    {{-- Pastikan placeholder.png ada atau gunakan path yang benar --}}
                                 @endif
                             </div>
                             <div class="activity-content">
-                                <p class="activity-description">{{ $activity->description }}</p>
+                                {{-- PERBAIKAN DI SINI --}}
+                                <p class="activity-description">{!! $activity->description !!}</p>
                             </div>
                         </div>
                     </div>

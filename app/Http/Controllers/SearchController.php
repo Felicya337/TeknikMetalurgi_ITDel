@@ -3,113 +3,98 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\News;
-use App\Models\Testimonial;
-use App\Models\Collaborate;
+use Illuminate\Support\Facades\Log;
 
 class SearchController extends Controller
 {
     public function search(Request $request)
     {
-        $query = strtolower(trim($request->input('query')));
+        try {
+            $query = strtolower(trim($request->input('query')));
 
-        // Validasi input
-        if (empty($query)) {
-            return response()->json(['error' => 'Masukkan kata kunci pencarian.'], 400);
-        }
+            Log::info('Search query received: ' . $query);
 
-        // Daftar halaman yang valid
-        $validPages = [
-            'beranda' => ['url' => '/', 'name' => 'Beranda'],
-            'profil umum' => ['url' => '/metaprofile', 'name' => 'Profil Umum'],
-            'kurikulum' => ['url' => '/curriculum', 'name' => 'Kurikulum'],
-            'struktur organisasi' => ['url' => '/structureorganization', 'name' => 'Struktur Organisasi'],
-            'dosen staff' => ['url' => '/lecturer', 'name' => 'Dosen Staff'],
-            'publikasi' => ['url' => '/achievements/publication', 'name' => 'Publikasi'],
-            'penelitian' => ['url' => '/achievements/research', 'name' => 'Penelitian'],
-            'pencapaian' => ['url' => '/achievements/achievement', 'name' => 'Pencapaian'],
-            'fasilitas' => ['url' => '/facility', 'name' => 'Fasilitas'],
-            'laboratorium' => ['url' => '/laboratory', 'name' => 'Laboratorium'],
-            'kegiatan mahasiswa' => ['url' => '/student_activity/activity', 'name' => 'Kegiatan Mahasiswa'],
-            'kegiatan prodi' => ['url' => '/student_activity/program', 'name' => 'Kegiatan Prodi'],
-            'club mahasiswa' => ['url' => '/student_activity/club', 'name' => 'Club Mahasiswa'],
-            'berita' => ['url' => '/news', 'name' => 'Berita'],
-            'testimoni' => ['url' => '/testimoni', 'name' => 'Testimoni'],
-            'collaborate' => ['url' => '/collaborate', 'name' => 'Kerjasama'],
-        ];
-
-        // Cari kecocokan halaman
-        $pageResult = null;
-        foreach ($validPages as $pageName => $pageData) {
-            if (str_contains(strtolower($pageName), $query)) {
-                $pageResult = $pageData;
-                break;
+            if (empty($query)) {
+                if ($request->expectsJson()) {
+                    Log::warning('Empty search query');
+                    return response()->json(['error' => 'Masukkan kata kunci pencarian.'], 400);
+                }
+                return redirect()->route('not-found')->with('error', 'Masukkan kata kunci pencarian.');
             }
+
+            $validPages = [
+                ['keywords' => ['beranda', 'home', 'utama'], 'url' => '/', 'name' => 'Beranda'],
+                ['keywords' => ['profil', 'profile', 'profil umum', 'tentang', 'sejarah'], 'url' => '/metaprofile', 'name' => 'Profil Umum'],
+                ['keywords' => ['kurikulum', 'curriculum', 'mata kuliah', 'matkul'], 'url' => '/curriculum', 'name' => 'Kurikulum'],
+                ['keywords' => ['struktur', 'organisasi', 'struktur organisasi', 'organization'], 'url' => '/structureorganization', 'name' => 'Struktur Organisasi'],
+                ['keywords' => ['dosen', 'staff', 'dosen staff', 'lecturer', 'pengajar'], 'url' => '/lecturer', 'name' => 'Dosen Staff'],
+                ['keywords' => ['publikasi', 'publication', 'jurnal', 'paper'], 'url' => '/achievements/publication', 'name' => 'Publikasi'],
+                ['keywords' => ['penelitian', 'research', 'riset'], 'url' => '/achievements/research', 'name' => 'Penelitian'],
+                ['keywords' => ['pencapaian', 'achievement', 'prestasi'], 'url' => '/achievements/achievement', 'name' => 'Pencapaian'],
+                ['keywords' => ['fasilitas', 'facility', 'sarana'], 'url' => '/facility', 'name' => 'Fasilitas'],
+                ['keywords' => ['laboratorium', 'laboratory', 'lab'], 'url' => '/laboratory', 'name' => 'Laboratorium'],
+                ['keywords' => ['kegiatan mahasiswa', 'student activity', 'aktivitas mahasiswa'], 'url' => '/student_activity/activity', 'name' => 'Kegiatan Mahasiswa'],
+                ['keywords' => ['kegiatan prodi', 'program', 'kegiatan program'], 'url' => '/student_activity/program', 'name' => 'Kegiatan Prodi'],
+                ['keywords' => ['club', 'klub', 'club mahasiswa', 'organisasi mahasiswa'], 'url' => '/student_activity/club', 'name' => 'Club Mahasiswa'],
+                ['keywords' => ['berita', 'news', 'artikel'], 'url' => '/news', 'name' => 'Berita'],
+                ['keywords' => ['testimoni', 'testimonial', 'kesaksian'], 'url' => '/#testimonial-section', 'name' => 'Testimoni'],
+                ['keywords' => ['kerjasama', 'collaborate', 'collaboration', 'partnership'], 'url' => '/#kerjasama-section', 'name' => 'Kerjasama'],
+            ];
+
+            $pageResult = null;
+            foreach ($validPages as $page) {
+                foreach ($page['keywords'] as $keyword) {
+                    $keywordLower = strtolower($keyword);
+                    if (strpos($keywordLower, $query) !== false || strpos($query, $keywordLower) !== false) {
+                        $pageResult = ['url' => $page['url'], 'name' => $page['name']];
+                        Log::info('Page match found: ' . $page['name']);
+                        break 2;
+                    }
+                }
+            }
+
+            if ($request->expectsJson()) {
+                if ($pageResult) {
+                    return response()->json(['page' => $pageResult]);
+                }
+                // Optionally, search for testimonials or collaborations in the database
+                $news = \App\Models\News::where('is_active', true)
+                    ->where(function ($q) use ($query) {
+                        $q->where('title', 'like', '%' . $query . '%')
+                            ->orWhere('content', 'like', '%' . $query . '%');
+                    })->get();
+                $testimonials = \App\Models\Testimonial::where('is_active', true)
+                    ->where(function ($q) use ($query) {
+                        $q->where('name', 'like', '%' . $query . '%')
+                            ->orWhere('content', 'like', '%' . $query . '%')
+                            ->orWhere('student', 'like', '%' . $query . '%');
+                    })->get();
+                $collaborates = \App\Models\Collaborate::where('is_active', true)
+                    ->where(function ($q) use ($query) {
+                        $q->where('institution_name', 'like', '%' . $query . '%')
+                            ->orWhere('company_profile', 'like', '%' . $query . '%')
+                            ->orWhere('institution_description', 'like', '%' . $query . '%');
+                    })->get();
+
+                return response()->json([
+                    'query' => $query,
+                    'news' => $news,
+                    'testimonials' => $testimonials,
+                    'collaborates' => $collaborates
+                ]);
+            }
+
+            if ($pageResult) {
+                return redirect($pageResult['url']);
+            }
+
+            return view('search-results', compact('query', 'pageResult'));
+        } catch (\Exception $e) {
+            Log::error('Search error: ' . $e->getMessage());
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Terjadi kesalahan dalam pencarian: ' . $e->getMessage()], 500);
+            }
+            return redirect()->route('not-found')->with('error', 'Terjadi kesalahan dalam pencarian.');
         }
-
-        // Cari di tabel news
-        $newsResults = News::query()
-            ->when($query, function ($queryBuilder) use ($query) {
-                return $queryBuilder->where('title', 'LIKE', "%{$query}%")
-                    ->orWhere('content', 'LIKE', "%{$query}%");
-            })
-            ->get();
-
-        // Cari di tabel testimonials
-        $testimonialResults = Testimonial::query()
-            ->when($query, function ($queryBuilder) use ($query) {
-                return $queryBuilder->where('name', 'LIKE', "%{$query}%")
-                    ->orWhere('content', 'LIKE', "%{$query}%")
-                    ->orWhere('student', 'LIKE', "%{$query}%");
-            })
-            ->get();
-
-        // Cari di tabel collaborates
-        $collaborateResults = Collaborate::query()
-            ->when($query, function ($queryBuilder) use ($query) {
-                return $queryBuilder->where('company_profile', 'LIKE', "%{$query}%")
-                    ->orWhere('institution_description', 'LIKE', "%{$query}%");
-            })
-            ->get();
-
-        // Jika tidak ada hasil dan tidak ada halaman yang cocok
-        if (!$pageResult && $newsResults->isEmpty() && $testimonialResults->isEmpty() && $collaborateResults->isEmpty()) {
-            return response()->json([
-                'error' => 'Tidak ada hasil ditemukan untuk kata kunci: ' . $query
-            ], 404);
-        }
-
-        // Kembalikan hasil dalam format JSON
-        return response()->json([
-            'page' => $pageResult,
-            'news' => $newsResults->map(function ($news) {
-                return [
-                    'id' => $news->id,
-                    'title' => $news->title,
-                    'content' => \Illuminate\Support\Str::limit(strip_tags($news->content), 200),
-                    'image' => $news->image ? asset('storage/' . $news->image) : null,
-                    'url' => route('newsdetail', $news->id),
-                ];
-            }),
-            'testimonials' => $testimonialResults->map(function ($testimonial) {
-                return [
-                    'id' => $testimonial->id,
-                    'name' => $testimonial->name,
-                    'student' => $testimonial->student,
-                    'content' => \Illuminate\Support\Str::limit(strip_tags($testimonial->content), 200),
-                    'image' => $testimonial->image ? asset('storage/' . $testimonial->image) : null,
-                ];
-            }),
-            'collaborates' => $collaborateResults->map(function ($collaborate) {
-                return [
-                    'id' => $collaborate->id,
-                    'institution_name' => $collaborate->institution_name,
-                    'company_profile' => \Illuminate\Support\Str::limit(strip_tags($collaborate->company_profile), 200),
-                    'institution_description' => \Illuminate\Support\Str::limit(strip_tags($collaborate->institution_description), 200),
-                    'logo' => $collaborate->logo ? asset('storage/' . $collaborate->logo) : null,
-                    'date' => \Carbon\Carbon::parse($collaborate->date)->format('d F Y'),
-                ];
-            }),
-        ]);
     }
 }
