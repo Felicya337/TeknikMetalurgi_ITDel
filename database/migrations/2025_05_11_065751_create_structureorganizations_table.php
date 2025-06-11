@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('structureorganizations', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->string('title');
             $table->string('degree')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();

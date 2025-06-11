@@ -132,7 +132,7 @@
                                 <tbody>
                                     @foreach ($structures as $structure)
                                         <tr data-structure-id="{{ $structure->id }}">
-                                            <td>{{ $structure->name }}</td>
+                                            <td>{{ $structure->name ?? '-' }}</td>
                                             <td>{{ $structure->title }}</td>
                                             <td>{{ $structure->degree ?? '-' }}</td>
                                             <td>{{ $structure->level }}</td>

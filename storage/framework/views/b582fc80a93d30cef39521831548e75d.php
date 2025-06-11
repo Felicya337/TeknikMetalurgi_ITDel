@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
@@ -15,10 +13,6 @@
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             overflow: hidden;
-        }
-
-        .table {
-            margin-bottom: 0;
         }
 
         .table th {
@@ -62,10 +56,7 @@
 
         .img-thumbnail {
             border-radius: 8px;
-            max-width: 60px;
-            /* Disesuaikan agar tidak terlalu besar */
-            max-height: 45px;
-            /* Disesuaikan agar tidak terlalu besar */
+            max-width: 80px;
             object-fit: cover;
         }
 
@@ -73,21 +64,6 @@
             padding: 6px 12px;
             border-radius: 12px;
             font-weight: 500;
-        }
-
-        .badge-kegiatan_mahasiswa {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .badge-kegiatan_prodi {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .badge-club_mahasiswa {
-            background-color: #ffc107;
-            color: black;
         }
 
         .modal-content {
@@ -123,11 +99,6 @@
                 padding: 4px 8px;
                 font-size: 0.8rem;
             }
-
-            .img-thumbnail {
-                max-width: 50px;
-                max-height: 35px;
-            }
         }
     </style>
 
@@ -135,125 +106,133 @@
         <div class="row">
             <div class="col-md-10 offset-md-1">
                 <div class="mb-3">
-                    <h2 class="mb-0 fw-bold text-dark"> Kegiatan Mahasiswa</h2>
+                    <h2 class="mb-0 fw-bold text-dark">Laboratorium</h2>
                     <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal"
-                        data-bs-target="#modal-studentactivity">
-                        <i class="fas fa-plus me-2"></i>Tambah Kegiatan
+                        data-bs-target="#modal-laboratory">
+                        <i class="fas fa-plus me-2"></i>Tambah Laboratorium
                     </button>
                 </div>
 
                 <div class="card">
                     <div class="card-body p-4">
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered text-center" id="studentActivityTable">
+                            <table class="table table-striped table-bordered text-center" id="laboratoryTable">
                                 <thead>
                                     <tr>
-                                        {{-- KOLOM NOMOR DIHAPUS --}}
-                                        <th scope="col" style="width: 20%;">Jenis Kegiatan</th> {{-- Lebar disesuaikan --}}
-                                        <th scope="col" style="width: 20%;">Judul</th>
-                                        <th scope="col" style="width: 25%;">Deskripsi</th>
-                                        <th scope="col" style="width: 10%;">Gambar</th> {{-- Lebar disesuaikan --}}
+                                        <th scope="col" style="width: 5%;">Nomor</th>
+                                        <th scope="col" style="width: 15%;">Nama</th>
+                                        <th scope="col" style="width: 20%;">Deskripsi</th>
+                                        <th scope="col" style="width: 15%;">Hari Akademik</th>
+                                        <th scope="col" style="width: 10%;">Jam Akademik</th>
+                                        <th scope="col" style="width: 10%;">Jam Kolaborasi</th>
+                                        <th scope="col" style="width: 10%;">Gambar</th>
                                         <th scope="col" style="width: 10%;">Status</th>
                                         <th scope="col" style="width: 15%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($activities as $activity)
+                                    <?php $__currentLoopData = $laboratories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $laboratory): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
-                                            {{-- KOLOM NOMOR DIHAPUS --}}
+                                            <td><?php echo e($loop->iteration); ?></td>
+                                            <td><?php echo e($laboratory->name); ?></td>
                                             <td>
-                                                <span class="badge badge-{{ $activity->type }}">
-                                                    {{ $activity->getTypeLabel() }}
-                                                </span>
-                                            </td>
-                                            <td class="text-start">{{ $activity->title }}</td>
-                                            <td class="text-start">{!! Str::limit(strip_tags($activity->description), 70) !!}</td>
-                                            <td>
-                                                @if ($activity->image)
-                                                    <img src="{{ asset('storage/' . $activity->image) }}"
-                                                        class="img-thumbnail" alt="Activity Image">
-                                                @else
-                                                    <span class="text-muted small">N/A</span>
-                                                @endif
+                                                <?php if($laboratory->description): ?>
+                                                    <?php echo Str::limit(strip_tags($laboratory->description), 100); ?>
+
+                                                <?php else: ?>
+                                                    <span class="text-muted">Tidak ada deskripsi</span>
+                                                <?php endif; ?>
                                             </td>
                                             <td>
-                                                <span class="badge {{ $activity->is_active ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ $activity->is_active ? 'Aktif' : 'Nonaktif' }}
+                                                <?php echo e($laboratory->academic_days ? implode(', ', $laboratory->academic_days) : '-'); ?>
+
+                                            </td>
+                                            <td><?php echo e($laboratory->academic_hours ?? '-'); ?></td>
+                                            <td><?php echo e($laboratory->collaborative_hours ?? '-'); ?></td>
+                                            <td>
+                                                <?php if($laboratory->images && count($laboratory->images) > 0): ?>
+                                                    <img src="<?php echo e(asset('storage/' . $laboratory->images[0])); ?>"
+                                                        class="img-thumbnail" alt="Laboratory Image">
+                                                <?php else: ?>
+                                                    <span class="text-muted">Tidak ada gambar</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="badge <?php echo e($laboratory->is_active ? 'bg-success' : 'bg-danger'); ?>">
+                                                    <?php echo e($laboratory->is_active ? 'Aktif' : 'Tidak Aktif'); ?>
+
                                                 </span>
                                             </td>
                                             <td>
                                                 <div class="d-flex justify-content-center">
                                                     <button type="button" class="btn btn-info btn-sm mx-1"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#modal-read-studentactivity-{{ $activity->id }}">
-                                                        <i class="fas fa-eye"></i>
+                                                        data-bs-target="#modal-read-laboratory-<?php echo e($laboratory->id); ?>">
+                                                        <i class="fas fa-eye"></i> Lihat
                                                     </button>
                                                     <button type="button" class="btn btn-warning btn-sm mx-1"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#modal-edit-studentactivity-{{ $activity->id }}">
-                                                        <i class="fas fa-edit"></i>
+                                                        data-bs-target="#modal-edit-laboratory-<?php echo e($laboratory->id); ?>">
+                                                        <i class="fas fa-edit"></i> Edit
                                                     </button>
-                                                    <form
-                                                        action="{{ route('admin.studentactivity.destroy', $activity->id) }}"
+                                                    <form action="<?php echo e(route('admin.laboratory.destroy', $laboratory->id)); ?>"
                                                         method="POST" class="d-inline">
-                                                        @csrf @method('DELETE')
+                                                        <?php echo csrf_field(); ?>
+                                                        <?php echo method_field('DELETE'); ?>
                                                         <button type="submit"
                                                             class="btn btn-danger btn-sm mx-1 delete-btn">
-                                                            <i class="fas fa-trash"></i>
+                                                            <i class="fas fa-trash"></i> Hapus
                                                         </button>
                                                     </form>
                                                 </div>
                                             </td>
                                         </tr>
 
-                                        <!-- MODAL READ STUDENT ACTIVITY -->
-                                        <div class="modal fade" id="modal-read-studentactivity-{{ $activity->id }}"
+                                        <!-- MODAL READ LABORATORY -->
+                                        <div class="modal fade" id="modal-read-laboratory-<?php echo e($laboratory->id); ?>"
                                             tabindex="-1"
-                                            aria-labelledby="modal-read-studentactivityLabel-{{ $activity->id }}"
+                                            aria-labelledby="modal-read-laboratoryLabel-<?php echo e($laboratory->id); ?>"
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Detail Kegiatan: {{ $activity->title }}
-                                                        </h5>
+                                                        <h5 class="modal-title">Detail Laboratorium</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        @include('admin.studentactivity.read', [
-                                                            'activity' => $activity,
-                                                        ])
+                                                        <?php echo $__env->make('admin.laboratory.read', [
+                                                            'laboratory' => $laboratory,
+                                                        ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- MODAL EDIT STUDENT ACTIVITY -->
-                                        <div class="modal fade" id="modal-edit-studentactivity-{{ $activity->id }}"
+                                        <!-- MODAL EDIT LABORATORY -->
+                                        <div class="modal fade" id="modal-edit-laboratory-<?php echo e($laboratory->id); ?>"
                                             tabindex="-1"
-                                            aria-labelledby="modal-edit-studentactivityLabel-{{ $activity->id }}"
+                                            aria-labelledby="modal-edit-laboratoryLabel-<?php echo e($laboratory->id); ?>"
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Kegiatan: {{ $activity->title }}</h5>
+                                                        <h5 class="modal-title">Edit Laboratorium</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        @include('admin.studentactivity.edit', [
-                                                            'activity' => $activity,
-                                                        ])
+                                                        <?php echo $__env->make('admin.laboratory.edit', [
+                                                            'laboratory' => $laboratory,
+                                                        ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
-                        </div>
-                        <div class="mt-3">
-                            {{ $activities->links() }}
                         </div>
                     </div>
                 </div>
@@ -261,24 +240,23 @@
         </div>
     </div>
 
-    <!-- MODAL ADD STUDENT ACTIVITY -->
-    <div class="modal fade" id="modal-studentactivity" tabindex="-1" aria-labelledby="modal-studentactivityLabel"
-        aria-hidden="true">
+    <!-- MODAL ADD LABORATORY -->
+    <div class="modal fade" id="modal-laboratory" tabindex="-1" aria-labelledby="modal-laboratoryLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Kegiatan Mahasiswa</h5>
+                    <h5 class="modal-title">Tambah Laboratorium</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    @include('admin.studentactivity.create')
+                    <?php echo $__env->make('admin.laboratory.create', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
@@ -289,7 +267,7 @@
     <script>
         $(document).ready(function() {
             // DataTables Initialization
-            $('#studentActivityTable').DataTable({
+            $('#laboratoryTable').DataTable({
                 responsive: true,
                 pageLength: 10,
                 searching: true,
@@ -312,68 +290,38 @@
                         sortDescending: ": aktifkan untuk mengurutkan kolom turun"
                     }
                 },
-                dom: '<"top"<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>>rt<"bottom"<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>>',
-                // --- AWAL PERUBAHAN PADA COLUMNS ---
-                // Karena kolom "No" dihilangkan, konfigurasi columns disesuaikan. Sekarang ada 6 kolom.
-                columns: [
-                    null, // Kolom 0: Jenis Kegiatan (sebelumnya indeks 1)
-                    null, // Kolom 1: Judul
-                    { // Kolom 2: Deskripsi
-                        render: function(data, type, row) {
-                            if (type === 'display') {
-                                return data; // Data sudah HTML dari Blade
-                            }
-                            // Untuk sorting/filtering, ambil teksnya
-                            var tempDiv = document.createElement("div");
-                            tempDiv.innerHTML = data;
-                            return tempDiv.textContent || tempDiv.innerText || "";
+                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>',
+                columnDefs: [{
+                    targets: 0,
+                    orderable: false,
+                    searchable: false
+                }, {
+                    targets: 2,
+                    render: function(data, type, row) {
+                        if (type === 'display') {
+                            return data.length > 100 ? data.substr(0, 100) + '...' : data;
                         }
-                    },
-                    {
-                        orderable: false,
-                        searchable: false
-                    }, // Kolom 3: Gambar
-                    {
-                        orderable: false
-                    }, // Kolom 4: Status
-                    {
-                        orderable: false,
-                        searchable: false
-                    } // Kolom 5: Aksi
-                ],
-                // columnDefs bisa disesuaikan atau dikosongkan jika pengaturan default sudah cukup
-                columnDefs: [
-                    // Contoh: jika ingin kolom Jenis Kegiatan juga tidak bisa di-sort
-                    // { targets: 0, orderable: false },
-                    {
-                        targets: [3, 5],
-                        orderable: false,
-                        searchable: false
-                    }, // Gambar, Aksi
-                    {
-                        targets: [4],
-                        orderable: false
-                    } // Status
-                ],
-                order: [], // Tidak ada pengurutan awal default
-                // --- AKHIR PERUBAHAN PADA COLUMNS ---
+                        return data;
+                    }
+                }, {
+                    targets: 8,
+                    orderable: false,
+                    searchable: false
+                }],
                 initComplete: function() {
                     $('.dataTables_length select').addClass('form-select form-select-sm');
                     $('.dataTables_filter input').addClass('form-control form-control-sm');
                 }
             });
 
-            // Initialize Summernote for Create Form in Modal
-            $('#modal-studentactivity').on('shown.bs.modal', function() {
-                // Pastikan elemen #editor-create ada sebelum inisialisasi
-                if ($('#editor-create').length && !$('#editor-create').data('summernote')) {
+            // Initialize Summernote for CREATE form
+            function initCreateSummernote() {
+                if ($('#editor-create').length && !$('#editor-create').next('.note-editor').length) {
                     $('#editor-create').summernote({
-                        height: 250,
-                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
-                            'Courier New'
-                        ],
+                        height: 300,
+                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
                         fontNamesIgnoreCheck: ['Poppins'],
-                        fontSizes: ['10', '12', '14', '16', '18', '20', '24'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
                         toolbar: [
                             ['style', ['style']],
                             ['font', ['bold', 'underline', 'clear']],
@@ -386,40 +334,47 @@
                             ['view', ['fullscreen', 'codeview', 'help']]
                         ],
                         callbacks: {
-                            onChange: function(contents) {
+                            onChange: function(contents, $editable) {
                                 $('#description-create').val(contents);
                             },
                             onInit: function() {
-                                var oldDescription = $('#description-create').val();
-                                if (oldDescription) {
-                                    $('#editor-create').summernote('code', oldDescription);
+                                var initialValue = $('#description-create').val();
+                                if (initialValue) {
+                                    $('#editor-create').summernote('code', initialValue);
                                 }
                             }
                         }
                     });
                 }
-            }).on('hidden.bs.modal', function() {
-                if ($('#editor-create').length && $('#editor-create').data('summernote')) {
+            }
+
+            // Initialize create summernote when modal is shown
+            $('#modal-laboratory').on('shown.bs.modal', function() {
+                initCreateSummernote();
+            });
+
+            // Destroy summernote when create modal is hidden
+            $('#modal-laboratory').on('hidden.bs.modal', function() {
+                if ($('#editor-create').next('.note-editor').length) {
                     $('#editor-create').summernote('destroy');
                 }
             });
 
-
             // Initialize Summernote for Edit Forms when modals are shown
-            $('div[id^="modal-edit-studentactivity-"]').on('shown.bs.modal', function() {
+            $('div[id^="modal-edit-laboratory-"]').on('shown.bs.modal', function() {
                 var modalId = $(this).attr('id');
-                var activityId = modalId.replace('modal-edit-studentactivity-', '');
-                var editorId = 'editor-edit-' + activityId;
-                var descriptionInputId = 'description-edit-' + activityId;
+                var laboratoryId = modalId.replace('modal-edit-laboratory-', '');
+                var editorId = 'editor-edit-' + laboratoryId;
+                var hiddenInputId = 'description-edit-' + laboratoryId;
 
-                if ($('#' + editorId).length && !$('#' + editorId).data('summernote')) {
+                if (!$('#' + editorId).next('.note-editor').length) {
                     $('#' + editorId).summernote({
-                        height: 250,
+                        height: 300,
                         fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
                             'Courier New'
                         ],
                         fontNamesIgnoreCheck: ['Poppins'],
-                        fontSizes: ['10', '12', '14', '16', '18', '20', '24'],
+                        fontSizes: ['12', '14', '16', '20', '24', '32'],
                         toolbar: [
                             ['style', ['style']],
                             ['font', ['bold', 'underline', 'clear']],
@@ -432,85 +387,65 @@
                             ['view', ['fullscreen', 'codeview', 'help']]
                         ],
                         callbacks: {
-                            onChange: function(contents) {
-                                $('#' + descriptionInputId).val(contents);
+                            onChange: function(contents, $editable) {
+                                $('#' + hiddenInputId).val(contents);
+                            },
+                            onInit: function() {
+                                var existingDescription = $('#' + hiddenInputId).val();
+                                if (existingDescription) {
+                                    $('#' + editorId).summernote('code', existingDescription);
+                                }
                             }
                         }
                     });
-                    var description = $('#' + descriptionInputId).val();
-                    $('#' + editorId).summernote('code', description);
                 }
-            }).on('hidden.bs.modal', function() {
+            });
+
+            // Destroy Summernote instances when edit modals are hidden
+            $('div[id^="modal-edit-laboratory-"]').on('hidden.bs.modal', function() {
                 var modalId = $(this).attr('id');
-                var activityId = modalId.replace('modal-edit-studentactivity-', '');
-                var editorId = 'editor-edit-' + activityId;
-                if ($('#' + editorId).length && $('#' + editorId).data('summernote')) {
+                var laboratoryId = modalId.replace('modal-edit-laboratory-', '');
+                var editorId = 'editor-edit-' + laboratoryId;
+
+                if ($('#' + editorId).next('.note-editor').length) {
                     $('#' + editorId).summernote('destroy');
                 }
             });
 
-
             // SweetAlert2 for Notifications
-            @if (session('success'))
+            <?php if(session('success')): ?>
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil!',
-                    text: '{{ session('success') }}',
+                    text: '<?php echo e(session('success')); ?>',
                     timer: 2500,
                     showConfirmButton: false
                 });
-            @endif
+            <?php endif; ?>
 
-            @if (session('error'))
+            <?php if(session('error')): ?>
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: '{{ session('error') }}',
+                    text: '<?php echo e(session('error')); ?>',
                     timer: 2500,
                     showConfirmButton: false
                 });
-            @endif
-
-            @if ($errors->any())
-                let errorMsg = "<ul class='text-start'>"; // text-start untuk alignment
-                @foreach ($errors->all() as $error)
-                    errorMsg += "<li>{{ $error }}</li>";
-                @endforeach
-                errorMsg += "</ul>";
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops, terjadi kesalahan!',
-                    html: errorMsg
-                });
-
-                // Jika error terjadi pada form tambah, buka modal tambah
-                @if (old('form_type') == 'create_student_activity' || (isset($errors) && $errors->hasBag('createStudentActivity')))
-                    $('#modal-studentactivity').modal('show');
-                @endif
-
-                // Jika error terjadi pada form edit, buka modal edit yang sesuai
-                @if (old('form_type') == 'edit_student_activity' ||
-                        (isset($errors) && $errors->hasBag('editStudentActivity' . old('activity_id_error'))))
-                    var activityIdError = "{{ old('activity_id_error') }}";
-                    if (activityIdError) {
-                        $('#modal-edit-studentactivity-' + activityIdError).modal('show');
-                    }
-                @endif
-            @endif
+            <?php endif; ?>
 
             // SweetAlert2 for Delete Confirmation
-            $(document).on('click', '.delete-btn', function(e) {
+            $('.delete-btn').on('click', function(e) {
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Hapus Kegiatan Mahasiswa?',
+                    title: 'Hapus Laboratorium?',
                     text: "Tindakan ini tidak dapat dibatalkan!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: '<i class="fas fa-trash-alt"></i> Ya, Hapus!',
-                    cancelButtonText: '<i class="fas fa-times"></i> Batal'
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit();
@@ -519,4 +454,6 @@
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/admin/laboratory/index.blade.php ENDPATH**/ ?>

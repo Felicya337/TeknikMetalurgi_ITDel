@@ -21,7 +21,7 @@ class StructureOrganizationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255', // Changed from 'required' to 'nullable'
             'title' => 'required|string|max:255',
             'degree' => 'nullable|string|max:255',
             'level' => [
@@ -71,7 +71,7 @@ class StructureOrganizationController extends Controller
         $structure = StructureOrganization::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255', // Changed from 'required' to 'nullable'
             'title' => 'required|string|max:255',
             'degree' => 'nullable|string|max:255',
             'level' => [

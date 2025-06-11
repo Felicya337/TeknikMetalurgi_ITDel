@@ -404,7 +404,9 @@
                         @endif
 
                         <div class="org-title">{{ $org->title }}</div>
-                        <div class="org-name">{{ $org->name }}</div>
+                        @if ($org->name)
+                            <div class="org-name">{{ $org->name }}</div>
+                        @endif
                         @if ($org->degree)
                             <div class="org-degree">{{ $org->degree }}</div>
                         @endif

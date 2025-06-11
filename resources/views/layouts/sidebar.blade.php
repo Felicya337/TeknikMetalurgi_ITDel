@@ -95,6 +95,15 @@
                 </a>
             </li>
 
+            <!-- Prestasi Mahasiswa -->
+            <li class="nav-item">
+                <a href="{{ route('admin.student_achievement.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.student_achievement.*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-star"></i>
+                    <p>Prestasi Mahasiswa</p>
+                </a>
+            </li>
+
             <!-- Fasilitas -->
             <li class="nav-item">
                 <a href="{{ route('admin.facility.index') }}"

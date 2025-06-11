@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <div class="container">
@@ -18,29 +16,30 @@
         <div class="container">
             <h2 class="facility-title">Fasilitas Program Studi Teknik Metalurgi Fakultas Teknologi Industri</h2>
             <div class="accordion" id="facilityAccordion">
-                @php
+                <?php
                     $facilityTypes = [
                         'classroom' => 'Ruang Kelas',
                         'smartclass' => 'Smart Class',
                         'reading_room' => 'Ruang Baca',
                     ];
-                @endphp
+                ?>
 
-                @foreach ($facilityTypes as $type => $typeName)
+                <?php $__currentLoopData = $facilityTypes; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $type => $typeName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="accordion-item">
-                        <h2 class="accordion-header" id="heading{{ ucfirst($type) }}">
+                        <h2 class="accordion-header" id="heading<?php echo e(ucfirst($type)); ?>">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapse{{ ucfirst($type) }}" aria-expanded="false"
-                                aria-controls="collapse{{ ucfirst($type) }}">
-                                {{ $typeName }}
+                                data-bs-target="#collapse<?php echo e(ucfirst($type)); ?>" aria-expanded="false"
+                                aria-controls="collapse<?php echo e(ucfirst($type)); ?>">
+                                <?php echo e($typeName); ?>
+
                                 <span class="custom-arrow"></span>
                             </button>
                         </h2>
-                        <div id="collapse{{ ucfirst($type) }}" class="accordion-collapse collapse"
-                            aria-labelledby="heading{{ ucfirst($type) }}" data-bs-parent="#facilityAccordion">
+                        <div id="collapse<?php echo e(ucfirst($type)); ?>" class="accordion-collapse collapse"
+                            aria-labelledby="heading<?php echo e(ucfirst($type)); ?>" data-bs-parent="#facilityAccordion">
                             <div class="accordion-body">
-                                @if (isset($facilities[$type]) && $facilities[$type]->isNotEmpty())
-                                    @php
+                                <?php if(isset($facilities[$type]) && $facilities[$type]->isNotEmpty()): ?>
+                                    <?php
                                         $completeFacilities = [];
                                         $imageOnlyFacilities = [];
                                         $allImages = [];
@@ -65,53 +64,54 @@
                                                 $facilityImages = $facility->images ? $facility->images : [];
                                                 $allFacilityImages = array_merge($facilityImages, $allImages);
                                                 $allFacilityImages = array_unique($allFacilityImages);
-                                    @endphp
+                                    ?>
                                                 <div class="facility-details">
                                                     <h4 class="info-title">
-                                                        <img src="{{ asset('aset/img/logo1.png') }}" alt="Info Icon" class="icon-img">
+                                                        <img src="<?php echo e(asset('aset/img/logo1.png')); ?>" alt="Info Icon" class="icon-img">
                                                         INFORMASI UMUM
                                                     </h4>
                                                     <p class="facility-description">
-                                                        {!! $facility->description ?? 'Tidak ada deskripsi yang tersedia.' !!}
+                                                        <?php echo $facility->description ?? 'Tidak ada deskripsi yang tersedia.'; ?>
+
                                                     </p>
 
                                                     <h4 class="info-title">
-                                                        <img src="{{ asset('aset/img/logo2.png') }}" alt="Clock Icon" class="icon-img">
+                                                        <img src="<?php echo e(asset('aset/img/logo2.png')); ?>" alt="Clock Icon" class="icon-img">
                                                         JAM KERJA
                                                     </h4>
                                                     <div class="schedule-item">
                                                         <span class="schedule-text">Hari Akademik:
-                                                            {{ $facility->academic_days ? implode(', ', $facility->academic_days) : 'Senin - Jumat' }}</span>
+                                                            <?php echo e($facility->academic_days ? implode(', ', $facility->academic_days) : 'Senin - Jumat'); ?></span>
                                                     </div>
                                                     <div class="schedule-item">
                                                         <span class="schedule-text">Jam Akademik:
-                                                            {{ $facility->academic_hours ?? '07:00 - 17:00' }}</span>
+                                                            <?php echo e($facility->academic_hours ?? '07:00 - 17:00'); ?></span>
                                                     </div>
                                                     <div class="schedule-item">
                                                         <span class="schedule-text">Jam Kolaboratif:
-                                                            {{ $facility->collaborative_hours ?? '19:00 - 22:00' }}</span>
+                                                            <?php echo e($facility->collaborative_hours ?? '19:00 - 22:00'); ?></span>
                                                     </div>
 
-                                                    @if (count($allFacilityImages) > 0)
+                                                    <?php if(count($allFacilityImages) > 0): ?>
                                                         <div class="facility-images">
-                                                            @foreach ($allFacilityImages as $image)
-                                                                <img src="{{ asset('storage/' . $image) }}" alt="Facility Image"
+                                                            <?php $__currentLoopData = $allFacilityImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                <img src="<?php echo e(asset('storage/' . $image)); ?>" alt="Facility Image"
                                                                     class="facility-image">
-                                                            @endforeach
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </div>
-                                                    @else
+                                                    <?php else: ?>
                                                         <p class="text-muted">Tidak ada gambar tersedia.</p>
-                                                    @endif
+                                                    <?php endif; ?>
                                                 </div>
-                                    @php
+                                    <?php
                                             }
                                             $allImages = [];
                                         } else {
                                             if (!empty($allImages)) {
-                                    @endphp
+                                    ?>
                                                 <div class="facility-details">
                                                     <h4 class="info-title">
-                                                        <img src="{{ asset('aset/img/logo1.png') }}" alt="Info Icon" class="icon-img">
+                                                        <img src="<?php echo e(asset('aset/img/logo1.png')); ?>" alt="Info Icon" class="icon-img">
                                                         INFORMASI UMUM
                                                     </h4>
                                                     <p class="facility-description">
@@ -119,7 +119,7 @@
                                                     </p>
 
                                                     <h4 class="info-title">
-                                                        <img src="{{ asset('aset/img/logo2.png') }}" alt="Clock Icon" class="icon-img">
+                                                        <img src="<?php echo e(asset('aset/img/logo2.png')); ?>" alt="Clock Icon" class="icon-img">
                                                         JAM KERJA
                                                     </h4>
                                                     <div class="schedule-item">
@@ -133,23 +133,23 @@
                                                     </div>
 
                                                     <div class="facility-images">
-                                                        @foreach ($allImages as $image)
-                                                            <img src="{{ asset('storage/' . $image) }}" alt="Facility Image"
+                                                        <?php $__currentLoopData = $allImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <img src="<?php echo e(asset('storage/' . $image)); ?>" alt="Facility Image"
                                                                 class="facility-image">
-                                                        @endforeach
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                     </div>
                                                 </div>
-                                    @php
+                                    <?php
                                             }
                                         }
-                                    @endphp
-                                @else
-                                    <p class="text-muted">Belum ada data untuk {{ $typeName }}.</p>
-                                @endif
+                                    ?>
+                                <?php else: ?>
+                                    <p class="text-muted">Belum ada data untuk <?php echo e($typeName); ?>.</p>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
     </section>
@@ -331,7 +331,9 @@
 }
     </style>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-@endpush
-@endsection
+<?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/facility.blade.php ENDPATH**/ ?>

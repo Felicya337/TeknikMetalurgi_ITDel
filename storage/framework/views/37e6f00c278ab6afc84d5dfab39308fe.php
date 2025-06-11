@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         /* Research Page Styles */
         body {
@@ -280,11 +278,11 @@
         }
     </style>
 
-    {{-- Breadcrumb --}}
+    
     <nav aria-label="breadcrumb">
         <ol class="breadcrumbs">
             <li class="breadcrumb-item">
-                <a href="{{ url('/penelitian') }}" class="text-decoration-none">Penelitian</a>
+                <a href="<?php echo e(url('/penelitian')); ?>" class="text-decoration-none">Penelitian</a>
             </li>
             <li class="breadcrumb-item current-page">Semua Penelitian</li>
         </ol>
@@ -293,66 +291,72 @@
     <div class="research-container">
         <h1 class="my-4">Penelitian</h1>
 
-        @if ($researches->isEmpty())
+        <?php if($researches->isEmpty()): ?>
             <div class="alert alert-info">
                 Tidak ada penelitian yang tersedia saat ini.
             </div>
-        @else
-            @foreach ($researches as $research)
+        <?php else: ?>
+            <?php $__currentLoopData = $researches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $research): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="research-card">
                     <div class="research-body">
                         <div class="research-row">
                             <div class="research-image">
-                                @if ($research->image)
-                                    <img src="{{ asset('storage/' . $research->image) }}" alt="{{ $research->title }}">
-                                @else
-                                    <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
-                                @endif
+                                <?php if($research->image): ?>
+                                    <img src="<?php echo e(asset('storage/' . $research->image)); ?>" alt="<?php echo e($research->title); ?>">
+                                <?php else: ?>
+                                    <img src="<?php echo e(asset('images/placeholder.png')); ?>" alt="No Image Available">
+                                <?php endif; ?>
                             </div>
                             <div class="research-content">
-                                <h5 class="research-title">{{ $research->title }}</h5>
+                                <h5 class="research-title"><?php echo e($research->title); ?></h5>
 
                                 <div class="research-meta">
                                     <div class="research-meta-item">
-                                        <strong>By:</strong> {{ $research->author ?? 'Anonim' }}
+                                        <strong>By:</strong> <?php echo e($research->author ?? 'Anonim'); ?>
+
                                     </div>
                                     <div class="research-meta-item">
                                         <strong>Date:</strong>
-                                        {{ $research->date ? \Carbon\Carbon::parse($research->date)->translatedFormat('F Y') : '-' }}
+                                        <?php echo e($research->date ? \Carbon\Carbon::parse($research->date)->translatedFormat('F Y') : '-'); ?>
+
                                     </div>
-                                    @if ($research->type)
+                                    <?php if($research->type): ?>
                                         <div class="research-meta-item">
-                                            <strong>Type:</strong> {{ ucfirst($research->type) }}
+                                            <strong>Type:</strong> <?php echo e(ucfirst($research->type)); ?>
+
                                         </div>
-                                    @endif
-                                    @if ($research->file)
+                                    <?php endif; ?>
+                                    <?php if($research->file): ?>
                                         <div class="research-meta-item">
                                             <div class="file-actions">
-                                                <a href="{{ asset('storage/' . $research->file) }}"
+                                                <a href="<?php echo e(asset('storage/' . $research->file)); ?>"
                                                     class="file-link download-link" download title="Download Document">
                                                     <i class="bi bi-download"></i>
                                                     Download
                                                 </a>
-                                                <a href="{{ asset('storage/' . $research->file) }}"
+                                                <a href="<?php echo e(asset('storage/' . $research->file)); ?>"
                                                     class="file-link view-link" target="_blank" title="View Document">
                                                     <i class="bi bi-eye"></i>
                                                     View
                                                 </a>
                                             </div>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
 
-                                <div class="research-description">{!! $research->description !!}</div>
+                                <div class="research-description"><?php echo $research->description; ?></div>
                             </div>
                         </div>
                     </div>
                 </div>
-            @endforeach
-        @endif
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
 
         <div class="pagination-wrapper">
-            {{ $researches->links() }}
+            <?php echo e($researches->links()); ?>
+
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/achievements/research.blade.php ENDPATH**/ ?>

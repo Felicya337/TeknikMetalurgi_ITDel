@@ -81,11 +81,14 @@
             background: linear-gradient(135deg, var(--card-gradient-1) 0%, var(--card-gradient-2) 100%);
             color: white;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-decoration: none;
         }
 
         .data-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            text-decoration: none;
+            color: white;
         }
 
         .data-card .card-content {
@@ -317,6 +320,17 @@
                                     Kelola <i class="fas fa-arrow-right"></i>
                                 </div>
                             </a>
+
+                            <a href="<?php echo e(route('admin.student_achievement.index')); ?>" class="data-card"
+                                style="--card-gradient-1: #8b5cf6; --card-gradient-2: #a855f7;">
+                                <div class="card-content">
+                                    <div class="card-title">Prestasi Mahasiswa</div>
+                                    <i class="fas fa-star card-icon"></i>
+                                </div>
+                                <div class="card-footer">
+                                    Kelola <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -324,6 +338,7 @@
         </div>
     </div>
 
+    <!-- Notification Toast -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="adminNotificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
@@ -336,6 +351,7 @@
             </div>
         </div>
     </div>
+
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>

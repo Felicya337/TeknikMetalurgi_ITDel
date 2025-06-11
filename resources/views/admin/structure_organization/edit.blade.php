@@ -23,11 +23,12 @@
     <div class="mb-3">
         <label for="name_edit_{{ $structure->id }}" class="form-label">Nama</label>
         <input type="text" class="form-control" id="name_edit_{{ $structure->id }}" name="name"
-            value="{{ old('name', $structure->name) }}" required>
+            value="{{ old('name', $structure->name) }}"> <!-- Removed required -->
         @error('name')
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
+
     <div class="mb-3">
         <label for="level_edit_{{ $structure->id }}" class="form-label">Level</label>
         <select class="form-control" id="level_edit_{{ $structure->id }}" name="level" required>

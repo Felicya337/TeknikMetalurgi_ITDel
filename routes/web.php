@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\LecturerController;
 use App\Http\Controllers\Admin\StructureOrganizationController;
 use App\Http\Controllers\Admin\StudentActivityController;
 use App\Http\Controllers\Admin\InquiryController;
+use App\Http\Controllers\Admin\StudentAchievementController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Frontend\NewsController as FrontendNewsController;
 use App\Http\Controllers\Frontend\AchievementController as FrontendAchievementController;
@@ -172,4 +173,13 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::get('/inquiries/{inquiry}', [InquiryController::class, 'show'])->name('inquiries.show');
     Route::post('/inquiries/{inquiry}/respond', [InquiryController::class, 'respond'])->name('inquiries.respond');
     Route::delete('/inquiries/{inquiry}', [InquiryController::class, 'destroy'])->name('inquiries.destroy');
+
+    //student achievement routes
+    Route::get('/student_achievements', [StudentAchievementController::class, 'index'])->name('student_achievement.index');
+    Route::get('/student_achievements/create', [StudentAchievementController::class, 'create'])->name('student_achievement.create');
+    Route::post('/student_achievements', [StudentAchievementController::class, 'store'])->name('student_achievement.store');
+    Route::get('/student_achievements/{id}', [StudentAchievementController::class, 'show'])->name('student_achievement.show');
+    Route::get('/student_achievements/{id}/edit', [StudentAchievementController::class, 'edit'])->name('student_achievement.edit');
+    Route::put('/student_achievements/{id}', [StudentAchievementController::class, 'update'])->name('student_achievement.update');
+    Route::delete('/student_achievements/{id}', [StudentAchievementController::class, 'destroy'])->name('student_achievement.destroy');
 });

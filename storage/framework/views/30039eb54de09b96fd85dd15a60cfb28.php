@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
@@ -62,9 +60,9 @@
 
         .img-thumbnail {
             border-radius: 8px;
-            max-width: 60px;
+            max-width: 80px;
             /* Disesuaikan agar tidak terlalu besar */
-            max-height: 45px;
+            max-height: 60px;
             /* Disesuaikan agar tidak terlalu besar */
             object-fit: cover;
         }
@@ -73,21 +71,6 @@
             padding: 6px 12px;
             border-radius: 12px;
             font-weight: 500;
-        }
-
-        .badge-kegiatan_mahasiswa {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .badge-kegiatan_prodi {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .badge-club_mahasiswa {
-            background-color: #ffc107;
-            color: black;
         }
 
         .modal-content {
@@ -110,6 +93,13 @@
             padding: 24px;
         }
 
+        .title-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
         .note-editor.note-frame {
             border-radius: 8px;
         }
@@ -125,8 +115,8 @@
             }
 
             .img-thumbnail {
-                max-width: 50px;
-                max-height: 35px;
+                max-width: 60px;
+                max-height: 45px;
             }
         }
     </style>
@@ -135,68 +125,94 @@
         <div class="row">
             <div class="col-md-10 offset-md-1">
                 <div class="mb-3">
-                    <h2 class="mb-0 fw-bold text-dark"> Kegiatan Mahasiswa</h2>
+                    <h2 class="mb-0 fw-bold text-dark">Prestasi Mahasiswa</h2>
                     <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal"
-                        data-bs-target="#modal-studentactivity">
-                        <i class="fas fa-plus me-2"></i>Tambah Kegiatan
+                        data-bs-target="#modal-achievement">
+                        <i class="fas fa-plus me-2"></i>Tambah Prestasi
                     </button>
                 </div>
 
                 <div class="card">
                     <div class="card-body p-4">
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered text-center" id="studentActivityTable">
+                            <table class="table table-striped table-bordered text-center" id="achievementTable">
                                 <thead>
                                     <tr>
-                                        {{-- KOLOM NOMOR DIHAPUS --}}
-                                        <th scope="col" style="width: 20%;">Jenis Kegiatan</th> {{-- Lebar disesuaikan --}}
-                                        <th scope="col" style="width: 20%;">Judul</th>
-                                        <th scope="col" style="width: 25%;">Deskripsi</th>
-                                        <th scope="col" style="width: 10%;">Gambar</th> {{-- Lebar disesuaikan --}}
-                                        <th scope="col" style="width: 10%;">Status</th>
+                                        
+                                        <th scope="col" style="width: 10%;">Jenis</th>
+                                        <th scope="col" style="width: 10%;">Tipe</th>
+                                        <th scope="col" style="width: 15%;">Judul</th>
+                                        <th scope="col" style="width: 20%;">Deskripsi</th>
+                                        <th scope="col" style="width: 10%;">Tanggal</th>
+                                        <th scope="col" style="width: 10%;">Gambar</th>
+                                        <th scope="col" style="width: 10%;">File</th>
+                                        <th scope="col" style="width: 10%;">Aktif</th>
                                         <th scope="col" style="width: 15%;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($activities as $activity)
+                                    <?php $__currentLoopData = $achievements; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $achievement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
-                                            {{-- KOLOM NOMOR DIHAPUS --}}
+                                            
                                             <td>
-                                                <span class="badge badge-{{ $activity->type }}">
-                                                    {{ $activity->getTypeLabel() }}
+                                                <span
+                                                    class="badge <?php echo e($achievement->type == 'publikasi' ? 'bg-primary' : ($achievement->type == 'penelitian' ? 'bg-info' : 'bg-success')); ?>">
+                                                    <?php echo e(ucfirst($achievement->type)); ?> 
                                                 </span>
                                             </td>
-                                            <td class="text-start">{{ $activity->title }}</td>
-                                            <td class="text-start">{!! Str::limit(strip_tags($activity->description), 70) !!}</td>
                                             <td>
-                                                @if ($activity->image)
-                                                    <img src="{{ asset('storage/' . $activity->image) }}"
-                                                        class="img-thumbnail" alt="Activity Image">
-                                                @else
-                                                    <span class="text-muted small">N/A</span>
-                                                @endif
+                                                <?php if($achievement->subtype): ?>
+                                                    <span class="badge bg-secondary"><?php echo e($achievement->subtype); ?></span>
+                                                <?php else: ?>
+                                                    <span class="text-muted">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="text-start"><?php echo e($achievement->title); ?></td>
+                                            <td class="text-start"><?php echo Str::limit(strip_tags($achievement->description), 70); ?></td> 
+                                            <td><?php echo e($achievement->date ? \Carbon\Carbon::parse($achievement->date)->format('d-m-Y') : '-'); ?>
+
                                             </td>
                                             <td>
-                                                <span class="badge {{ $activity->is_active ? 'bg-success' : 'bg-danger' }}">
-                                                    {{ $activity->is_active ? 'Aktif' : 'Nonaktif' }}
+                                                <?php if($achievement->image): ?>
+                                                    <img src="<?php echo e(asset('storage/' . $achievement->image)); ?>"
+                                                        class="img-thumbnail" alt="Achievement Image">
+                                                <?php else: ?>
+                                                    <span class="text-muted small">N/A</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <?php if($achievement->file): ?>
+                                                    <a href="<?php echo e(asset('storage/' . $achievement->file)); ?>" target="_blank"
+                                                        class="btn btn-sm btn-outline-info">
+                                                        <i class="fas fa-file-alt"></i> 
+                                                    </a>
+                                                <?php else: ?>
+                                                    <span class="text-muted small">N/A</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="badge <?php echo e($achievement->is_active ? 'bg-success' : 'bg-danger'); ?>">
+                                                    <?php echo e($achievement->is_active ? 'Aktif' : 'Nonaktif'); ?>
+
                                                 </span>
                                             </td>
                                             <td>
                                                 <div class="d-flex justify-content-center">
                                                     <button type="button" class="btn btn-info btn-sm mx-1"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#modal-read-studentactivity-{{ $activity->id }}">
+                                                        data-bs-target="#modal-read-achievement-<?php echo e($achievement->id); ?>">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
                                                     <button type="button" class="btn btn-warning btn-sm mx-1"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#modal-edit-studentactivity-{{ $activity->id }}">
+                                                        data-bs-target="#modal-edit-achievement-<?php echo e($achievement->id); ?>">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                     <form
-                                                        action="{{ route('admin.studentactivity.destroy', $activity->id) }}"
+                                                        action="<?php echo e(route('admin.achievement.destroy', $achievement->id)); ?>"
                                                         method="POST" class="d-inline">
-                                                        @csrf @method('DELETE')
+                                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                                                         <button type="submit"
                                                             class="btn btn-danger btn-sm mx-1 delete-btn">
                                                             <i class="fas fa-trash"></i>
@@ -206,54 +222,58 @@
                                             </td>
                                         </tr>
 
-                                        <!-- MODAL READ STUDENT ACTIVITY -->
-                                        <div class="modal fade" id="modal-read-studentactivity-{{ $activity->id }}"
+                                        <!-- MODAL READ ACHIEVEMENT -->
+                                        <div class="modal fade" id="modal-read-achievement-<?php echo e($achievement->id); ?>"
                                             tabindex="-1"
-                                            aria-labelledby="modal-read-studentactivityLabel-{{ $activity->id }}"
+                                            aria-labelledby="modal-read-achievementLabel-<?php echo e($achievement->id); ?>"
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Detail Kegiatan: {{ $activity->title }}
+                                                        <h5 class="modal-title">Detail Prestasi: <?php echo e($achievement->title); ?>
+
                                                         </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        @include('admin.studentactivity.read', [
-                                                            'activity' => $activity,
-                                                        ])
+                                                        <?php echo $__env->make('admin.achievement.read', [
+                                                            'achievement' => $achievement,
+                                                        ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <!-- MODAL EDIT STUDENT ACTIVITY -->
-                                        <div class="modal fade" id="modal-edit-studentactivity-{{ $activity->id }}"
+                                        <!-- MODAL EDIT ACHIEVEMENT -->
+                                        <div class="modal fade" id="modal-edit-achievement-<?php echo e($achievement->id); ?>"
                                             tabindex="-1"
-                                            aria-labelledby="modal-edit-studentactivityLabel-{{ $activity->id }}"
+                                            aria-labelledby="modal-edit-achievementLabel-<?php echo e($achievement->id); ?>"
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-lg modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Kegiatan: {{ $activity->title }}</h5>
+                                                        <h5 class="modal-title">Edit Prestasi: <?php echo e($achievement->title); ?>
+
+                                                        </h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        @include('admin.studentactivity.edit', [
-                                                            'activity' => $activity,
-                                                        ])
+                                                        <?php echo $__env->make('admin.achievement.edit', [
+                                                            'achievement' => $achievement,
+                                                        ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </tbody>
                             </table>
                         </div>
                         <div class="mt-3">
-                            {{ $activities->links() }}
+                            <?php echo e($achievements->links()); ?>
+
                         </div>
                     </div>
                 </div>
@@ -261,24 +281,24 @@
         </div>
     </div>
 
-    <!-- MODAL ADD STUDENT ACTIVITY -->
-    <div class="modal fade" id="modal-studentactivity" tabindex="-1" aria-labelledby="modal-studentactivityLabel"
+    <!-- MODAL ADD ACHIEVEMENT -->
+    <div class="modal fade" id="modal-achievement" tabindex="-1" aria-labelledby="modal-achievementLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah Kegiatan Mahasiswa</h5>
+                    <h5 class="modal-title">Tambah Prestasi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    @include('admin.studentactivity.create')
+                    <?php echo $__env->make('admin.achievement.create', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
@@ -289,11 +309,14 @@
     <script>
         $(document).ready(function() {
             // DataTables Initialization
-            $('#studentActivityTable').DataTable({
+            $('#achievementTable').DataTable({
                 responsive: true,
                 pageLength: 10,
                 searching: true,
                 lengthChange: true,
+                processing: true, // Tambahkan ini jika ada proses loading data
+                // serverSide: true, // Aktifkan jika Anda menggunakan server-side processing
+                // ajax: "", // Contoh jika pakai server-side
                 language: {
                     search: "Cari:",
                     lengthMenu: "Tampilkan _MENU_ entri per halaman",
@@ -307,68 +330,70 @@
                         next: "Berikutnya",
                         previous: "Sebelumnya"
                     },
-                    aria: {
-                        sortAscending: ": aktifkan untuk mengurutkan kolom naik",
-                        sortDescending: ": aktifkan untuk mengurutkan kolom turun"
-                    }
+                    processing: "Memuat..." // Pesan saat loading
                 },
-                dom: '<"top"<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>>rt<"bottom"<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>>',
-                // --- AWAL PERUBAHAN PADA COLUMNS ---
-                // Karena kolom "No" dihilangkan, konfigurasi columns disesuaikan. Sekarang ada 6 kolom.
+                dom: '<"top"<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>>rt<"bottom"<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>>', // Dom yang lebih standar
+                // --- AWAL PERUBAHAN ---
+                // Karena kolom nomor dihilangkan dari HTML, konfigurasi 'columns' juga disesuaikan
+                // Sekarang ada 9 kolom yang terlihat di HTML
                 columns: [
-                    null, // Kolom 0: Jenis Kegiatan (sebelumnya indeks 1)
-                    null, // Kolom 1: Judul
-                    { // Kolom 2: Deskripsi
+                    null, // Kolom 0: Jenis (Indeks asli 1, sekarang 0)
+                    null, // Kolom 1: Tipe
+                    null, // Kolom 2: Judul
+                    { // Kolom 3: Deskripsi
                         render: function(data, type, row) {
                             if (type === 'display') {
-                                return data; // Data sudah HTML dari Blade
+                                return data;
                             }
-                            // Untuk sorting/filtering, ambil teksnya
                             var tempDiv = document.createElement("div");
                             tempDiv.innerHTML = data;
                             return tempDiv.textContent || tempDiv.innerText || "";
                         }
                     },
+                    null, // Kolom 4: Tanggal
                     {
                         orderable: false,
                         searchable: false
-                    }, // Kolom 3: Gambar
+                    }, // Kolom 5: Gambar
+                    {
+                        orderable: false,
+                        searchable: false
+                    }, // Kolom 6: File
                     {
                         orderable: false
-                    }, // Kolom 4: Status
+                    }, // Kolom 7: Aktif
                     {
                         orderable: false,
                         searchable: false
-                    } // Kolom 5: Aksi
+                    } // Kolom 8: Aksi
                 ],
-                // columnDefs bisa disesuaikan atau dikosongkan jika pengaturan default sudah cukup
-                columnDefs: [
-                    // Contoh: jika ingin kolom Jenis Kegiatan juga tidak bisa di-sort
-                    // { targets: 0, orderable: false },
-                    {
-                        targets: [3, 5],
+                // columnDefs tidak lagi diperlukan untuk render deskripsi karena sudah di 'columns'
+                // Anda bisa menambahkan columnDefs lain jika perlu
+                // Contoh:
+                columnDefs: [{
+                        targets: [5, 6, 8],
                         orderable: false,
                         searchable: false
-                    }, // Gambar, Aksi
+                    }, // Gambar, File, Aksi
                     {
-                        targets: [4],
+                        targets: [7],
                         orderable: false
-                    } // Status
+                    } // Status Aktif mungkin tidak perlu searchable
                 ],
+                // --- AKHIR PERUBAHAN ---
                 order: [], // Tidak ada pengurutan awal default
-                // --- AKHIR PERUBAHAN PADA COLUMNS ---
                 initComplete: function() {
+                    // Menyesuaikan kelas form control Bootstrap pada elemen DataTables
                     $('.dataTables_length select').addClass('form-select form-select-sm');
                     $('.dataTables_filter input').addClass('form-control form-control-sm');
                 }
             });
 
             // Initialize Summernote for Create Form in Modal
-            $('#modal-studentactivity').on('shown.bs.modal', function() {
-                // Pastikan elemen #editor-create ada sebelum inisialisasi
-                if ($('#editor-create').length && !$('#editor-create').data('summernote')) {
+            $('#modal-achievement').on('shown.bs.modal', function() {
+                if (!$('#editor-create').data('summernote')) { // Cek apakah sudah diinisialisasi
                     $('#editor-create').summernote({
-                        height: 250,
+                        height: 250, // Tinggi disesuaikan
                         fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
                             'Courier New'
                         ],
@@ -390,6 +415,7 @@
                                 $('#description-create').val(contents);
                             },
                             onInit: function() {
+                                // Set initial content if any (e.g. from old input after validation error)
                                 var oldDescription = $('#description-create').val();
                                 if (oldDescription) {
                                     $('#editor-create').summernote('code', oldDescription);
@@ -399,20 +425,21 @@
                     });
                 }
             }).on('hidden.bs.modal', function() {
-                if ($('#editor-create').length && $('#editor-create').data('summernote')) {
+                // Opsional: Hancurkan instance Summernote saat modal ditutup untuk menghindari masalah
+                if ($('#editor-create').data('summernote')) {
                     $('#editor-create').summernote('destroy');
                 }
             });
 
 
             // Initialize Summernote for Edit Forms when modals are shown
-            $('div[id^="modal-edit-studentactivity-"]').on('shown.bs.modal', function() {
+            $('div[id^="modal-edit-achievement-"]').on('shown.bs.modal', function() {
                 var modalId = $(this).attr('id');
-                var activityId = modalId.replace('modal-edit-studentactivity-', '');
-                var editorId = 'editor-edit-' + activityId;
-                var descriptionInputId = 'description-edit-' + activityId;
+                var achievementId = modalId.replace('modal-edit-achievement-', '');
+                var editorId = 'editor-edit-' + achievementId;
+                var descriptionInputId = 'description-edit-' + achievementId;
 
-                if ($('#' + editorId).length && !$('#' + editorId).data('summernote')) {
+                if (!$('#' + editorId).data('summernote')) { // Cek apakah sudah diinisialisasi
                     $('#' + editorId).summernote({
                         height: 250,
                         fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
@@ -437,78 +464,80 @@
                             }
                         }
                     });
+                    // Set initial content from hidden input
                     var description = $('#' + descriptionInputId).val();
                     $('#' + editorId).summernote('code', description);
                 }
             }).on('hidden.bs.modal', function() {
                 var modalId = $(this).attr('id');
-                var activityId = modalId.replace('modal-edit-studentactivity-', '');
-                var editorId = 'editor-edit-' + activityId;
-                if ($('#' + editorId).length && $('#' + editorId).data('summernote')) {
+                var achievementId = modalId.replace('modal-edit-achievement-', '');
+                var editorId = 'editor-edit-' + achievementId;
+                // Opsional: Hancurkan instance Summernote saat modal ditutup
+                if ($('#' + editorId).data('summernote')) {
                     $('#' + editorId).summernote('destroy');
                 }
             });
 
-
             // SweetAlert2 for Notifications
-            @if (session('success'))
+            <?php if(session('success')): ?>
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil!',
-                    text: '{{ session('success') }}',
+                    text: '<?php echo e(session('success')); ?>',
                     timer: 2500,
                     showConfirmButton: false
                 });
-            @endif
+            <?php endif; ?>
 
-            @if (session('error'))
+            <?php if(session('error')): ?>
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: '{{ session('error') }}',
+                    text: '<?php echo e(session('error')); ?>',
                     timer: 2500,
                     showConfirmButton: false
                 });
-            @endif
+            <?php endif; ?>
 
-            @if ($errors->any())
-                let errorMsg = "<ul class='text-start'>"; // text-start untuk alignment
-                @foreach ($errors->all() as $error)
-                    errorMsg += "<li>{{ $error }}</li>";
-                @endforeach
-                errorMsg += "</ul>";
+            // SweetAlert2 for Validation Errors (jika ada dari $errors)
+            <?php if($errors->any()): ?>
+                let errorMessages = '';
+                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    errorMessages += `<li><?php echo e($error); ?></li>`;
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops, terjadi kesalahan!',
-                    html: errorMsg
+                    html: `<ul class="text-start">${errorMessages}</ul>`,
                 });
 
                 // Jika error terjadi pada form tambah, buka modal tambah
-                @if (old('form_type') == 'create_student_activity' || (isset($errors) && $errors->hasBag('createStudentActivity')))
-                    $('#modal-studentactivity').modal('show');
-                @endif
+                <?php if(old('form_type') == 'create_achievement' || (isset($errors) && $errors->hasBag('createAchievement'))): ?>
+                    $('#modal-achievement').modal('show');
+                <?php endif; ?>
 
                 // Jika error terjadi pada form edit, buka modal edit yang sesuai
-                @if (old('form_type') == 'edit_student_activity' ||
-                        (isset($errors) && $errors->hasBag('editStudentActivity' . old('activity_id_error'))))
-                    var activityIdError = "{{ old('activity_id_error') }}";
-                    if (activityIdError) {
-                        $('#modal-edit-studentactivity-' + activityIdError).modal('show');
+                <?php if(old('form_type') == 'edit_achievement' ||
+                        (isset($errors) && $errors->hasBag('editAchievement' . old('achievement_id_error')))): ?>
+                    var achievementIdError = "<?php echo e(old('achievement_id_error')); ?>";
+                    if (achievementIdError) {
+                        $('#modal-edit-achievement-' + achievementIdError).modal('show');
                     }
-                @endif
-            @endif
+                <?php endif; ?>
+            <?php endif; ?>
+
 
             // SweetAlert2 for Delete Confirmation
-            $(document).on('click', '.delete-btn', function(e) {
+            $(document).on('click', '.delete-btn', function(e) { // Gunakan event delegation
                 e.preventDefault();
                 const form = $(this).closest('form');
                 Swal.fire({
-                    title: 'Hapus Kegiatan Mahasiswa?',
+                    title: 'Hapus Prestasi?',
                     text: "Tindakan ini tidak dapat dibatalkan!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
+                    cancelButtonColor: '#6c757d', // Warna cancel diubah
                     confirmButtonText: '<i class="fas fa-trash-alt"></i> Ya, Hapus!',
                     cancelButtonText: '<i class="fas fa-times"></i> Batal'
                 }).then((result) => {
@@ -519,4 +548,6 @@
             });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/admin/achievement/index.blade.php ENDPATH**/ ?>

@@ -130,7 +130,7 @@
                                 <tbody>
                                     <?php $__currentLoopData = $structures; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $structure): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr data-structure-id="<?php echo e($structure->id); ?>">
-                                            <td><?php echo e($structure->name); ?></td>
+                                            <td><?php echo e($structure->name ?? '-'); ?></td>
                                             <td><?php echo e($structure->title); ?></td>
                                             <td><?php echo e($structure->degree ?? '-'); ?></td>
                                             <td><?php echo e($structure->level); ?></td>

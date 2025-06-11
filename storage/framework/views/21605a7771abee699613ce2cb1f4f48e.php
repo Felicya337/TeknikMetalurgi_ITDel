@@ -33,7 +33,8 @@ unset($__errorArgs, $__bag); ?>
 
     <div class="mb-3">
         <label for="name" class="form-label">Nama</label>
-        <input type="text" class="form-control" id="name" name="name" value="<?php echo e(old('name')); ?>" required>
+        <input type="text" class="form-control" id="name" name="name" value="<?php echo e(old('name')); ?>">
+        <!-- Removed required -->
         <?php $__errorArgs = ['name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :

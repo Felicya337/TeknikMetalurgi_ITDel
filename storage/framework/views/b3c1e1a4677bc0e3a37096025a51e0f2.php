@@ -402,7 +402,9 @@
                         <?php endif; ?>
 
                         <div class="org-title"><?php echo e($org->title); ?></div>
-                        <div class="org-name"><?php echo e($org->name); ?></div>
+                        <?php if($org->name): ?>
+                            <div class="org-name"><?php echo e($org->name); ?></div>
+                        <?php endif; ?>
                         <?php if($org->degree): ?>
                             <div class="org-degree"><?php echo e($org->degree); ?></div>
                         <?php endif; ?>

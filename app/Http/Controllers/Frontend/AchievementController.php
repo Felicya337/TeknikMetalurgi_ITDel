@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Achievement;
+use App\Models\StudentAchievement; // Import model StudentAchievement
 
 class AchievementController extends Controller
 {
-    private $perPage = 6; // Jumlah item per halaman
+    private $perPage = 10; // Jumlah item per halaman
 
     public function index()
     {
@@ -37,8 +38,8 @@ class AchievementController extends Controller
 
     public function achievement()
     {
-        $achievements = Achievement::where('type', 'pencapaian')
-            ->active()
+        // Gunakan StudentAchievement model untuk prestasi mahasiswa
+        $achievements = StudentAchievement::active()
             ->latest()
             ->paginate($this->perPage);
 
@@ -47,7 +48,11 @@ class AchievementController extends Controller
 
     public function allAchievements()
     {
-        $achievements = Achievement::active()->latest()->paginate($this->perPage);
+        // Gunakan StudentAchievement model untuk semua prestasi
+        $achievements = StudentAchievement::active()
+            ->latest()
+            ->paginate($this->perPage);
+
         return view('user.achievement.index', compact('achievements'));
     }
 }

@@ -119,6 +119,27 @@
             margin: 0;
         }
 
+        .publication-description * {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .publication-description img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .publication-description p {
+            margin: 0 0 10px 0;
+        }
+
+        .publication-description ul,
+        .publication-description ol {
+            padding-left: 20px;
+            margin: 0 0 10px 0;
+        }
+
         /* File Action Links Styles */
         .file-actions {
             display: flex;
@@ -307,25 +328,22 @@
                                     @if ($pub->file)
                                         <div class="publication-meta-item">
                                             <div class="file-actions">
-
                                                 <a href="{{ asset('storage/' . $pub->file) }}"
                                                     class="file-link download-link" download title="Download Document">
                                                     <i class="bi bi-download"></i>
                                                     Download
                                                 </a>
-
                                                 <a href="{{ asset('storage/' . $pub->file) }}" class="file-link view-link"
                                                     target="_blank" title="View Document">
                                                     <i class="bi bi-eye"></i>
                                                     View
                                                 </a>
-
                                             </div>
                                         </div>
                                     @endif
                                 </div>
 
-                                <p class="publication-description">{{ $pub->description }}</p>
+                                <div class="publication-description">{!! $pub->description !!}</div>
                             </div>
                         </div>
                     </div>
