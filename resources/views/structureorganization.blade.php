@@ -4,7 +4,7 @@
     <style>
         /* Base Styles */
         .org-structure {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 15px auto;
             max-width: 100%;
             width: 95%;

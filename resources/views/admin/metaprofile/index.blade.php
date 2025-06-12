@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: #f4f6f9;
         }
 
@@ -329,8 +329,8 @@
             // Initialize Summernote for Create Form
             $('#editor-create').summernote({
                 height: 300,
-                fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
-                fontNamesIgnoreCheck: ['Poppins'],
+                fontNames: ['Inter', 'Arial', 'Helvetica', 'Times New Roman', 'Courier New'],
+                fontNamesIgnoreCheck: ['Inter'],
                 fontSizes: ['12', '14', '16', '20', '24', '32'],
                 toolbar: [
                     ['style', ['style']],
@@ -362,10 +362,10 @@
                 if (!$('#' + editorId).hasClass('note-editor')) {
                     $('#' + editorId).summernote({
                         height: 300,
-                        fontNames: ['Poppins', 'Arial', 'Helvetica', 'Times New Roman',
+                        fontNames: ['Inter', 'Arial', 'Helvetica', 'Times New Roman',
                             'Courier New'
                         ],
-                        fontNamesIgnoreCheck: ['Poppins'],
+                        fontNamesIgnoreCheck: ['Inter'],
                         fontSizes: ['12', '14', '16', '20', '24', '32'],
                         toolbar: [
                             ['style', ['style']],

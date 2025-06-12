@@ -14,7 +14,7 @@
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
 
     <!-- Core CSS -->
     <link rel="stylesheet" href="<?php echo e(asset('adminlte/plugins/fontawesome-free/css/all.min.css')); ?>">
@@ -84,7 +84,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <?php if(isset($subtitle)): ?>
+                            <?php if (isset($subtitle)): ?>
                                 <p class="text-muted mt-1"><?php echo $__env->yieldContent('subtitle'); ?></p>
                             <?php endif; ?>
                         </div>
@@ -158,8 +158,8 @@
             $('.summernote').summernote({
                 height: 200,
                 placeholder: 'Masukkan deskripsi di sini...',
-                fontNames: ['Poppins', 'Arial', 'Courier New', 'Times New Roman', 'Sans Serif'],
-                fontNamesIgnoreCheck: ['Poppins'],
+                fontNames: ['Inter', 'Arial', 'Courier New', 'Times New Roman', 'Sans Serif'],
+                fontNamesIgnoreCheck: ['Inter'],
                 toolbar: [
                     ['style', ['bold', 'italic', 'underline', 'clear']],
                     ['font', ['strikethrough', 'superscript', 'subscript']],

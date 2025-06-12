@@ -17,7 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body id="top">
@@ -157,8 +157,11 @@
     <div class="news-container" id="news-section">
         <h3 class="my-4 mb-5 text-center"><strong>BERITA TERBARU</strong></h3>
         <div class="row justify-content-center">
-            <?php if(isset($news) && $news->count() > 0): ?>
-                <?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php if (isset($news) && $news->count() > 0): ?>
+                <?php $__currentLoopData = $news;
+                $__env->addLoop($__currentLoopData);
+                foreach ($__currentLoopData as $item): $__env->incrementLoopIndices();
+                    $loop = $__env->getLastLoop(); ?>
                     <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
                         <div class="news-card">
                             <div class="news-image-container">
@@ -171,7 +174,9 @@
                             </div>
                         </div>
                     </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endforeach;
+                $__env->popLoop();
+                $loop = $__env->getLastLoop(); ?>
             <?php else: ?>
                 <p class="text-center">Belum ada berita.</p>
             <?php endif; ?>
@@ -201,7 +206,10 @@
                 <div class="testimonial-carousel-container">
                     <div class="testimonial-carousel" id="testimonialCarousel">
                         <!-- Testimonial cards will be populated by PHP/Laravel -->
-                        <?php $__currentLoopData = $testimonials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $testimonial): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $testimonials;
+                        $__env->addLoop($__currentLoopData);
+                        foreach ($__currentLoopData as $testimonial): $__env->incrementLoopIndices();
+                            $loop = $__env->getLastLoop(); ?>
                             <div class="testimonial-card">
                                 <div class="testimonial-image-wrapper">
                                     <img src="<?php echo e($testimonial->image ? asset('storage/' . $testimonial->image) : 'https://via.placeholder.com/150'); ?>"
@@ -213,7 +221,9 @@
                                 </div>
                                 <blockquote class="testimonial-content mt-3"><?php echo $testimonial->content; ?></blockquote>
                             </div>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endforeach;
+                        $__env->popLoop();
+                        $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
@@ -224,7 +234,7 @@
     <section class="kerjasama-section" id="kerjasama-section">
         <h3 class="section-title"><strong>KERJA SAMA</strong></h3>
 
-        <?php if(count($collaborates) > 0): ?>
+        <?php if (count($collaborates) > 0): ?>
             <div class="slider-container">
                 <!-- Navigation Arrows - OUTSIDE carousel container -->
                 <button class="nav-arrow left" onclick="moveKerjasama(-1)">
@@ -239,18 +249,24 @@
                 </button>
                 <div class="kerjasama-container">
                     <?php
-                        // Split collaborations into chunks of 3 for each row
-                        $chunkedCollaborations = $collaborates->chunk(3);
+                    // Split collaborations into chunks of 3 for each row
+                    $chunkedCollaborations = $collaborates->chunk(3);
                     ?>
 
-                    <?php $__currentLoopData = $chunkedCollaborations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php $__currentLoopData = $chunkedCollaborations;
+                    $__env->addLoop($__currentLoopData);
+                    foreach ($__currentLoopData as $row): $__env->incrementLoopIndices();
+                        $loop = $__env->getLastLoop(); ?>
                         <div class="kerjasama-row">
-                            <?php $__currentLoopData = $row; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php $__currentLoopData = $row;
+                            $__env->addLoop($__currentLoopData);
+                            foreach ($__currentLoopData as $data): $__env->incrementLoopIndices();
+                                $loop = $__env->getLastLoop(); ?>
                                 <div class="kerjasama-item" data-title="<?php echo e(addslashes($data->institution_name)); ?>"
                                     data-company-profile="<?php echo e(json_encode($data->company_profile)); ?>"
                                     data-description="<?php echo e(json_encode($data->institution_description)); ?>"
                                     onclick="showCollaborationModal(this.getAttribute('data-title'), this.getAttribute('data-company-profile'), this.getAttribute('data-description'))">
-                                    <?php if($data->logo): ?>
+                                    <?php if ($data->logo): ?>
                                         <img src="<?php echo e(asset('storage/' . $data->logo)); ?>"
                                             alt="logo <?php echo e($data->institution_name); ?>" class="institution-logo"
                                             data-bs-toggle="tooltip" data-bs-placement="top"
@@ -259,9 +275,13 @@
                                     <span class="tanggal">Tanggal Kerjasama:
                                         <?php echo e(\Carbon\Carbon::parse($data->date)->format('d F Y')); ?></span>
                                 </div>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endforeach;
+                            $__env->popLoop();
+                            $loop = $__env->getLastLoop(); ?>
                         </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php endforeach;
+                    $__env->popLoop();
+                    $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
         <?php else: ?>

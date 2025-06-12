@@ -1,10 +1,10 @@
 /* ============ IMPORT FONT ============ */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ============ GLOBAL STYLES ============ */
 body {
     background-color: #f4f7f6;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -20,7 +20,7 @@ body {
     width: 100% !important;
     z-index: 999 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
 
@@ -50,7 +50,7 @@ body {
     align-items: center;
     background-color: #fff;
     padding: 10px 20px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.9rem;
     color: #666;
     margin: 90px auto 40px auto;
@@ -161,7 +161,7 @@ body {
     width: 100%;
     z-index: 999;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 /* Container scales for all screen sizes */
@@ -1004,7 +1004,7 @@ body {
 }
 
 .description-text {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.5rem;
     /* diperbesar dari 1.05rem */
     line-height: 2;
@@ -1183,10 +1183,10 @@ body {
 }
 
 /* ============ GLOBAL STYLES ============ */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: #fff;
     margin: 0;
     padding: 0;
@@ -1211,7 +1211,7 @@ body {
 }
 
 /* Import Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ============ NEWS CARD GRID ============ */
 .news-container {
@@ -1227,7 +1227,7 @@ body {
     margin-bottom: 30px;
     font-size: 2rem;
     font-weight: bold;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 .row {
@@ -1340,7 +1340,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     line-height: 1.4;
     box-sizing: border-box;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
@@ -1955,7 +1955,7 @@ body {
     background-color: #000;
     color: #fff;
     padding: 30px 0 0;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 /* Footer Container */
@@ -2237,7 +2237,7 @@ body {
     background-color: #f8fafc;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     overflow: hidden;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 #chatModal .modal-header,
@@ -2584,9 +2584,9 @@ textarea.form-control {
 }
 
 /* Import Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 /* Import Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ============ ALL NEWS PAGE ============ */
 .all-news-page {
@@ -2594,7 +2594,7 @@ textarea.form-control {
     max-width: 1200px;
     margin: auto;
     background-color: #ffffff;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     padding: 20px;
 }
 
@@ -2763,7 +2763,7 @@ textarea.form-control {
     border-radius: 0;
     box-shadow: none;
     height: fit-content;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 .sidebar-area:hover {
@@ -2806,7 +2806,7 @@ textarea.form-control {
     line-height: 1.4;
     display: block;
     transition: color 0.3s ease;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     margin-bottom: 8px;
 }
 
@@ -2905,7 +2905,7 @@ textarea.form-control {
 }
 
 .news-title-overlay h1 {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.4rem;
     font-weight: 700;
     color: #007bff;

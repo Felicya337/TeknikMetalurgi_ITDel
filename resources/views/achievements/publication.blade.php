@@ -4,7 +4,7 @@
     <style>
         /* Publication Page Styles */
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: #ffffff;
             margin: 0;
             padding: 0;

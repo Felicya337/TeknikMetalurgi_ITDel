@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Auth\Passwords\CanResetPassword;
+// Import Notifikasi yang baru dibuat
+use App\Notifications\AdminResetPasswordNotification;
 
-class Admin extends Authenticatable
+class Admin extends Authenticatable implements CanResetPasswordContract
 {
-    use Notifiable;
-
-    protected $table = 'admins';
-    protected $guard = 'admin'; // Explicitly set guard to admin
+    use Notifiable, CanResetPassword;
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'is_active'
+        'is_active',
     ];
 
     protected $hidden = [
@@ -26,43 +26,20 @@ class Admin extends Authenticatable
     ];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_active' => 'boolean',
     ];
 
-    public function setPasswordAttribute($value)
+    /**
+     * Mengirim notifikasi reset password.
+     * Ini akan menimpa method default agar menggunakan Notifikasi kustom kita.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
     {
-        if ($value) {
-            $this->attributes['password'] = Hash::make($value);
-        }
-    }
-
-    public function setEmailAttribute($value)
-    {
-        $this->attributes['email'] = strtolower($value);
-    }
-
-    public function newsCreated()
-    {
-        return $this->hasMany(News::class, 'created_by');
-    }
-
-    public function newsUpdated()
-    {
-        return $this->hasMany(News::class, 'updated_by');
-    }
-
-    public function metaProfilesCreated()
-    {
-        return $this->hasMany(MetaProfile::class, 'created_by');
-    }
-
-    public function metaProfilesUpdated()
-    {
-        return $this->hasMany(MetaProfile::class, 'updated_by');
-    }
-
-    public static function findByEmail($email)
-    {
-        return static::where('email', strtolower($email))->first();
+        $this->notify(new AdminResetPasswordNotification($token));
     }
 }
