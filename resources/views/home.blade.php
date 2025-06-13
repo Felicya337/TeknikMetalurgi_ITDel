@@ -221,12 +221,13 @@
     </section>
 
     <!-- Collaboration Section -->
+    <!-- Collaboration Section -->
     <section class="kerjasama-section" id="kerjasama-section">
         <h3 class="section-title"><strong>KERJA SAMA</strong></h3>
 
         @if (count($collaborates) > 0)
             <div class="slider-container">
-                <!-- Navigation Arrows - OUTSIDE carousel container -->
+                <!-- Navigation Arrows (ditempatkan oleh JS) -->
                 <button class="nav-arrow left" onclick="moveKerjasama(-1)">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <polygon points="15,6 9,12 15,18" fill="#000000" />
@@ -237,41 +238,61 @@
                         <polygon points="9,6 15,12 9,18" fill="#000000" />
                     </svg>
                 </button>
-                <div class="kerjasama-container">
-                    @php
-                        // Split collaborations into chunks of 3 for each row
-                        $chunkedCollaborations = $collaborates->chunk(3);
-                    @endphp
 
-                    @foreach ($chunkedCollaborations as $row)
-                        <div class="kerjasama-row">
-                            @foreach ($row as $data)
-                                <div class="kerjasama-item" data-title="{{ addslashes($data->institution_name) }}"
-                                    data-company-profile="{{ json_encode($data->company_profile) }}"
-                                    data-description="{{ json_encode($data->institution_description) }}"
-                                    onclick="showCollaborationModal(this.getAttribute('data-title'), this.getAttribute('data-company-profile'), this.getAttribute('data-description'))">
-                                    @if ($data->logo)
-                                        <img src="{{ asset('storage/' . $data->logo) }}"
-                                            alt="logo {{ $data->institution_name }}" class="institution-logo"
-                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Klik untuk detail">
-                                    @endif
-                                    <span class="tanggal">Tanggal Kerjasama:
-                                        {{ \Carbon\Carbon::parse($data->date)->format('d F Y') }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endforeach
+                <div class="kerjasama-slider-wrapper"> <!-- Wrapper baru untuk overflow -->
+                    <div class="kerjasama-slider"> <!-- Ini yang akan kita geser -->
+                        @php
+                            // Kelompokkan data menjadi "halaman", masing-masing 6 item
+                            $pages = $collaborates->chunk(6);
+                        @endphp
+
+                        @foreach ($pages as $pageItems)
+                            <div class="kerjasama-page">
+                                @php
+                                    // Bagi 6 item menjadi 2 baris, masing-masing 3 item
+                                    $rows = $pageItems->chunk(3);
+                                @endphp
+
+                                @foreach ($rows as $rowItems)
+                                    <div class="kerjasama-row">
+                                        @foreach ($rowItems as $data)
+                                            <div class="kerjasama-item"
+                                                data-title="{{ addslashes($data->institution_name) }}"
+                                                data-company-profile="{{ json_encode($data->company_profile) }}"
+                                                data-description="{{ json_encode($data->institution_description) }}"
+                                                onclick="showCollaborationModal(this.getAttribute('data-title'), this.getAttribute('data-company-profile'), this.getAttribute('data-description'))">
+
+                                                @if ($data->logo)
+                                                    <img src="{{ asset('storage/' . $data->logo) }}"
+                                                        alt="logo {{ $data->institution_name }}"
+                                                        class="institution-logo">
+                                                @else
+                                                    <div class="logo-placeholder">Logo Tidak Tersedia</div>
+                                                @endif
+
+                                                <span class="tanggal">Tanggal Kerjasama:
+                                                    {{ \Carbon\Carbon::parse($data->date)->format('d F Y') }}</span>
+                                            </div>
+                                        @endforeach
+                                        {{-- Placeholder untuk mengisi baris yang tidak penuh --}}
+                                        @for ($i = count($rowItems); $i < 3; $i++)
+                                            <div class="kerjasama-item-placeholder"></div>
+                                        @endfor
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         @else
             <div class="no-collaborations">
-                <p>Tidak ada kerjasama</p>
+                <p>Tidak ada data kerjasama yang ditampilkan.</p>
             </div>
         @endif
     </section>
 
-    <!-- Modal for Collaboration Details -->
+    <!-- Modal for Collaboration Details (Kode Modal Anda tidak perlu diubah) -->
     <div class="modal fade" id="collaborationModal" tabindex="-1" aria-labelledby="collaborationModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">

@@ -157,11 +157,8 @@
     <div class="news-container" id="news-section">
         <h3 class="my-4 mb-5 text-center"><strong>BERITA TERBARU</strong></h3>
         <div class="row justify-content-center">
-            <?php if (isset($news) && $news->count() > 0): ?>
-                <?php $__currentLoopData = $news;
-                $__env->addLoop($__currentLoopData);
-                foreach ($__currentLoopData as $item): $__env->incrementLoopIndices();
-                    $loop = $__env->getLastLoop(); ?>
+            <?php if(isset($news) && $news->count() > 0): ?>
+                <?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
                         <div class="news-card">
                             <div class="news-image-container">
@@ -174,9 +171,7 @@
                             </div>
                         </div>
                     </div>
-                <?php endforeach;
-                $__env->popLoop();
-                $loop = $__env->getLastLoop(); ?>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             <?php else: ?>
                 <p class="text-center">Belum ada berita.</p>
             <?php endif; ?>
@@ -206,10 +201,7 @@
                 <div class="testimonial-carousel-container">
                     <div class="testimonial-carousel" id="testimonialCarousel">
                         <!-- Testimonial cards will be populated by PHP/Laravel -->
-                        <?php $__currentLoopData = $testimonials;
-                        $__env->addLoop($__currentLoopData);
-                        foreach ($__currentLoopData as $testimonial): $__env->incrementLoopIndices();
-                            $loop = $__env->getLastLoop(); ?>
+                        <?php $__currentLoopData = $testimonials; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $testimonial): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="testimonial-card">
                                 <div class="testimonial-image-wrapper">
                                     <img src="<?php echo e($testimonial->image ? asset('storage/' . $testimonial->image) : 'https://via.placeholder.com/150'); ?>"
@@ -221,9 +213,7 @@
                                 </div>
                                 <blockquote class="testimonial-content mt-3"><?php echo $testimonial->content; ?></blockquote>
                             </div>
-                        <?php endforeach;
-                        $__env->popLoop();
-                        $loop = $__env->getLastLoop(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
             </div>
@@ -231,12 +221,13 @@
     </section>
 
     <!-- Collaboration Section -->
+    <!-- Collaboration Section -->
     <section class="kerjasama-section" id="kerjasama-section">
         <h3 class="section-title"><strong>KERJA SAMA</strong></h3>
 
-        <?php if (count($collaborates) > 0): ?>
+        <?php if(count($collaborates) > 0): ?>
             <div class="slider-container">
-                <!-- Navigation Arrows - OUTSIDE carousel container -->
+                <!-- Navigation Arrows (ditempatkan oleh JS) -->
                 <button class="nav-arrow left" onclick="moveKerjasama(-1)">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <polygon points="15,6 9,12 15,18" fill="#000000" />
@@ -247,51 +238,61 @@
                         <polygon points="9,6 15,12 9,18" fill="#000000" />
                     </svg>
                 </button>
-                <div class="kerjasama-container">
-                    <?php
-                    // Split collaborations into chunks of 3 for each row
-                    $chunkedCollaborations = $collaborates->chunk(3);
-                    ?>
 
-                    <?php $__currentLoopData = $chunkedCollaborations;
-                    $__env->addLoop($__currentLoopData);
-                    foreach ($__currentLoopData as $row): $__env->incrementLoopIndices();
-                        $loop = $__env->getLastLoop(); ?>
-                        <div class="kerjasama-row">
-                            <?php $__currentLoopData = $row;
-                            $__env->addLoop($__currentLoopData);
-                            foreach ($__currentLoopData as $data): $__env->incrementLoopIndices();
-                                $loop = $__env->getLastLoop(); ?>
-                                <div class="kerjasama-item" data-title="<?php echo e(addslashes($data->institution_name)); ?>"
-                                    data-company-profile="<?php echo e(json_encode($data->company_profile)); ?>"
-                                    data-description="<?php echo e(json_encode($data->institution_description)); ?>"
-                                    onclick="showCollaborationModal(this.getAttribute('data-title'), this.getAttribute('data-company-profile'), this.getAttribute('data-description'))">
-                                    <?php if ($data->logo): ?>
-                                        <img src="<?php echo e(asset('storage/' . $data->logo)); ?>"
-                                            alt="logo <?php echo e($data->institution_name); ?>" class="institution-logo"
-                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                            title="Klik untuk detail">
-                                    <?php endif; ?>
-                                    <span class="tanggal">Tanggal Kerjasama:
-                                        <?php echo e(\Carbon\Carbon::parse($data->date)->format('d F Y')); ?></span>
-                                </div>
-                            <?php endforeach;
-                            $__env->popLoop();
-                            $loop = $__env->getLastLoop(); ?>
-                        </div>
-                    <?php endforeach;
-                    $__env->popLoop();
-                    $loop = $__env->getLastLoop(); ?>
+                <div class="kerjasama-slider-wrapper"> <!-- Wrapper baru untuk overflow -->
+                    <div class="kerjasama-slider"> <!-- Ini yang akan kita geser -->
+                        <?php
+                            // Kelompokkan data menjadi "halaman", masing-masing 6 item
+                            $pages = $collaborates->chunk(6);
+                        ?>
+
+                        <?php $__currentLoopData = $pages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pageItems): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <div class="kerjasama-page">
+                                <?php
+                                    // Bagi 6 item menjadi 2 baris, masing-masing 3 item
+                                    $rows = $pageItems->chunk(3);
+                                ?>
+
+                                <?php $__currentLoopData = $rows; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $rowItems): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="kerjasama-row">
+                                        <?php $__currentLoopData = $rowItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <div class="kerjasama-item"
+                                                data-title="<?php echo e(addslashes($data->institution_name)); ?>"
+                                                data-company-profile="<?php echo e(json_encode($data->company_profile)); ?>"
+                                                data-description="<?php echo e(json_encode($data->institution_description)); ?>"
+                                                onclick="showCollaborationModal(this.getAttribute('data-title'), this.getAttribute('data-company-profile'), this.getAttribute('data-description'))">
+
+                                                <?php if($data->logo): ?>
+                                                    <img src="<?php echo e(asset('storage/' . $data->logo)); ?>"
+                                                        alt="logo <?php echo e($data->institution_name); ?>"
+                                                        class="institution-logo">
+                                                <?php else: ?>
+                                                    <div class="logo-placeholder">Logo Tidak Tersedia</div>
+                                                <?php endif; ?>
+
+                                                <span class="tanggal">Tanggal Kerjasama:
+                                                    <?php echo e(\Carbon\Carbon::parse($data->date)->format('d F Y')); ?></span>
+                                            </div>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        
+                                        <?php for($i = count($rowItems); $i < 3; $i++): ?>
+                                            <div class="kerjasama-item-placeholder"></div>
+                                        <?php endfor; ?>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
                 </div>
             </div>
         <?php else: ?>
             <div class="no-collaborations">
-                <p>Tidak ada kerjasama</p>
+                <p>Tidak ada data kerjasama yang ditampilkan.</p>
             </div>
         <?php endif; ?>
     </section>
 
-    <!-- Modal for Collaboration Details -->
+    <!-- Modal for Collaboration Details (Kode Modal Anda tidak perlu diubah) -->
     <div class="modal fade" id="collaborationModal" tabindex="-1" aria-labelledby="collaborationModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
