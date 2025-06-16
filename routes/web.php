@@ -6,6 +6,7 @@ use App\Http\Controllers\SearchController;
 
 // Admin Controllers
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\Auth\AdminForgotPasswordController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
@@ -227,5 +228,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/student_achievements/{id}/edit', [StudentAchievementController::class, 'edit'])->name('student_achievement.edit');
         Route::put('/student_achievements/{id}', [StudentAchievementController::class, 'update'])->name('student_achievement.update');
         Route::delete('/student_achievements/{id}', [StudentAchievementController::class, 'destroy'])->name('student_achievement.destroy');
+
+        // --- MANAJEMEN ADMIN (HANYA UNTUK SUPER ADMIN) ---
+        Route::middleware('is_superadmin')->group(function () {
+            // Beritahu Laravel untuk menggunakan 'admin' sebagai nama parameter, bukan 'management'
+            Route::resource('management', App\Http\Controllers\Admin\AdminManagementController::class)
+                ->parameters(['management' => 'admin']) // <-- BARIS KUNCI PERBAIKAN
+                ->except(['show']);
+
+            Route::post('management/{admin}/reset-password', [App\Http\Controllers\Admin\AdminManagementController::class, 'resetPassword'])
+                ->name('management.resetPassword');
+        });
     });
 });

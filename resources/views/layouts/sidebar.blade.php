@@ -32,6 +32,16 @@
                 </a>
             </li>
 
+            @if (auth()->guard('admin')->user()->is_superadmin)
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.management.*') ? 'active' : '' }}"
+                        href="{{ route('admin.management.index') }}">
+                        <i class="nav-icon fas fa-users-cog text-primary"></i>
+                        <p>Manajemen Admin</p>
+                    </a>
+                </li>
+            @endif
+
             <li class="nav-item">
                 <a href="{{ route('admin.inquiries.index') }}"
                     class="nav-link {{ request()->routeIs('admin.inquiries.*') ? 'active' : '' }}">

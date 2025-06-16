@@ -32,6 +32,16 @@
                 </a>
             </li>
 
+            <?php if(auth()->guard('admin')->user()->is_superadmin): ?>
+                <li class="nav-item">
+                    <a class="nav-link <?php echo e(request()->routeIs('admin.management.*') ? 'active' : ''); ?>"
+                        href="<?php echo e(route('admin.management.index')); ?>">
+                        <i class="nav-icon fas fa-users-cog text-primary"></i>
+                        <p>Manajemen Admin</p>
+                    </a>
+                </li>
+            <?php endif; ?>
+
             <li class="nav-item">
                 <a href="<?php echo e(route('admin.inquiries.index')); ?>"
                     class="nav-link <?php echo e(request()->routeIs('admin.inquiries.*') ? 'active' : ''); ?>">

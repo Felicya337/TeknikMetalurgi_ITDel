@@ -10,6 +10,9 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
+        // Definisikan email super admin secara permanen
+        $superAdminEmail = 'aitdel844@gmail.com';
+
         $admins = [
             [
                 'name' => 'Felicya Panjaitan',
@@ -17,19 +20,21 @@ class AdminSeeder extends Seeder
                 'password' => 'felicyaa.123',
             ],
             [
-                'name' => 'General Admin',
-                'email' => 'aitdel844@gmail.com',
+                'name' => 'General Admin', // Nama bisa apa saja
+                'email' => $superAdminEmail,
                 'password' => 'AdminTMItdel.1230987',
             ],
         ];
 
         foreach ($admins as $adminData) {
-            Admin::firstOrCreate(
+            Admin::updateOrCreate(
                 ['email' => $adminData['email']], // Kunci untuk mencari
-                [                                 // Data untuk dibuat jika tidak ada
+                [
                     'name' => $adminData['name'],
-                    'password' => Hash::make($adminData['password']), // Password di-hash
+                    'password' => Hash::make($adminData['password']),
                     'is_active' => true,
+                    // Tetapkan peran super admin berdasarkan email
+                    'is_superadmin' => ($adminData['email'] === $superAdminEmail),
                 ]
             );
         }
