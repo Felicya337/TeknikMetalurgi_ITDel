@@ -1,8 +1,6 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
-        /* Publication Page Styles */
+        /* Research Page Styles */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #ffffff;
@@ -20,7 +18,7 @@
         }
 
         /* Container Styles */
-        .publication-container {
+        .research-container {
             max-width: 1300px;
             margin: 0 auto;
             padding: 20px;
@@ -33,8 +31,8 @@
             text-align: center;
         }
 
-        /* Publication Cards */
-        .publication-card {
+        /* Research Cards */
+        .research-card {
             background: white;
             margin-bottom: 30px;
             border-radius: 8px;
@@ -46,28 +44,28 @@
             cursor: pointer;
         }
 
-        .publication-card:hover {
+        .research-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             border-color: #ffffff;
         }
 
-        .publication-body {
+        .research-body {
             padding: 20px;
         }
 
-        .publication-row {
+        .research-row {
             display: flex;
             align-items: flex-start;
             gap: 20px;
         }
 
-        .publication-image {
+        .research-image {
             flex: 0 0 40%;
             max-width: 40%;
         }
 
-        .publication-image img {
+        .research-image img {
             width: 100%;
             height: 250px;
             object-fit: cover;
@@ -75,11 +73,11 @@
             border-radius: 5px;
         }
 
-        .publication-content {
+        .research-content {
             flex: 1;
         }
 
-        .publication-title {
+        .research-title {
             font-size: 18px;
             font-weight: bold;
             color: #1976d2;
@@ -89,7 +87,7 @@
             line-height: 1.3;
         }
 
-        .publication-meta {
+        .research-meta {
             margin-bottom: 15px;
             font-size: 14px;
             color: #6c757d;
@@ -100,18 +98,18 @@
             align-items: center;
         }
 
-        .publication-meta strong {
+        .research-meta strong {
             color: #000000;
             margin-right: 5px;
         }
 
-        .publication-meta-item {
+        .research-meta-item {
             display: flex;
             align-items: center;
             white-space: nowrap;
         }
 
-        .publication-description {
+        .research-description {
             font-size: 14px;
             color: #000000;
             line-height: 1.6;
@@ -119,23 +117,23 @@
             margin: 0;
         }
 
-        .publication-description * {
+        .research-description * {
             max-width: 100%;
             box-sizing: border-box;
         }
 
-        .publication-description img {
+        .research-description img {
             max-width: 100%;
             height: auto;
             border-radius: 5px;
         }
 
-        .publication-description p {
+        .research-description p {
             margin: 0 0 10px 0;
         }
 
-        .publication-description ul,
-        .publication-description ol {
+        .research-description ul,
+        .research-description ol {
             padding-left: 20px;
             margin: 0 0 10px 0;
         }
@@ -195,7 +193,7 @@
             margin-top: 30px;
         }
 
-        /* No publications alert */
+        /* No research alert */
         .alert-info {
             background-color: #d1ecf1;
             border: 1px solid #bee5eb;
@@ -208,36 +206,36 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .publication-container {
+            .research-container {
                 padding: 15px;
             }
 
-            .publication-row {
+            .research-row {
                 flex-direction: column;
                 gap: 15px;
             }
 
-            .publication-image {
+            .research-image {
                 flex: none;
                 max-width: 100%;
             }
 
-            .publication-image img {
+            .research-image img {
                 height: 200px;
             }
 
-            .publication-title {
+            .research-title {
                 font-size: 16px;
             }
 
-            .publication-meta {
+            .research-meta {
                 font-size: 13px;
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 8px;
             }
 
-            .publication-description {
+            .research-description {
                 font-size: 13px;
             }
 
@@ -249,27 +247,27 @@
         }
 
         @media (max-width: 480px) {
-            .publication-container {
+            .research-container {
                 padding: 10px;
             }
 
-            .publication-body {
+            .research-body {
                 padding: 15px;
             }
 
-            .publication-image img {
+            .research-image img {
                 height: 180px;
             }
 
-            .publication-title {
+            .research-title {
                 font-size: 15px;
             }
 
-            .publication-meta {
+            .research-meta {
                 font-size: 12px;
             }
 
-            .publication-description {
+            .research-description {
                 font-size: 12px;
             }
 
@@ -280,80 +278,86 @@
         }
     </style>
 
-    {{-- Breadcrumb --}}
+    
     <nav aria-label="breadcrumb">
         <ol class="breadcrumbs">
             <li class="breadcrumb-item">
-                <a href="{{ url('/penelitian') }}" class="text-decoration-none">Prestasi</a>
+                <a href="<?php echo e(url('/penelitian')); ?>" class="text-decoration-none">Penelitian</a>
             </li>
-            <li class="breadcrumb-item current-page">Semua Publikasi</li>
+            <li class="breadcrumb-item current-page">Semua Penelitian</li>
         </ol>
     </nav>
 
-    <div class="publication-container">
-        <h3 class="text-center mb-5 fw-bold">PUBLIKASI</h3>
+    <div class="research-container">
+        <h3 class="text-center mb-5 fw-bold">PENELITIAN</h3>
 
 
-        @if ($publications->isEmpty())
+        <?php if($researches->isEmpty()): ?>
             <div class="alert alert-info">
-                Tidak ada publikasi yang tersedia saat ini.
+                Tidak ada penelitian yang tersedia saat ini.
             </div>
-        @else
-            @foreach ($publications as $pub)
-                <div class="publication-card">
-                    <div class="publication-body">
-                        <div class="publication-row">
-                            <div class="publication-image">
-                                @if ($pub->image)
-                                    <img src="{{ asset('storage/' . $pub->image) }}" alt="{{ $pub->title }}">
-                                @else
-                                    <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
-                                @endif
+        <?php else: ?>
+            <?php $__currentLoopData = $researches; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $research): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="research-card">
+                    <div class="research-body">
+                        <div class="research-row">
+                            <div class="research-image">
+                                <?php if($research->image): ?>
+                                    <img src="<?php echo e(asset('storage/' . $research->image)); ?>" alt="<?php echo e($research->title); ?>">
+                                <?php else: ?>
+                                    <img src="<?php echo e(asset('images/placeholder.png')); ?>" alt="No Image Available">
+                                <?php endif; ?>
                             </div>
-                            <div class="publication-content">
-                                <h5 class="publication-title">{{ $pub->title }}</h5>
+                            <div class="research-content">
+                                <h5 class="research-title"><?php echo e($research->title); ?></h5>
 
-                                <div class="publication-meta">
-                                    <div class="publication-meta-item">
-                                        <strong>By:</strong> {{ $pub->author ?? 'Anonim' }}
+                                <div class="research-meta">
+                                    <div class="research-meta-item">
+                                        <strong>By:</strong> <?php echo e($research->author ?? 'Anonim'); ?>
+
                                     </div>
-                                    <div class="publication-meta-item">
+                                    <div class="research-meta-item">
                                         <strong>Date:</strong>
-                                        {{ $pub->date ? \Carbon\Carbon::parse($pub->date)->translatedFormat('F Y') : '-' }}
+                                        <?php echo e($research->date ? \Carbon\Carbon::parse($research->date)->translatedFormat('F Y') : '-'); ?>
+
                                     </div>
-                                    @if ($pub->type)
-                                        <div class="publication-meta-item">
-                                            <strong>Type:</strong> {{ $pub->type }}
+                                    <?php if($research->type): ?>
+                                        <div class="research-meta-item">
+                                            <strong>Type:</strong> <?php echo e(ucfirst($research->type)); ?>
+
                                         </div>
-                                    @endif
-                                    @if ($pub->file)
-                                        <div class="publication-meta-item">
+                                    <?php endif; ?>
+                                    <?php if($research->file): ?>
+                                        <div class="research-meta-item">
                                             <div class="file-actions">
-                                                <a href="{{ asset('storage/' . $pub->file) }}"
+                                                <a href="<?php echo e(asset('storage/' . $research->file)); ?>"
                                                     class="file-link download-link" download title="Download Document">
                                                     <i class="bi bi-download"></i>
                                                     Download
                                                 </a>
-                                                <a href="{{ asset('storage/' . $pub->file) }}" class="file-link view-link"
-                                                    target="_blank" title="View Document">
+                                                <a href="<?php echo e(asset('storage/' . $research->file)); ?>"
+                                                    class="file-link view-link" target="_blank" title="View Document">
                                                     <i class="bi bi-eye"></i>
                                                     View
                                                 </a>
                                             </div>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
 
-                                <div class="publication-description">{!! $pub->description !!}</div>
+                                <div class="research-description"><?php echo $research->description; ?></div>
                             </div>
                         </div>
                     </div>
                 </div>
-            @endforeach
-        @endif
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
 
         <div class="pagination-wrapper">
-            {{ $publications->links() }}
+            <?php echo e($researches->links()); ?>
+
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/achievements/research.blade.php ENDPATH**/ ?>

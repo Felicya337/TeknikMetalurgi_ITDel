@@ -13,9 +13,8 @@
         </nav>
 
         
-        <div class="header">
-            <h1>KURIKULUM</h1>
-        </div>
+        <h3 class="header-title">KURIKULUM</h3>
+
 
         
         <div class="curriculum-description">
@@ -106,17 +105,12 @@
 
     <style>
         /* Header Styles */
-        .header {
+        .header-title {
             text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            font-size: 24px;
+            font-size: 30px;
             font-weight: 700;
             color: #000000;
-            margin: 0;
-            padding-top: 20px;
+            margin-bottom: 3rem;
         }
 
         /* Curriculum Description */

@@ -1,8 +1,6 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
-        /* Program Activities Styling */
+        /* HIMAMETAL Student Activities Styling */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #ffffff;
@@ -10,41 +8,35 @@
             padding: 0;
         }
 
-        .program-container {
+        .himametal-container {
             max-width: 1300px;
             margin: 0 auto;
             padding: 20px;
         }
 
         /* Header Section */
-        .program-header {
+        .himametal-header {
             margin-bottom: 30px;
-            text-align: center;
-            /* Center-align the entire header */
         }
 
         .header-content {
             display: flex;
             align-items: center;
-            justify-content: center;
-            /* Center the flex items */
             gap: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .header-logo {
             width: 120px;
             height: 120px;
             flex-shrink: 0;
-            margin-right: 20px;
-            /* Add space between logo and text */
         }
 
         .header-text {
             flex: 1;
             padding-top: 0;
             text-align: center;
-            /* Center-align text within header-text */
+            /* Center main-title and sub-title */
         }
 
         .main-title {
@@ -53,7 +45,6 @@
             color: #000000;
             margin: 0 0 10px 0;
             letter-spacing: 1px;
-
         }
 
         .sub-title {
@@ -67,8 +58,7 @@
             font-size: 14px;
             color: #202020;
             line-height: 1.6;
-            text-align: center;
-            /* Changed from justify to center */
+            text-align: justify;
             margin: 0;
         }
 
@@ -88,13 +78,12 @@
             color: #2ea3f1;
             font-size: 16px;
             text-transform: uppercase;
+            text-align: center;
             padding: 12px 20px;
             margin: 0;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid #ffffff;
-            /* Should this be #e9ecef or similar for a visible line? */
-            text-align: center;
-            /* Added text-align center */
+            border-bottom: 1px solid #e9ecef;
+            /* Changed to a visible color */
         }
 
         .activity-body {
@@ -148,7 +137,7 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .program-container {
+            .himametal-container {
                 padding: 15px;
             }
 
@@ -162,8 +151,6 @@
                 width: 100px;
                 height: 100px;
                 align-self: center;
-                margin-right: 0;
-                /* Remove margin on mobile */
             }
 
             .header-text {
@@ -207,7 +194,7 @@
         }
 
         @media (max-width: 480px) {
-            .program-container {
+            .himametal-container {
                 padding: 10px;
             }
 
@@ -241,55 +228,59 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumbs">
             <li class="breadcrumb-item">
-                <a href="{{ url('/') }}" class="text-decoration-none">Beranda</a>
+                <a href="<?php echo e(url('/')); ?>" class="text-decoration-none">beranda</a>
             </li>
-            <li class="breadcrumb-item current-page">Kegiatan Prodi</li>
+            <li class="breadcrumb-item current-page">Kegiatan Mahasiswa, Kegiatan Prodi, Club Mahasiswa</li>
         </ol>
     </nav>
 
-    <div class="program-container my-5">
-        <div class="program-header">
+    <div class="himametal-container my-5">
+        <div class="himametal-header">
             <div class="header-content">
-                <img src="{{ asset('aset/img/logohima.jpg') }}" alt="Logo HIMAMETAL" class="header-logo">
+                <img src="<?php echo e(asset('aset/img/logohima.jpg')); ?>" alt="Logo HIMAMETAL" class="header-logo">
                 <div class="header-text">
-                    <h3 class="text-center mb-5 fw-bold">KEGIATAN PRODI</h3>
-                    <h4 class="sub-title">TEKNIK METALURGI</h4>
+                    <h3 class="text-center mb-5 fw-bold">KEGIATAN MAHASISWA</h3>
+                    <h4 class="sub-title">HIMAMETAL (HIMPUNAN MAHASISWA TEKNIK METALURGI)</h4>
                     <p class="description">
-                        Kegiatan Prodi Teknik Metalurgi di Institut Teknologi Del, Fakultas Teknologi Industri,
-                        dirancang untuk meningkatkan pemahaman mahasiswa terhadap ilmu metalurgi dan aplikasinya
-                        di industri. Melalui seminar, lokakarya, kunjungan industri, dan kegiatan akademik lainnya,
-                        prodi ini bertujuan untuk memperkaya pengalaman akademik dan profesional mahasiswa, serta
-                        memperkuat hubungan dengan dunia industri.
+                        HIMAMETAL (Himpunan Mahasiswa Teknik Metalurgi) adalah organisasi mahasiswa di Institut Teknologi
+                        Del, Fakultas Teknologi Industri, yang mewakili mahasiswa Teknik Metalurgi. HIMAMETAL berperan dalam
+                        membangun komunitas, mengembangkan keterampilan, serta menjembatani mahasiswa dengan dosen dan
+                        industri. Melalui kegiatan seperti kaderisasi, sharing session, rapat akhir semester, dan buka
+                        bersama,
+                        HIMAMETAL menambah pengalaman akademik, sosial, dan profesional mahasiswa.
                     </p>
                 </div>
             </div>
         </div>
 
-        @if ($studentactivities->isEmpty())
+        <?php if($studentactivities->isEmpty()): ?>
             <div class="alert alert-info">
-                Tidak ada kegiatan prodi yang tersedia saat ini.
+                Tidak ada kegiatan yang tersedia saat ini.
             </div>
-        @else
-            @foreach ($studentactivities as $activity)
+        <?php else: ?>
+            <?php $__currentLoopData = $studentactivities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $activity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="activity-card">
-                    <h5 class="activity-title">{{ $activity->title }}</h5>
+                    <h5 class="activity-title"><?php echo e($activity->title); ?></h5>
                     <div class="activity-body">
                         <div class="activity-row">
                             <div class="activity-image">
-                                @if ($activity->image)
-                                    <img src="{{ asset('storage/' . $activity->image) }}" alt="{{ $activity->title }}">
-                                @else
-                                    <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
-                                    {{-- Pastikan placeholder.png ada atau gunakan path yang benar --}}
-                                @endif
+                                <?php if($activity->image): ?>
+                                    <img src="<?php echo e(asset('storage/' . $activity->image)); ?>" alt="<?php echo e($activity->title); ?>">
+                                <?php else: ?>
+                                    <img src="<?php echo e(asset('images/placeholder.png')); ?>" alt="No Image Available">
+                                    
+                                <?php endif; ?>
                             </div>
                             <div class="activity-content">
-                                <p class="activity-description">{!! $activity->description !!}</p> {{-- Sudah benar menggunakan {!! !!} --}}
+                                
+                                <p class="activity-description"><?php echo $activity->description; ?></p>
                             </div>
                         </div>
                     </div>
                 </div>
-            @endforeach
-        @endif
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/student_activity/activity.blade.php ENDPATH**/ ?>

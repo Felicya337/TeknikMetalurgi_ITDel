@@ -155,7 +155,7 @@
 
     <!-- News Section -->
     <div class="news-container" id="news-section">
-        <h3 class="my-4 mb-5 text-center"><strong>BERITA TERBARU</strong></h3>
+        <h3 class="text-center mb-5 fw-bold">BERITA TERBARU</h3>
         <div class="row justify-content-center">
             @if (isset($news) && $news->count() > 0)
                 @foreach ($news as $item)
@@ -223,7 +223,7 @@
     <!-- Collaboration Section -->
     <!-- Collaboration Section -->
     <section class="kerjasama-section" id="kerjasama-section">
-        <h3 class="section-title"><strong>KERJA SAMA</strong></h3>
+        <h3 class="text-center mb-5 fw-bold">KERJASAMA</h3>
 
         @if (count($collaborates) > 0)
             <div class="slider-container">

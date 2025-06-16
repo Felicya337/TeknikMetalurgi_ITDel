@@ -291,7 +291,8 @@
     </nav>
 
     <div class="research-container">
-        <h1 class="my-4">Penelitian</h1>
+        <h3 class="text-center mb-5 fw-bold">PENELITIAN</h3>
+
 
         @if ($researches->isEmpty())
             <div class="alert alert-info">

@@ -241,7 +241,7 @@
             <div class="header-content">
                 <img src="{{ asset('aset/img/logohima.jpg') }}" alt="Logo HIMAMETAL" class="header-logo">
                 <div class="header-text">
-                    <h2 class="main-title">KEGIATAN MAHASISWA</h2>
+                    <h3 class="text-center mb-5 fw-bold">KEGIATAN MAHASISWA</h3>
                     <h4 class="sub-title">HIMAMETAL (HIMPUNAN MAHASISWA TEKNIK METALURGI)</h4>
                     <p class="description">
                         HIMAMETAL (Himpunan Mahasiswa Teknik Metalurgi) adalah organisasi mahasiswa di Institut Teknologi

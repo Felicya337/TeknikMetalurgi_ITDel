@@ -1221,14 +1221,6 @@ body {
     margin: 0 auto;
 }
 
-.news-container h3 {
-    text-align: center;
-    color: #000000;
-    margin-bottom: 30px;
-    font-size: 2rem;
-    font-weight: bold;
-    font-family: 'Inter', sans-serif;
-}
 
 .row {
     display: flex;

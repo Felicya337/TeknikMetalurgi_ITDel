@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         /* Base Styles */
         .org-structure {
@@ -378,7 +376,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumbs">
             <li class="breadcrumb-item">
-                <a href="{{ url('/metaprofile') }}" class="text-decoration-none">Profil</a>
+                <a href="<?php echo e(url('/metaprofile')); ?>" class="text-decoration-none">Profil</a>
             </li>
             <li class="breadcrumb-item current-page"><b>struktur Organisasi</b></li>
         </ol>
@@ -388,31 +386,33 @@
         <h1 class="text-center mb-4"><strong>STRUKTUR ORGANISASI FAKULTAS TEKNOLOGI INDUSTRI <br>
                 JURUSAN TEKNIK METALURGI INSTITUT TEKNOLOGI DEL</strong></h1>
 
-        @foreach ($levels as $level => $organizations)
+        <?php $__currentLoopData = $levels; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $level => $organizations): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <div class="org-level">
-                @foreach ($organizations as $org)
+                <?php $__currentLoopData = $organizations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $org): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="org-box">
-                        @if ($level > 0)
+                        <?php if($level > 0): ?>
                             <div class="org-connector vertical-connector"></div>
-                        @endif
-                        @if (!$loop->first)
+                        <?php endif; ?>
+                        <?php if(!$loop->first): ?>
                             <div class="org-connector horizontal-connector"></div>
-                        @endif
+                        <?php endif; ?>
 
-                        @if ($org->image && file_exists(public_path('storage/' . $org->image)))
-                            <img src="{{ asset('storage/' . $org->image) }}" alt="{{ $org->title }}">
-                        @endif
+                        <?php if($org->image && file_exists(public_path('storage/' . $org->image))): ?>
+                            <img src="<?php echo e(asset('storage/' . $org->image)); ?>" alt="<?php echo e($org->title); ?>">
+                        <?php endif; ?>
 
-                        <div class="org-title">{{ $org->title }}</div>
-                        @if ($org->name)
-                            <div class="org-name">{{ $org->name }}</div>
-                        @endif
-                        @if ($org->degree)
-                            <div class="org-degree">{{ $org->degree }}</div>
-                        @endif
+                        <div class="org-title"><?php echo e($org->title); ?></div>
+                        <?php if($org->name): ?>
+                            <div class="org-name"><?php echo e($org->name); ?></div>
+                        <?php endif; ?>
+                        <?php if($org->degree): ?>
+                            <div class="org-degree"><?php echo e($org->degree); ?></div>
+                        <?php endif; ?>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
-        @endforeach
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/structureorganization.blade.php ENDPATH**/ ?>

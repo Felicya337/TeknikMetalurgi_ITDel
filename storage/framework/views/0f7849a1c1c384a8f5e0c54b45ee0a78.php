@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         /* Program Activities Styling */
         body {
@@ -241,7 +239,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumbs">
             <li class="breadcrumb-item">
-                <a href="{{ url('/') }}" class="text-decoration-none">Beranda</a>
+                <a href="<?php echo e(url('/')); ?>" class="text-decoration-none">Beranda</a>
             </li>
             <li class="breadcrumb-item current-page">Kegiatan Prodi</li>
         </ol>
@@ -250,7 +248,7 @@
     <div class="program-container my-5">
         <div class="program-header">
             <div class="header-content">
-                <img src="{{ asset('aset/img/logohima.jpg') }}" alt="Logo HIMAMETAL" class="header-logo">
+                <img src="<?php echo e(asset('aset/img/logohima.jpg')); ?>" alt="Logo HIMAMETAL" class="header-logo">
                 <div class="header-text">
                     <h3 class="text-center mb-5 fw-bold">KEGIATAN PRODI</h3>
                     <h4 class="sub-title">TEKNIK METALURGI</h4>
@@ -265,31 +263,33 @@
             </div>
         </div>
 
-        @if ($studentactivities->isEmpty())
+        <?php if($studentactivities->isEmpty()): ?>
             <div class="alert alert-info">
                 Tidak ada kegiatan prodi yang tersedia saat ini.
             </div>
-        @else
-            @foreach ($studentactivities as $activity)
+        <?php else: ?>
+            <?php $__currentLoopData = $studentactivities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $activity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="activity-card">
-                    <h5 class="activity-title">{{ $activity->title }}</h5>
+                    <h5 class="activity-title"><?php echo e($activity->title); ?></h5>
                     <div class="activity-body">
                         <div class="activity-row">
                             <div class="activity-image">
-                                @if ($activity->image)
-                                    <img src="{{ asset('storage/' . $activity->image) }}" alt="{{ $activity->title }}">
-                                @else
-                                    <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
-                                    {{-- Pastikan placeholder.png ada atau gunakan path yang benar --}}
-                                @endif
+                                <?php if($activity->image): ?>
+                                    <img src="<?php echo e(asset('storage/' . $activity->image)); ?>" alt="<?php echo e($activity->title); ?>">
+                                <?php else: ?>
+                                    <img src="<?php echo e(asset('images/placeholder.png')); ?>" alt="No Image Available">
+                                    
+                                <?php endif; ?>
                             </div>
                             <div class="activity-content">
-                                <p class="activity-description">{!! $activity->description !!}</p> {{-- Sudah benar menggunakan {!! !!} --}}
+                                <p class="activity-description"><?php echo $activity->description; ?></p> 
                             </div>
                         </div>
                     </div>
                 </div>
-            @endforeach
-        @endif
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/student_activity/program.blade.php ENDPATH**/ ?>

@@ -1,8 +1,6 @@
-@extends('layouts.main')
+<?php $__env->startSection('title', 'Laboratorium'); ?>
 
-@section('title', 'Laboratorium')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         .laboratory-section {
             padding: 2rem 0;
@@ -170,7 +168,7 @@
         <div class="container">
             <ol class="breadcrumbs">
                 <li class="breadcrumb-item">
-                    <a href="{{ url('/') }}">Laboratorium</a>
+                    <a href="<?php echo e(url('/')); ?>">Laboratorium</a>
                 </li>
             </ol>
         </div>
@@ -181,65 +179,72 @@
             <h3 class="text-center mb-5 fw-bold">Laboratorium Program Studi Teknik Metalurgi<br>Fakultas Teknologi Industri
             </h3>
 
-            @if ($laboratories->isEmpty())
+            <?php if($laboratories->isEmpty()): ?>
                 <p class="no-data">Tidak ada laboratorium yang tersedia saat ini.</p>
-            @else
-                @foreach ($laboratories as $laboratory)
-                    <article class="laboratory-card" aria-labelledby="lab-{{ $laboratory->id }}-title">
+            <?php else: ?>
+                <?php $__currentLoopData = $laboratories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $laboratory): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <article class="laboratory-card" aria-labelledby="lab-<?php echo e($laboratory->id); ?>-title">
                         <header class="laboratory-header">
-                            <h3 class="laboratory-name" id="lab-{{ $laboratory->id }}-title">
-                                {{ strtoupper($laboratory->name) }}
+                            <h3 class="laboratory-name" id="lab-<?php echo e($laboratory->id); ?>-title">
+                                <?php echo e(strtoupper($laboratory->name)); ?>
+
                             </h3>
                         </header>
 
                         <div class="laboratory-content">
                             <div class="laboratory-image">
-                                <img src="{{ $laboratory->images && count($laboratory->images) > 0 ? asset('storage/' . $laboratory->images[0]) : asset('aset/img/default-lab.jpg') }}"
-                                    alt="{{ $laboratory->name }} laboratory image">
+                                <img src="<?php echo e($laboratory->images && count($laboratory->images) > 0 ? asset('storage/' . $laboratory->images[0]) : asset('aset/img/default-lab.jpg')); ?>"
+                                    alt="<?php echo e($laboratory->name); ?> laboratory image">
                             </div>
 
                             <div class="laboratory-details">
                                 <h4 class="info-title">
-                                    <img src="{{ asset('aset/img/logo1.png') }}" alt="Information icon" class="info-icon">
+                                    <img src="<?php echo e(asset('aset/img/logo1.png')); ?>" alt="Information icon" class="info-icon">
                                     Informasi Umum
                                 </h4>
                                 <p class="laboratory-description">
-                                    {!! $laboratory->description ?? 'Tidak ada deskripsi yang tersedia.' !!}
+                                    <?php echo $laboratory->description ?? 'Tidak ada deskripsi yang tersedia.'; ?>
+
                                 </p>
 
                                 <h4 class="info-title">
-                                    <img src="{{ asset('aset/img/logo2.png') }}" alt="Clock icon" class="info-icon">
+                                    <img src="<?php echo e(asset('aset/img/logo2.png')); ?>" alt="Clock icon" class="info-icon">
                                     Jam Kerja
                                 </h4>
 
                                 <ul class="schedule-list">
                                     <li class="schedule-item">
                                         <strong>Hari Akademik:</strong>
-                                        {{ $laboratory->academic_days ? implode(', ', $laboratory->academic_days) : 'Senin - Jumat' }}
+                                        <?php echo e($laboratory->academic_days ? implode(', ', $laboratory->academic_days) : 'Senin - Jumat'); ?>
+
                                     </li>
                                     <li class="schedule-item">
                                         <strong>Jam Akademik:</strong>
-                                        {{ $laboratory->academic_hours ?? '07:00 - 17:00' }}
+                                        <?php echo e($laboratory->academic_hours ?? '07:00 - 17:00'); ?>
+
                                     </li>
                                     <li class="schedule-item">
                                         <strong>Jam Kolaboratif:</strong>
-                                        {{ $laboratory->collaborative_hours ?? '19:00 - 22:00' }}
+                                        <?php echo e($laboratory->collaborative_hours ?? '19:00 - 22:00'); ?>
+
                                     </li>
                                 </ul>
 
-                                @if ($laboratory->images && count($laboratory->images) > 1)
+                                <?php if($laboratory->images && count($laboratory->images) > 1): ?>
                                     <div class="additional-images">
-                                        @foreach (array_slice($laboratory->images, 1) as $image)
-                                            <img src="{{ asset('storage/' . $image) }}"
-                                                alt="Additional image of {{ $laboratory->name }} laboratory">
-                                        @endforeach
+                                        <?php $__currentLoopData = array_slice($laboratory->images, 1); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <img src="<?php echo e(asset('storage/' . $image)); ?>"
+                                                alt="Additional image of <?php echo e($laboratory->name); ?> laboratory">
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </div>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                     </article>
-                @endforeach
-            @endif
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php endif; ?>
         </div>
     </section>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/laboratory.blade.php ENDPATH**/ ?>

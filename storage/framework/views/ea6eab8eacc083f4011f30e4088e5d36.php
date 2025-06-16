@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         .content-wrapper {
             background-color: #fff;
@@ -513,7 +511,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumbs">
             <li class="breadcrumb-item">
-                <a href="{{ url('/metaprofile') }}" class="text-decoration-none">Profil</a>
+                <a href="<?php echo e(url('/metaprofile')); ?>" class="text-decoration-none">Profil</a>
             </li>
             <li class="breadcrumb-item current-page"><b>Sejarah, Visi dan Misi Keilmuan, Prospek Kerja</b></li>
         </ol>
@@ -550,7 +548,7 @@
     <div class="content-section" id="sejarah">
         <div class="image-gallery">
             <div class="image-overlay">
-                <img src="{{ asset('aset/img/mp1.png') }}" alt="Gambar 1">
+                <img src="<?php echo e(asset('aset/img/mp1.png')); ?>" alt="Gambar 1">
             </div>
             <p>Program Studi Sarjana Teknik Metalurgi di Institut Teknologi Del (untuk selanjutnya disebut sebagai
                 Prodi
@@ -569,7 +567,7 @@
                 fasilitas
                 pendukung, serta membuka peluang magang dan riset terapan bagi mahasiswa.</p>
             <div class="image-overlay">
-                <img src="{{ asset('aset/img/mp2.png') }}" alt="Gambar 2">
+                <img src="<?php echo e(asset('aset/img/mp2.png')); ?>" alt="Gambar 2">
             </div>
             <p>Politeknik Informatika Del didirikan oleh Yayasan Del sesuai dengan visi dan misinya untuk
                 menyediakan akses
@@ -596,7 +594,7 @@
                 Rizal
                 Horas Manahan Sinaga, S.Si., M.T., Ph.D. menjabat sebagai Kepala Program Studi Teknik Metalurgi.</p>
             <div class="image-overlay">
-                <img src="{{ asset('aset/img/mp3.png') }}" alt="Gambar 3">
+                <img src="<?php echo e(asset('aset/img/mp3.png')); ?>" alt="Gambar 3">
             </div>
             <p>Program Studi Teknik Metalurgi mulai menerima mahasiswa baru sejak tahun akademik 2023/2024, dengan
                 total
@@ -611,7 +609,7 @@
                 Perguruan
                 Tinggi (BAN-PT) berdasarkan Keputusan BAN-PT No. 0461/SK/LAM Teknik/PB.AS/XII/2023.</p>
             <div class="image-overlay">
-                <img src="{{ asset('aset/img/mp4.png') }}" alt="mp 4">
+                <img src="<?php echo e(asset('aset/img/mp4.png')); ?>" alt="mp 4">
             </div>
             <p>Untuk mendukung penyelenggaraan proses pembelajaran yang optimal pada Program Studi Teknik Metalurgi,
                 Institut Teknologi Del mendirikan Gedung Program Studi Teknik Metalurgi. Gedung ini dirancang secara
@@ -631,20 +629,20 @@
     <div class="content-section" id="visi-misi" style="display: none;">
         <div class="image-gallery">
             <!-- Header Image for Visi Misi -->
-            @php
+            <?php
                 $vmHeaderImage = $metaprofiles->firstWhere('metakey', 'vm_header_image');
-            @endphp
+            ?>
             <div class="image-overlay">
-                @if ($vmHeaderImage && $vmHeaderImage->image && Storage::disk('public')->exists($vmHeaderImage->image))
-                    <img src="{{ asset('storage/' . $vmHeaderImage->image) }}"
-                        alt="{{ $vmHeaderImage->title ?? 'Visi Misi Header' }}">
-                @else
-                    <img src="{{ asset('aset/img/mp5.png') }}" alt="Visi Misi Default Header">
-                @endif
+                <?php if($vmHeaderImage && $vmHeaderImage->image && Storage::disk('public')->exists($vmHeaderImage->image)): ?>
+                    <img src="<?php echo e(asset('storage/' . $vmHeaderImage->image)); ?>"
+                        alt="<?php echo e($vmHeaderImage->title ?? 'Visi Misi Header'); ?>">
+                <?php else: ?>
+                    <img src="<?php echo e(asset('aset/img/mp5.png')); ?>" alt="Visi Misi Default Header">
+                <?php endif; ?>
             </div>
 
             <!-- Dynamic Vision and Mission Items -->
-            @php
+            <?php
                 $visiMisiItems = $metaprofiles
                     ->filter(function ($item) {
                         return Str::startsWith($item->metakey, 'vm_') &&
@@ -652,14 +650,14 @@
                             $item->is_active;
                     })
                     ->sortBy('created_at');
-            @endphp
+            ?>
 
-            @if ($visiMisiItems->isNotEmpty())
-                @foreach ($visiMisiItems as $index => $item)
+            <?php if($visiMisiItems->isNotEmpty()): ?>
+                <?php $__currentLoopData = $visiMisiItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="vision-mission-container">
                         <!-- Left Column: Title -->
                         <div class="vision-content">
-                            <div class="vision-title">{{ $item->title }}</div>
+                            <div class="vision-title"><?php echo e($item->title); ?></div>
                         </div>
 
                         <!-- Vertical Divider -->
@@ -667,15 +665,15 @@
 
                         <!-- Right Column: Description -->
                         <div class="vision-content">
-                            <p>{!! $item->description !!}</p>
+                            <p><?php echo $item->description; ?></p>
                         </div>
                     </div>
-                @endforeach
-            @else
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php else: ?>
                 <div class="vision-mission-container" style="justify-content: center;">
                     <p>Data Visi dan Misi belum tersedia.</p>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
@@ -683,7 +681,7 @@
     <div class="content-section" id="prospek-kerja" style="display: none;">
         <div class="image-gallery">
             <div class="image-overlay">
-                <img src="{{ asset('aset/img/mp6.png') }}" alt="Prospek Kerja">
+                <img src="<?php echo e(asset('aset/img/mp6.png')); ?>" alt="Prospek Kerja">
             </div>
 
             <!-- Grid Layout for Career Prospects -->
@@ -802,4 +800,6 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/metaprofile.blade.php ENDPATH**/ ?>

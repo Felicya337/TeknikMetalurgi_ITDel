@@ -5,21 +5,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     {{-- ... (style Anda tidak berubah signifikan, saya akan singkat untuk fokus ke logika) ... --}}
     <style>
-        /* Gaya CSS Anda di sini */
-        .header-section {
-            color: rgb(0, 0, 0);
-            padding: 5px 0;
-            /* dikurangi dari 10px menjadi 5px */
-            text-align: center;
-        }
-
-        .header-section h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            /* dikurangi dari 10px menjadi 5px */
-        }
-
         .section-title {
             font-size: 2rem;
             font-weight: 600;
@@ -246,9 +231,8 @@
     </nav>
     <div class="container-fluid">
         {{-- Tampilan Daftar Dosen dan Staf --}}
-        <div class="header-section">
-            <h1>DOSEN / STAF PENDIDIK</h1>
-        </div>
+        <h3 class="text-center mb-5 fw-bold">DOSEN & STAFF</h3>
+
 
         <div class="container py-5">
             @foreach (['dosen', 'staf'] as $role)

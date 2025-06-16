@@ -1,21 +1,18 @@
-@extends('layouts.main')
-
-@section('content')
-    {{-- Breadcrumb --}}
+<?php $__env->startSection('content'); ?>
+    
     <nav aria-label="breadcrumb">
         <ol class="breadcrumbs">
             <li class="breadcrumb-item">
-                <a href="{{ url('/penelitian') }}" class="text-decoration-none">Prestasi</a>
+                <a href="<?php echo e(url('/penelitian')); ?>" class="text-decoration-none">Prestasi</a>
             </li>
             <li class="breadcrumb-item current-page">Semua Prestasi</li>
         </ol>
     </nav>
 
     <div class="container">
-        <h3 class="text-center mb-5 fw-bold">PRESTASI</h3>
+        <h1 class="my-4 text-center fw-bold">PRESTASI</h1>
 
-
-        {{-- Carousel --}}
+        
         <div id="carouselExampleIndicators" class="carousel slide mb-5">
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"
@@ -29,19 +26,19 @@
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="{{ asset('aset/img/1.jpg') }}" class="d-block w-100" alt="Slide 1"
+                    <img src="<?php echo e(asset('aset/img/1.jpg')); ?>" class="d-block w-100" alt="Slide 1"
                         style="height: 500px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="{{ asset('aset/img/2.jpg') }}" class="d-block w-100" alt="Slide 2"
+                    <img src="<?php echo e(asset('aset/img/2.jpg')); ?>" class="d-block w-100" alt="Slide 2"
                         style="height: 500px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="{{ asset('aset/img/3.jpg') }}" class="d-block w-100" alt="Slide 3"
+                    <img src="<?php echo e(asset('aset/img/3.jpg')); ?>" class="d-block w-100" alt="Slide 3"
                         style="height: 500px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="{{ asset('aset/img/4.jpg') }}" class="d-block w-100" alt="Slide 4"
+                    <img src="<?php echo e(asset('aset/img/4.jpg')); ?>" class="d-block w-100" alt="Slide 4"
                         style="height: 500px; object-fit: cover;">
                 </div>
             </div>
@@ -57,7 +54,7 @@
             </button>
         </div>
 
-        {{-- Prestasi Mahasiswa Section --}}
+        
         <div class="mt-5 mb-5">
             <h2 class="text-center fw-bold mb-4">PRESTASI MAHASISWA</h2>
 
@@ -72,66 +69,70 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($achievements as $achievement)
+                        <?php $__empty_1 = true; $__currentLoopData = $achievements; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $achievement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr>
-                                <td>{{ $achievement->nama_kegiatan }}</td>
-                                <td>{{ $achievement->waktu_pelaksanaan ? \Carbon\Carbon::parse($achievement->waktu_pelaksanaan)->format('d M Y') : '-' }}
+                                <td><?php echo e($achievement->nama_kegiatan); ?></td>
+                                <td><?php echo e($achievement->waktu_pelaksanaan ? \Carbon\Carbon::parse($achievement->waktu_pelaksanaan)->format('d M Y') : '-'); ?>
+
                                 </td>
-                                <td>{{ ucfirst($achievement->tingkat ?? 'Kampus') }}</td>
-                                <td>{{ $achievement->prestasi_yang_dicapai ?? '-' }}</td>
+                                <td><?php echo e(ucfirst($achievement->tingkat ?? 'Kampus')); ?></td>
+                                <td><?php echo e($achievement->prestasi_yang_dicapai ?? '-'); ?></td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="4" class="text-center text-muted">Tidak ada data prestasi</td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        {{-- Toggle Button --}}
+        
         <div class="text-center mb-4">
             <button class="btn btn-outline-primary" onclick="toggleView()">
                 <i class="bi bi-eye"></i> Toggle View
             </button>
         </div>
 
-        {{-- Card Layout (Hidden by default, can be toggled) --}}
+        
         <div class="mt-5 mb-5" id="cardLayout" style="display: none;">
             <h3 class="mb-4">Detail Prestasi</h3>
 
-            @forelse($achievements as $achievement)
+            <?php $__empty_1 = true; $__currentLoopData = $achievements; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $achievement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">{{ $achievement->nama_kegiatan }}</h5>
+                        <h5 class="card-title"><?php echo e($achievement->nama_kegiatan); ?></h5>
                         <p class="mb-1 text-muted">
                             <strong>Date:</strong>
-                            {{ $achievement->waktu_pelaksanaan ? \Carbon\Carbon::parse($achievement->waktu_pelaksanaan)->format('F Y') : 'N/A' }}
+                            <?php echo e($achievement->waktu_pelaksanaan ? \Carbon\Carbon::parse($achievement->waktu_pelaksanaan)->format('F Y') : 'N/A'); ?>
+
                             <strong>Type:</strong>
-                            {{ ucfirst($achievement->tingkat ?? 'Akademik') }}
+                            <?php echo e(ucfirst($achievement->tingkat ?? 'Akademik')); ?>
+
                         </p>
                         <p class="card-text">
-                            {{ $achievement->prestasi_yang_dicapai ?? 'Prestasi akademik yang membanggakan' }}</p>
+                            <?php echo e($achievement->prestasi_yang_dicapai ?? 'Prestasi akademik yang membanggakan'); ?></p>
                     </div>
                 </div>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="alert alert-info text-center">
                     <i class="bi bi-info-circle"></i> Belum ada data prestasi yang tersedia.
                 </div>
-            @endforelse
+            <?php endif; ?>
         </div>
 
-        {{-- Pagination --}}
-        @if ($achievements->hasPages())
+        
+        <?php if($achievements->hasPages()): ?>
             <div class="d-flex justify-content-center mb-5">
-                {{ $achievements->links() }}
-            </div>
-        @endif
-    </div>
-@endsection
+                <?php echo e($achievements->links()); ?>
 
-@push('styles')
+            </div>
+        <?php endif; ?>
+    </div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startPush('styles'); ?>
     <style>
         .table th {
             background-color: #ffffff !important;
@@ -168,9 +169,9 @@
             transform: translateY(-2px);
         }
     </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
     <script>
         function toggleView() {
             const cardLayout = document.getElementById('cardLayout');
@@ -185,4 +186,6 @@
             }
         }
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/achievements/achievement.blade.php ENDPATH**/ ?>
