@@ -58,7 +58,7 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownPrestasi">
                             <li><a class="dropdown-item" href="/achievements/publication">Publikasi</a></li>
                             <li><a class="dropdown-item" href="/achievements/research">Penelitian</a></li>
-                            <li><a class="dropdown-item" href="/achievements/achievement">Pencapaian</a></li>
+                            <li><a class="dropdown-item" href="/achievements/achievement">Prestasi</a></li>
                         </ul>
                     </li>
 

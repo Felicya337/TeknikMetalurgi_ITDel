@@ -19,7 +19,7 @@
         {{-- Curriculum Description --}}
         <div class="curriculum-description">
             <div class="curriculum-image">
-                <img src="{{ asset('aset/img/kurikulum.jpg') }}" alt="Kurikulum Teknik Metalurgi">{{-- Alt text yang lebih deskriptif --}}
+                <img src="{{ asset('aset/img/k.2.jpg') }}" alt="Kurikulum Teknik Metalurgi">{{-- Alt text yang lebih deskriptif --}}
             </div>
             <div class="curriculum-text">
                 Salah satu unsur utama untuk mencapai pembelajaran yang baik, Perguruan Tinggi harus memiliki rancangan

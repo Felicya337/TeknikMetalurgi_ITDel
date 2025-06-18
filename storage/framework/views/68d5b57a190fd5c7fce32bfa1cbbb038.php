@@ -19,7 +19,7 @@
         
         <div class="curriculum-description">
             <div class="curriculum-image">
-                <img src="<?php echo e(asset('aset/img/kurikulum.jpg')); ?>" alt="Kurikulum Teknik Metalurgi">
+                <img src="<?php echo e(asset('aset/img/k.2.jpg')); ?>" alt="Kurikulum Teknik Metalurgi">
             </div>
             <div class="curriculum-text">
                 Salah satu unsur utama untuk mencapai pembelajaran yang baik, Perguruan Tinggi harus memiliki rancangan

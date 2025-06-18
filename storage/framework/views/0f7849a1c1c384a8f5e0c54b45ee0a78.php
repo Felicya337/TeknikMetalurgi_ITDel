@@ -344,9 +344,9 @@
 
     <div class="program-container my-5">
         <div class="program-header">
-            <h3 class="text-center mb-5 fw-bold">KEGIATAN MAHASISWA</h3>
+            <h3 class="text-center mb-5 fw-bold">KEGIATAN PRODI</h3>
             <div class="header-content">
-                <img src="<?php echo e(asset('aset/img/logohima.jpg')); ?>" alt="Logo HIMAMETAL" class="header-logo">
+                <img src="<?php echo e(asset('aset/img/Prodi.jpg')); ?>" alt="Logo HIMAMETAL" class="header-logo">
                 <div class="header-text">
                     <h4 class="sub-title">TEKNIK METALURGI</h4>
                     <p class="description">
