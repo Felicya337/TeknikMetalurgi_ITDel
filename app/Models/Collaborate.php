@@ -23,7 +23,7 @@ class Collaborate extends Model
     ];
 
     protected $casts = [
-        'date' => 'date', // Cast date to Carbon instance
+        'date' => 'date',
         'is_active' => 'boolean',
     ];
 

@@ -27,7 +27,7 @@ class LecturerController extends Controller
     private function commonValidationRules($lecturerId = null): array
     {
         $rules = [
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5048',
             'name' => 'required|string|max:255',
             'room' => 'required|string|max:255',
             'education' => 'nullable|string|max:16777215',

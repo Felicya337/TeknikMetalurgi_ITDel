@@ -43,7 +43,6 @@
             border: 1px solid #e9ecef;
             width: 100%;
             transition: all 0.3s ease;
-            cursor: pointer;
         }
 
         .research-card:hover {
@@ -303,13 +302,16 @@
                 <div class="research-card">
                     <div class="research-body">
                         <div class="research-row">
-                            <div class="research-image">
-                                @if ($research->image)
+
+                            {{-- ==================== MODIFIED SECTION START ==================== --}}
+                            {{-- Blok ini hanya akan dirender jika $research->image memiliki nilai (tidak null/kosong) --}}
+                            @if ($research->image)
+                                <div class="research-image">
                                     <img src="{{ asset('storage/' . $research->image) }}" alt="{{ $research->title }}">
-                                @else
-                                    <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
-                                @endif
-                            </div>
+                                </div>
+                            @endif
+                            {{-- ===================== MODIFIED SECTION END ===================== --}}
+
                             <div class="research-content">
                                 <h5 class="research-title">{{ $research->title }}</h5>
 
@@ -323,7 +325,7 @@
                                     </div>
                                     @if ($research->type)
                                         <div class="research-meta-item">
-                                            <strong>Type:</strong> {{ ucfirst($research->type) }}
+                                            <strong>Type:</strong> {{ ucfirst($research->subtype) }}
                                         </div>
                                     @endif
                                     @if ($research->file)

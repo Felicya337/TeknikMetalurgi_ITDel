@@ -47,9 +47,9 @@
             padding: clamp(10px, 2.5vw, 20px);
             border-radius: clamp(6px, 1vw, 12px);
             text-align: center;
-            width: clamp(180px, 20vw, 250px);
-            min-width: 160px;
-            max-width: 280px;
+            width: clamp(160px, 20vw, 250px);
+            min-width: 140px;
+            max-width: 260px;
             position: relative;
             box-shadow: 0 4px 15px rgba(2, 117, 188, 0.2);
             transition: all 0.3s ease;
@@ -404,12 +404,13 @@
                         @endif
 
                         <div class="org-title">{{ $org->title }}</div>
+                        @if ($org->degree)
+                            <div class="org-title">{{ $org->degree }}</div>
+                        @endif
                         @if ($org->name)
                             <div class="org-name">{{ $org->name }}</div>
                         @endif
-                        @if ($org->degree)
-                            <div class="org-degree">{{ $org->degree }}</div>
-                        @endif
+
                     </div>
                 @endforeach
             </div>

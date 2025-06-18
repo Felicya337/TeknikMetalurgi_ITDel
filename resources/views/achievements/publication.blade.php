@@ -323,7 +323,7 @@
                                     </div>
                                     @if ($pub->type)
                                         <div class="publication-meta-item">
-                                            <strong>Type:</strong> {{ $pub->type }}
+                                            <strong>Type:</strong> {{ $pub->subtype }}
                                         </div>
                                     @endif
                                     @if ($pub->file)

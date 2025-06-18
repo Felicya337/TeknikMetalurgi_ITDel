@@ -359,6 +359,11 @@ const updateTestimonialNavButtons = (cardCount, cardsPerView) => {
     rightButton.style.cursor = isAtEnd ? 'not-allowed' : 'pointer';
 };
 
+// Fungsi ini (moveKerjasama) dan updateKerjasamaNavButtons di bawahnya
+// sudah ditulis dengan baik untuk fungsionalitas slider kerjasama.
+// Memastikan fungsi-fungsi ini ada dan dipanggil dengan benar (misalnya via onclick di HTML
+// atau event listener yang di-setup) akan membuat navigasi kerjasama berfungsi.
+// Inisialisasi juga sudah ada di setupCarousels.
 const moveKerjasama = (direction) => {
     // Gunakan selector baru dari objek DOM
     if (!DOM.kerjasamaSlider) return;
@@ -772,6 +777,11 @@ const setupCarousels = () => {
     }
 
     // Initialize kerjasama carousel
+    // Logika untuk kerjasama carousel (moveKerjasama, updateKerjasamaNavButtons)
+    // sudah ada dan diekspor secara global (window.moveKerjasama).
+    // Inisialisasi di bawah ini memastikan state awal benar.
+    // Jika tombol navigasi di HTML memanggil window.moveKerjasama(-1) atau window.moveKerjasama(1),
+    // maka fungsionalitasnya akan berjalan sesuai dengan logika yang sudah ada.
     if (DOM.kerjasamaSlider && document.querySelectorAll('.kerjasama-page').length) {
         // Reset index ke 0 saat inisialisasi
         currentKerjasamaIndex = 0;
@@ -869,6 +879,16 @@ const initialize = () => {
     setupModals();
     setupResizeListener();
 
+    // ---- MODIFIKASI DIMULAI: Membuat arrowUp berfungsi ----
+    if (DOM.arrowUp) {
+        DOM.arrowUp.addEventListener('click', (event) => {
+            event.preventDefault(); // Mencegah aksi default jika arrowUp adalah tag <a>
+            scrollToTop();
+        });
+    }
+    // ---- MODIFIKASI SELESAI ----
+
+
     // Log current device state for debugging
     console.log('Device Detection:', {
         isMobile: DeviceDetector.isMobile(),
@@ -907,5 +927,5 @@ window.addEventListener('unload', cleanup);
 // Make certain functions available globally if needed
 window.showCollaborationModal = showCollaborationModal;
 window.moveTestimonial = moveTestimonial;
-window.moveKerjasama = moveKerjasama;
+window.moveKerjasama = moveKerjasama; // Fungsi ini sudah diekspor, pastikan tombol di HTML memanggilnya.
 window.DeviceDetector = DeviceDetector;

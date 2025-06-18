@@ -10,7 +10,8 @@
     </nav>
 
     <div class="container">
-        <h1 class="my-4 text-center fw-bold">PRESTASI</h1>
+        <h3 class="text-center mb-5 fw-bold">PRESTASI</h3>
+
 
         
         <div id="carouselExampleIndicators" class="carousel slide mb-5">

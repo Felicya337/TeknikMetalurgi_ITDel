@@ -46,7 +46,6 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
     </div>
-
     <div class="mb-3">
         <label for="date" class="form-label">Tanggal</label>
         <input type="date" class="form-control" id="date" name="date" value="<?php echo e(old('date')); ?>" required>

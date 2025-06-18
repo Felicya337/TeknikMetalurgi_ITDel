@@ -485,7 +485,9 @@
         <!-- Header Section -->
         <div class="header">
             <div class="container">
-                <h1>CLUB MAHASISWA</h1>
+
+                <h3 class="text-center mb-5 fw-bold">CLUB MAHASISWA</h3>
+
                 <p>
                     Sebagai bagian dari upaya membentuk mahasiswa yang kreatif, adaptif, dan kolaboratif, program studi ini
                     menghadirkan berbagai klub mahasiswa yang dapat menjadi ruang tumbuh bersama di luar kegiatan akademik.

@@ -71,6 +71,13 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             border: 1px solid #e9ecef;
             width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .activity-title {
@@ -78,11 +85,11 @@
             color: #2ea3f1;
             font-size: 16px;
             text-transform: uppercase;
-            text-align: center;
+            text-align: start;
             padding: 12px 20px;
             margin: 0;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid #ffffff;
             /* Changed to a visible color */
         }
 
@@ -236,10 +243,13 @@
 
     <div class="himametal-container my-5">
         <div class="himametal-header">
+            
+            <h3 class="text-center mb-5 fw-bold">KEGIATAN MAHASISWA</h3>
+
+            
             <div class="header-content">
                 <img src="<?php echo e(asset('aset/img/logohima.jpg')); ?>" alt="Logo HIMAMETAL" class="header-logo">
                 <div class="header-text">
-                    <h3 class="text-center mb-5 fw-bold">KEGIATAN MAHASISWA</h3>
                     <h4 class="sub-title">HIMAMETAL (HIMPUNAN MAHASISWA TEKNIK METALURGI)</h4>
                     <p class="description">
                         HIMAMETAL (Himpunan Mahasiswa Teknik Metalurgi) adalah organisasi mahasiswa di Institut Teknologi

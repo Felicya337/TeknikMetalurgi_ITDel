@@ -41,7 +41,6 @@
             border: 1px solid #e9ecef;
             width: 100%;
             transition: all 0.3s ease;
-            cursor: pointer;
         }
 
         .research-card:hover {
@@ -301,13 +300,16 @@
                 <div class="research-card">
                     <div class="research-body">
                         <div class="research-row">
-                            <div class="research-image">
-                                <?php if($research->image): ?>
+
+                            
+                            
+                            <?php if($research->image): ?>
+                                <div class="research-image">
                                     <img src="<?php echo e(asset('storage/' . $research->image)); ?>" alt="<?php echo e($research->title); ?>">
-                                <?php else: ?>
-                                    <img src="<?php echo e(asset('images/placeholder.png')); ?>" alt="No Image Available">
-                                <?php endif; ?>
-                            </div>
+                                </div>
+                            <?php endif; ?>
+                            
+
                             <div class="research-content">
                                 <h5 class="research-title"><?php echo e($research->title); ?></h5>
 
@@ -323,7 +325,7 @@
                                     </div>
                                     <?php if($research->type): ?>
                                         <div class="research-meta-item">
-                                            <strong>Type:</strong> <?php echo e(ucfirst($research->type)); ?>
+                                            <strong>Type:</strong> <?php echo e(ucfirst($research->subtype)); ?>
 
                                         </div>
                                     <?php endif; ?>

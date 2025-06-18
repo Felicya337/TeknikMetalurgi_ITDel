@@ -127,10 +127,10 @@
         <div class="row">
             <div class="col-md-10 offset-md-1">
                 <div class="mb-3">
-                    <h2 class="mb-0 fw-bold text-dark">Prestasi Mahasiswa</h2>
+                    <h2 class="mb-0 fw-bold text-dark">Publikasi dan Penelitian</h2>
                     <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal"
                         data-bs-target="#modal-achievement">
-                        <i class="fas fa-plus me-2"></i>Tambah Prestasi
+                        <i class="fas fa-plus me-2"></i>Tambah
                     </button>
                 </div>
 
@@ -202,12 +202,12 @@
                                                     <button type="button" class="btn btn-info btn-sm mx-1"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modal-read-achievement-{{ $achievement->id }}">
-                                                        <i class="fas fa-eye"></i>
+                                                        <i class="fas fa-eye"></i>Lihat
                                                     </button>
                                                     <button type="button" class="btn btn-warning btn-sm mx-1"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modal-edit-achievement-{{ $achievement->id }}">
-                                                        <i class="fas fa-edit"></i>
+                                                        <i class="fas fa-edit"></i>Edit
                                                     </button>
                                                     <form
                                                         action="{{ route('admin.achievement.destroy', $achievement->id) }}"
@@ -215,7 +215,7 @@
                                                         @csrf @method('DELETE')
                                                         <button type="submit"
                                                             class="btn btn-danger btn-sm mx-1 delete-btn">
-                                                            <i class="fas fa-trash"></i>
+                                                            <i class="fas fa-trash"></i>Hapus
                                                         </button>
                                                     </form>
                                                 </div>

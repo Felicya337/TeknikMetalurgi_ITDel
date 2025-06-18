@@ -323,7 +323,7 @@
                                     </div>
                                     <?php if($pub->type): ?>
                                         <div class="publication-meta-item">
-                                            <strong>Type:</strong> <?php echo e($pub->type); ?>
+                                            <strong>Type:</strong> <?php echo e($pub->Subtype); ?>
 
                                         </div>
                                     <?php endif; ?>

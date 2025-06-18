@@ -29,7 +29,7 @@ class CollaborateController extends Controller
             'company_profile' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5048',
             'date' => 'nullable|date',
-            'is_active' => 'boolean', // Pastikan ada validasi untuk ini
+            'is_active' => 'boolean',
         ]);
 
         $data = $request->all();
@@ -38,7 +38,6 @@ class CollaborateController extends Controller
             $data['logo'] = $request->file('logo')->store('collaborate_logos', 'public');
         }
 
-        // Pastikan 'is_active' selalu ada, meskipun checkbox tidak dicentang
         $data['is_active'] = $request->has('is_active') ? 1 : 0;
         $data['created_by'] = Auth::guard('admin')->id() ?? null;
 
@@ -67,7 +66,7 @@ class CollaborateController extends Controller
             'company_profile' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:5048',
             'date' => 'nullable|date',
-            'is_active' => 'boolean', // Pastikan ada validasi
+            'is_active' => 'boolean',
         ]);
 
         $collaborate = Collaborate::findOrFail($id);
@@ -80,7 +79,6 @@ class CollaborateController extends Controller
             $data['logo'] = $request->file('logo')->store('collaborate_logos', 'public');
         }
 
-        // Pastikan 'is_active' selalu ada
         $data['is_active'] = $request->has('is_active') ? 1 : 0;
         $data['updated_by'] = Auth::guard('admin')->id() ?? null;
 

@@ -101,7 +101,7 @@
                 <a href="{{ route('admin.achievement.index') }}"
                     class="nav-link {{ request()->routeIs('admin.achievement.*') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-star"></i>
-                    <p>Prestasi</p>
+                    <p>Publikasi dan Penelitian</p>
                 </a>
             </li>
 

@@ -61,12 +61,12 @@
                                                     <button type="button" class="btn btn-info btn-sm mx-1"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modal-read-student-achievement-{{ $achievement->id }}">
-                                                        <i class="fas fa-eye"></i>
+                                                        <i class="fas fa-eye"></i>Lihat
                                                     </button>
                                                     <button type="button" class="btn btn-warning btn-sm mx-1"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modal-edit-student-achievement-{{ $achievement->id }}">
-                                                        <i class="fas fa-edit"></i>
+                                                        <i class="fas fa-edit"></i>Edit
                                                     </button>
                                                     <form
                                                         action="{{ route('admin.student_achievement.destroy', $achievement->id) }}"
@@ -74,7 +74,7 @@
                                                         @csrf @method('DELETE')
                                                         <button type="submit"
                                                             class="btn btn-danger btn-sm mx-1 delete-btn">
-                                                            <i class="fas fa-trash"></i>
+                                                            <i class="fas fa-trash"></i>Hapus
                                                         </button>
                                                     </form>
                                                 </div>

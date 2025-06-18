@@ -247,7 +247,7 @@
                             <a href="<?php echo e(route('admin.achievement.index')); ?>" class="data-card"
                                 style="--card-gradient-1: #8b5cf6; --card-gradient-2: #a855f7;">
                                 <div class="card-content">
-                                    <div class="card-title">Prestasi</div>
+                                    <div class="card-title">Publikasi dan Penelitian</div>
                                     <i class="fas fa-star card-icon"></i>
                                 </div>
                                 <div class="card-footer">

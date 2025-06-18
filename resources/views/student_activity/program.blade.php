@@ -20,14 +20,12 @@
         .program-header {
             margin-bottom: 30px;
             text-align: center;
-            /* Center-align the entire header */
         }
 
         .header-content {
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Center the flex items */
             gap: 20px;
             margin-bottom: 40px;
         }
@@ -37,14 +35,17 @@
             height: 120px;
             flex-shrink: 0;
             margin-right: 20px;
-            /* Add space between logo and text */
+            transition: transform 0.3s ease;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.05);
         }
 
         .header-text {
             flex: 1;
             padding-top: 0;
             text-align: center;
-            /* Center-align text within header-text */
         }
 
         .main-title {
@@ -53,7 +54,6 @@
             color: #000000;
             margin: 0 0 10px 0;
             letter-spacing: 1px;
-
         }
 
         .sub-title {
@@ -68,19 +68,41 @@
             color: #202020;
             line-height: 1.6;
             text-align: center;
-            /* Changed from justify to center */
             margin: 0;
         }
 
-        /* Activity Cards */
+        /* Activity Cards with Enhanced Hover Effects */
         .activity-card {
             background: white;
             margin-bottom: 30px;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             border: 1px solid #e9ecef;
             width: 100%;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .activity-card:hover::before {
+            transform: scaleX(1);
         }
 
         .activity-title {
@@ -92,9 +114,13 @@
             margin: 0;
             letter-spacing: 0.5px;
             border-bottom: 1px solid #ffffff;
-            /* Should this be #e9ecef or similar for a visible line? */
-            text-align: center;
-            /* Added text-align center */
+            text-align: start;
+            transition: all 0.3s ease;
+        }
+
+        .activity-card:hover .activity-title {
+            color: #1a73e8;
+            background: linear-gradient(135deg, #f8faff, #ffffff);
         }
 
         .activity-body {
@@ -104,13 +130,14 @@
         .activity-row {
             display: flex;
             align-items: center;
-            /* Vertically center items in the row */
             gap: 20px;
         }
 
         .activity-image {
             flex: 0 0 40%;
             max-width: 40%;
+            overflow: hidden;
+            border-radius: 8px;
         }
 
         .activity-image img {
@@ -118,13 +145,16 @@
             height: 250px;
             object-fit: cover;
             display: block;
-            border-radius: 5px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .activity-card:hover .activity-image img {
+            transform: scale(1.05);
         }
 
         .activity-content {
             flex: 1;
-            /* display: flex; This might not be needed if p is block */
-            /* align-items: center; This aligns the p tag itself, not its content */
         }
 
         .activity-description {
@@ -135,15 +165,45 @@
             margin: 0;
         }
 
+        .activity-card:hover .activity-description {
+            color: #333333;
+        }
+
+        /* Breadcrumb hover effect */
+        .breadcrumbs a {
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumbs a:hover {
+            color: #ffffff;
+        }
+
         /* No activities alert */
         .alert-info {
             background-color: #d1ecf1;
             border: 1px solid #bee5eb;
             color: #000000;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             text-align: center;
             margin: 30px 0;
+            transition: all 0.3s ease;
+        }
+
+        .alert-info:hover {
+            background-color: #c3e6f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 163, 241, 0.1);
+        }
+
+        /* Enhanced button/link hover effects */
+        .text-decoration-none:hover {
+            text-decoration: underline !important;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
         }
 
         /* Responsive Design */
@@ -163,7 +223,6 @@
                 height: 100px;
                 align-self: center;
                 margin-right: 0;
-                /* Remove margin on mobile */
             }
 
             .header-text {
@@ -204,6 +263,11 @@
             .activity-description {
                 font-size: 13px;
             }
+
+            /* Reduce hover effects on mobile for better touch experience */
+            .activity-card:hover {
+                transform: translateY(-4px);
+            }
         }
 
         @media (max-width: 480px) {
@@ -235,6 +299,39 @@
             .activity-image img {
                 height: 180px;
             }
+
+            /* Minimal hover effects on small screens */
+            .activity-card:hover {
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Active/Click state for better interaction feedback */
+        .activity-card:active {
+            transform: translateY(-4px);
+            transition: transform 0.1s ease;
+        }
+
+        /* Loading animation for images */
+        .activity-image {
+            position: relative;
+        }
+
+        .activity-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            border-radius: 8px;
+        }
+
+        .activity-card:hover .activity-image::before {
+            transform: translateX(100%);
         }
     </style>
 
@@ -249,10 +346,10 @@
 
     <div class="program-container my-5">
         <div class="program-header">
+            <h3 class="text-center mb-5 fw-bold">KEGIATAN MAHASISWA</h3>
             <div class="header-content">
                 <img src="{{ asset('aset/img/logohima.jpg') }}" alt="Logo HIMAMETAL" class="header-logo">
                 <div class="header-text">
-                    <h3 class="text-center mb-5 fw-bold">KEGIATAN PRODI</h3>
                     <h4 class="sub-title">TEKNIK METALURGI</h4>
                     <p class="description">
                         Kegiatan Prodi Teknik Metalurgi di Institut Teknologi Del, Fakultas Teknologi Industri,
@@ -280,11 +377,10 @@
                                     <img src="{{ asset('storage/' . $activity->image) }}" alt="{{ $activity->title }}">
                                 @else
                                     <img src="{{ asset('images/placeholder.png') }}" alt="No Image Available">
-                                    {{-- Pastikan placeholder.png ada atau gunakan path yang benar --}}
                                 @endif
                             </div>
                             <div class="activity-content">
-                                <p class="activity-description">{!! $activity->description !!}</p> {{-- Sudah benar menggunakan {!! !!} --}}
+                                <p class="activity-description">{!! $activity->description !!}</p>
                             </div>
                         </div>
                     </div>

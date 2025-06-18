@@ -21,7 +21,7 @@ class StudentActivityController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20048',
             'type' => 'required|in:kegiatan_mahasiswa,kegiatan_prodi,club_mahasiswa',
             'is_active' => 'nullable', // Ubah menjadi nullable
         ]);
@@ -48,7 +48,7 @@ class StudentActivityController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20048',
             'type' => 'required|in:kegiatan_mahasiswa,kegiatan_prodi,club_mahasiswa',
             'is_active' => 'nullable', // Ubah menjadi nullable
         ]);

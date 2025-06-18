@@ -5,7 +5,7 @@
             <ol class="breadcrumbs">
                 <li class="breadcrumb-item">
                     <a href="<?php echo e(route('home')); ?>" class="text-decoration-none">
-                        <i class="bi bi-house-door icon"></i> Beranda
+                        Beranda
                     </a>
                 </li>
                 <li class="breadcrumb-item current-page"><b>Semua Berita</b></li>
@@ -15,35 +15,24 @@
         <div class="all-news-page">
             <div class="news-search-form">
                 <div class="search-container">
-                    <form id="searchForm">
-                        <?php echo csrf_field(); ?>
+                    <form id="searchForm" onsubmit="return false;">
                         <input type="text" name="query" id="searchInput" class="form-control"
-                            placeholder="Cari berita berdasarkan judul, konten, atau tanggal..."
-                            value="<?php echo e($query ?? ''); ?>">
+                            placeholder="Cari berita berdasarkan judul, konten, atau tanggal...">
                         <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
                         <button type="button" id="clearSearch" class="clear-btn" style="display: none;"><i
                                 class="fas fa-times"></i></button>
                     </form>
-                    <div id="loadingSpinner" style="display: none;" class="text-center mt-2">
-                        <i class="fas fa-spinner fa-spin"></i> Mencari...
-                    </div>
                 </div>
             </div>
 
-            <div id="searchResults" style="display: none;">
-                <div class="search-info">
-                    <span id="searchCount"></span>
-                </div>
+            <div id="searchResultsInfo" style="display: none;" class="mb-3">
+                <span id="searchCount"></span>
             </div>
 
             <div id="newsContainer">
-                <?php if($news->isEmpty()): ?>
-                    <div class="no-news-message">
-                        <?php if(isset($query) && $query): ?>
-                            Maaf, berita tidak ditemukan untuk pencarian "<?php echo e($query); ?>".
-                        <?php else: ?>
-                            Tidak ada berita yang ditemukan.
-                        <?php endif; ?>
+                <?php if($news->isEmpty() && !(isset($query) && $query)): ?>
+                    <div class="no-news-message" id="initialNoNewsMessage">
+                        Tidak ada berita yang ditemukan.
                     </div>
                 <?php else: ?>
                     <div class="main-layout">
@@ -52,7 +41,7 @@
                                 <div class="news-item" data-title="<?php echo e(strtolower($item->title)); ?>"
                                     data-description="<?php echo e(strtolower(strip_tags($item->description))); ?>"
                                     data-date="<?php echo e(\Carbon\Carbon::parse($item->date)->format('Y-m-d')); ?>"
-                                    data-date-formatted="<?php echo e(\Carbon\Carbon::parse($item->date)->translatedFormat('d F Y')); ?>">
+                                    data-date-formatted="<?php echo e(strtolower(\Carbon\Carbon::parse($item->date)->translatedFormat('d F Y'))); ?>">
                                     <div class="news-item-image-container">
                                         <?php if($item->image): ?>
                                             <img src="<?php echo e(asset('storage/' . $item->image)); ?>" alt="<?php echo e($item->title); ?>"
@@ -63,12 +52,12 @@
                                         <?php endif; ?>
                                     </div>
                                     <div class="news-item-details">
-                                        <a href="<?php echo e(route('newsdetail', $item->id)); ?>" class="news-item-title">
-                                            <?php echo e(Str::limit($item->title, 200)); ?>
-
+                                        <a href="<?php echo e(route('newsdetail', $item->id)); ?>" class="news-item-title-link">
+                                            <span class="original-title"><?php echo e(Str::limit($item->title, 200)); ?></span>
                                         </a>
-                                        <p class="news-item-excerpt"><?php echo e(Str::limit(strip_tags($item->description), 120)); ?>
-
+                                        <p class="news-item-excerpt">
+                                            <span
+                                                class="original-excerpt"><?php echo e(Str::limit(strip_tags($item->description), 120)); ?></span>
                                         </p>
                                         <div class="news-item-meta">
                                             <span><i class="fas fa-calendar-alt"></i>
@@ -81,7 +70,7 @@
                         </div>
 
                         <?php if($recentNews->isNotEmpty()): ?>
-                            <aside class="sidebar-area">
+                            <aside class="sidebar-area" id="sidebarArea">
                                 <h3 class="sidebar-title">RILIS BERITA</h3>
                                 <ul class="recent-news-list">
                                     <?php $__currentLoopData = $recentNews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -104,29 +93,37 @@
                 <?php endif; ?>
             </div>
 
-            <div class="pagination-wrapper" id="paginationWrapper">
-                <?php echo e($news->links()); ?>
+            <div id="clientSideNoResultsMessage" class="no-news-message" style="display: none;">
+                Maaf, berita tidak ditemukan untuk pencarian Anda.
+            </div>
 
+            <div class="pagination-wrapper" id="paginationWrapper">
+                <?php if(!$news->isEmpty() && $news->hasPages()): ?>
+                    
+                    <?php echo e($news->links()); ?>
+
+                <?php endif; ?>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        
+        
+        
+
         <script>
             $(document).ready(function() {
                 let searchTimeout;
                 const $searchInput = $('#searchInput');
-                const $searchForm = $('#searchForm');
                 const $clearSearch = $('#clearSearch');
-                const $loadingSpinner = $('#loadingSpinner');
-                const $newsContainer = $('#newsContainer');
+                const $newsList = $('#newsList');
+                const $allNewsItems = $newsList.find('.news-item');
                 const $paginationWrapper = $('#paginationWrapper');
-                const $searchResults = $('#searchResults');
+                const $searchResultsInfo = $('#searchResultsInfo');
                 const $searchCount = $('#searchCount');
+                const $sidebarArea = $('#sidebarArea');
+                const $clientSideNoResultsMessage = $('#clientSideNoResultsMessage');
+                const $initialNoNewsMessage = $('#initialNoNewsMessage');
 
-                // Store original content
-                const originalContent = $newsContainer.html();
-                const originalPagination = $paginationWrapper.html();
-
-                // Show/hide clear button
                 function toggleClearButton() {
                     if ($searchInput.val().trim()) {
                         $clearSearch.show();
@@ -135,150 +132,227 @@
                     }
                 }
 
-                // Highlight search terms in text
+                function escapeRegExp(string) {
+                    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                }
+
                 function highlightText(text, searchTerm) {
-                    if (!searchTerm) return text;
-                    const regex = new RegExp(`(${searchTerm})`, 'gi');
-                    return text.replace(regex, '<span class="highlight">$1</span>');
+                    if (!searchTerm || !text) return text;
+                    try {
+                        const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi');
+                        return text.replace(regex, '<span class="highlight">$1</span>');
+                    } catch (e) {
+                        console.warn("Error creating regex for highlight:", e);
+                        return text;
+                    }
                 }
 
-                // Format tanggal untuk tampilan
-                function formatDate(dateStr) {
-                    return new Date(dateStr).toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-                }
+                function performClientSearch(query) {
+                    const normalizedQuery = query.toLowerCase().trim();
+                    let itemsFound = 0;
 
-                // Perform AJAX search
-                function performSearch(query) {
-                    if (!query.trim()) {
-                        resetToOriginal();
+                    $clientSideNoResultsMessage.hide();
+                    $paginationWrapper.hide();
+                    $searchResultsInfo.hide();
+                    if ($sidebarArea.length) $sidebarArea.show(); // Tampilkan sidebar jika ada
+
+                    if (!normalizedQuery) {
+                        resetSearch();
                         return;
                     }
 
-                    $loadingSpinner.show();
-                    $paginationWrapper.hide();
+                    $allNewsItems.each(function() {
+                        const $item = $(this);
+                        const title = $item.data('title') || "";
+                        const description = $item.data('description') || "";
+                        const dateFormatted = $item.data('date-formatted') || "";
+                        const dateRaw = $item.data('date') || "";
 
-                    $.ajax({
-                        url: "<?php echo e(route('news.search')); ?>",
-                        method: 'GET',
-                        data: {
-                            query: query,
-                            ajax: true
-                        },
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        success: function(response) {
-                            $loadingSpinner.hide();
-                            displaySearchResults(response, query);
-                        },
-                        error: function(xhr) {
-                            $loadingSpinner.hide();
-                            $newsContainer.html(`
-                        <div class="no-news-message">
-                            Terjadi kesalahan saat mencari berita. Silakan coba lagi. (Status: ${xhr.status})
-                        </div>
-                    `);
+                        const $titleLink = $item.find('.news-item-title-link');
+                        const $originalTitleSpan = $titleLink.find('.original-title');
+                        if ($originalTitleSpan.length) {
+                            $titleLink.html($originalTitleSpan.clone().html()); // Ambil HTML dalamnya
+                        }
+
+                        const $excerptP = $item.find('.news-item-excerpt');
+                        const $originalExcerptSpan = $excerptP.find('.original-excerpt');
+                        if ($originalExcerptSpan.length) {
+                            $excerptP.html($originalExcerptSpan.clone().html()); // Ambil HTML dalamnya
+                        }
+
+                        if (title.includes(normalizedQuery) || description.includes(normalizedQuery) ||
+                            dateFormatted.includes(normalizedQuery) || dateRaw.includes(normalizedQuery)) {
+                            if ($originalTitleSpan.length) {
+                                $titleLink.html(highlightText($originalTitleSpan.html(), normalizedQuery));
+                            }
+                            if ($originalExcerptSpan.length) {
+                                $excerptP.html(highlightText($originalExcerptSpan.html(), normalizedQuery));
+                            }
+
+                            $item.show();
+                            itemsFound++;
+                        } else {
+                            $item.hide();
                         }
                     });
-                }
 
-                // Display search results
-                function displaySearchResults(response, query) {
-                    if (response.news && response.news.length > 0) {
-                        let newsHtml = '<div class="main-layout"><div class="news-list-area">';
-
-                        response.news.forEach(function(item) {
-                            const highlightedTitle = highlightText(item.title, query);
-                            const highlightedDescription = highlightText(item.description ? item.description
-                                .substring(0, 120) : '', query);
-                            const formattedDate = formatDate(item.date);
-
-                            newsHtml += `
-                        <div class="news-item">
-                            <div class="news-item-image-container">
-                                ${item.image ?
-                                    `<img src="${item.image}" alt="${item.title}" class="news-item-image" loading="lazy">` :
-                                    `<img src="https://via.placeholder.com/120x90/6c757d/ffffff?text=No+Image" alt="${item.title}" class="news-item-image" loading="lazy">`
-                                }
-                            </div>
-                            <div class="news-item-details">
-                                <a href="<?php echo e(url('newsdetail')); ?>/${item.id}" class="news-item-title">
-                                    ${highlightedTitle}
-                                </a>
-                                <p class="news-item-excerpt">${highlightedDescription}</p>
-                                <div class="news-item-meta">
-                                    <span><i class="fas fa-calendar-alt"></i> ${formattedDate}</span>
-                                    <span><i class="fas fa-user"></i> ${item.author}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                        });
-
-                        newsHtml += '</div></div>';
-                        $newsContainer.html(newsHtml);
-
-                        $searchResults.show();
-                        $searchCount.text(`Ditemukan ${response.count} berita untuk pencarian "${query}"`);
+                    if (itemsFound > 0) {
+                        $searchCount.text(`Ditemukan ${itemsFound} berita untuk pencarian "${query.trim()}"`);
+                        $searchResultsInfo.show();
+                        if ($initialNoNewsMessage.length) $initialNoNewsMessage.hide();
                     } else {
-                        $newsContainer.html(`
-                    <div class="no-news-message">
-                        Maaf, berita tidak ditemukan untuk pencarian "${query}".
-                    </div>
-                `);
-                        $searchResults.show();
-                        $searchCount.text(`Tidak ada hasil untuk pencarian "${query}"`);
+                        $clientSideNoResultsMessage.html(
+                            `Maaf, berita tidak ditemukan untuk pencarian "${query.trim()}".`).show();
+                        if ($sidebarArea.length) $sidebarArea.hide();
+                        if ($initialNoNewsMessage.length) $initialNoNewsMessage.hide();
                     }
                 }
 
-                // Reset to original content
-                function resetToOriginal() {
-                    $newsContainer.html(originalContent);
-                    $paginationWrapper.html(originalPagination).show();
-                    $searchResults.hide();
-                    $clearSearch.hide();
+                function resetSearch() {
+                    $searchInput.val('');
+                    toggleClearButton();
+                    $allNewsItems.each(function() {
+                        const $item = $(this);
+                        const $titleLink = $item.find('.news-item-title-link');
+                        const $originalTitleSpan = $titleLink.find('.original-title');
+                        if ($originalTitleSpan.length) {
+                            $titleLink.html($originalTitleSpan.clone().html());
+                        }
+
+                        const $excerptP = $item.find('.news-item-excerpt');
+                        const $originalExcerptSpan = $excerptP.find('.original-excerpt');
+                        if ($originalExcerptSpan.length) {
+                            $excerptP.html($originalExcerptSpan.clone().html());
+                        }
+                        $item.show();
+                    });
+
+                    // Hanya tampilkan pagination jika ada item berita dan ada halaman pagination
+                    if ($allNewsItems.length > 0 && $paginationWrapper.find('.pagination').length > 0) {
+                        $paginationWrapper.show();
+                    } else {
+                        $paginationWrapper.hide();
+                    }
+
+                    $searchResultsInfo.hide();
+                    $clientSideNoResultsMessage.hide();
+                    if ($sidebarArea.length) $sidebarArea.show();
+
+                    if ($initialNoNewsMessage.length && $allNewsItems.length === 0) {
+                        $initialNoNewsMessage.show();
+                    } else if ($initialNoNewsMessage.length) {
+                        $initialNoNewsMessage.hide();
+                    }
                 }
 
-                // Real-time search with debounce
                 $searchInput.on('input', function() {
-                    const query = $(this).val().trim();
+                    const currentQuery = $(this).val();
                     toggleClearButton();
-
                     clearTimeout(searchTimeout);
                     searchTimeout = setTimeout(function() {
-                        performSearch(query);
-                    }, 500); // 500ms delay
+                        performClientSearch(currentQuery);
+                    }, 300);
                 });
 
-                // Form submit
-                $searchForm.on('submit', function(e) {
+                $('#searchForm').on('submit', function(e) {
                     e.preventDefault();
                     clearTimeout(searchTimeout);
-                    performSearch($searchInput.val().trim());
+                    performClientSearch($searchInput.val());
                 });
 
-                // Clear search
                 $clearSearch.on('click', function() {
-                    $searchInput.val('');
-                    resetToOriginal();
+                    resetSearch();
                 });
 
-                // Initialize
+                // Inisialisasi awal
                 toggleClearButton();
-
-                // If there's an initial query, show search results info
-                <?php if(isset($query) && $query): ?>
-                    $searchResults.show();
-                    $searchCount.text(`Hasil pencarian untuk "$<?php echo $query; ?>"`);
-                    performSearch("<?php echo e($query); ?>");
-                <?php endif; ?>
+                if ($allNewsItems.length === 0) {
+                    if ($initialNoNewsMessage.length) $initialNoNewsMessage.show();
+                    $paginationWrapper.hide();
+                } else {
+                    if ($initialNoNewsMessage.length) $initialNoNewsMessage.hide();
+                    // Tampilkan pagination jika ada item dan pagination links
+                    if ($paginationWrapper.find('.pagination').length === 0) {
+                        $paginationWrapper.hide();
+                    }
+                }
             });
         </script>
-    </div>
-<?php $__env->stopSection(); ?>
+
+        
+        <style>
+            .highlight {
+                background-color: yellow;
+                font-weight: bold;
+                /* Tambahkan padding jika perlu agar tidak terlalu mepet */
+                /* padding: 0 2px; */
+            }
+
+            .news-search-form .search-container {
+                display: flex;
+                align-items: center;
+                border: 1px solid #ced4da;
+                /* Sesuaikan dengan style Anda */
+                border-radius: .25rem;
+                /* Sesuaikan dengan style Anda */
+                overflow: hidden;
+                /* Agar tombol tidak keluar dari border */
+            }
+
+            .news-search-form .search-container input[type="text"] {
+                flex-grow: 1;
+                border: none;
+                /* Hapus border input karena sudah ada di container */
+                padding: .375rem .75rem;
+                /* Sesuaikan padding */
+            }
+
+            .news-search-form .search-container input[type="text"]:focus {
+                outline: none;
+                /* Hapus outline saat fokus */
+                box-shadow: none;
+                /* Hapus box-shadow saat fokus */
+            }
+
+            .news-search-form .search-container .search-btn,
+            .news-search-form .search-container .clear-btn {
+                background-color: #f8f9fa;
+                /* Sesuaikan dengan style Anda */
+                border: none;
+                border-left: 1px solid #ced4da;
+                /* Garis pemisah */
+                padding: .375rem .75rem;
+                cursor: pointer;
+                color: #495057;
+                /* Warna ikon */
+            }
+
+            .news-search-form .search-container .search-btn:hover,
+            .news-search-form .search-container .clear-btn:hover {
+                background-color: #e9ecef;
+                /* Warna hover */
+            }
+
+            .news-search-form .search-container .clear-btn {
+                border-left: 1px solid #ced4da;
+                /* Pemisah untuk clear button juga */
+            }
+
+            /* Style untuk no-news-message jika Anda belum punya */
+            .no-news-message {
+                text-align: center;
+                padding: 20px;
+                background-color: #f8f9fa;
+                /* Warna latar belakang yang lembut */
+                border: 1px solid #e9ecef;
+                /* Border yang lembut */
+                border-radius: 5px;
+                /* Sudut yang membulat */
+                margin-top: 20px;
+                color: #6c757d;
+                /* Warna teks yang sedikit abu-abu */
+            }
+        </style>
+    <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\MetalurgiITDEL\resources\views/news.blade.php ENDPATH**/ ?>

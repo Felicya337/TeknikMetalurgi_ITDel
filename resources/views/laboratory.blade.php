@@ -27,6 +27,26 @@
             border-radius: 8px;
             margin-bottom: 3rem;
             overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .laboratory-card:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04),
+                0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .laboratory-card:active {
+            transform: translateY(-4px);
+            box-shadow:
+                0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.1s ease;
         }
 
         .laboratory-header {
@@ -147,6 +167,14 @@
             .laboratory-content {
                 padding: 1rem;
             }
+
+            .laboratory-card:hover {
+                transform: translateY(-4px);
+            }
+
+            .laboratory-card:active {
+                transform: translateY(-2px);
+            }
         }
 
         @media (max-width: 576px) {
@@ -162,6 +190,14 @@
             .laboratory-description,
             .schedule-item {
                 font-size: 0.8125rem;
+            }
+
+            .laboratory-card:hover {
+                transform: translateY(-2px);
+            }
+
+            .laboratory-card:active {
+                transform: translateY(-1px);
             }
         }
     </style>

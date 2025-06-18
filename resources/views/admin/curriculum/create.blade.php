@@ -37,13 +37,26 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
-    <div class="mb-4">
+
+    {{-- Checkbox "Aktifkan" yang digabungkan --}}
+    <div class="mb-4"> {{-- Anda bisa menggunakan class mb-3 atau mb-4 sesuai preferensi spacing --}}
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="is_active_create" name="is_active" value="1"
-                {{ old('is_active') ? 'checked' : '' }}>
-            <label class="form-check-label" for="is_active_create">Aktifkan (Tampil di Halaman User)</label>
+            {{-- Menggunakan id unik jika form ini mungkin muncul bersamaan dengan form lain yang memiliki checkbox is_active --}}
+            {{-- Misalnya: id="is_active_curriculum_create" --}}
+            <input type="checkbox" class="form-check-input" id="is_active_curriculum" name="is_active" value="1"
+                {{-- Logika untuk 'checked':
+                     - Jika ada old('is_active'), gunakan itu (nilainya akan '1' jika sebelumnya dicentang).
+                     - Jika tidak ada old('is_active') (form baru), defaultnya dicentang (karena ada , 1).
+                       Jika ingin default tidak dicentang, hapus ', 1' -> old('is_active')
+                --}} {{ old('is_active', 1) ? 'checked' : '' }}>
+            <label class="form-check-label" for="is_active_curriculum">Aktifkan (Tampil di Halaman User)</label>
         </div>
+        @error('is_active')
+            <div class="text-danger mt-1">{{ $message }}</div> {{-- Tambahkan margin top kecil jika perlu --}}
+        @enderror
     </div>
+    {{-- Akhir dari checkbox "Aktifkan" --}}
+
     <div class="d-flex justify-content-end gap-2">
         <button type="submit" class="btn btn-primary">Simpan</button>
     </div>

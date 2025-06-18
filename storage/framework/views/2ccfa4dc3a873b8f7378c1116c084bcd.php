@@ -115,7 +115,7 @@
         .lecturer-name {
             font-size: 24px;
             font-weight: 700;
-            color: #2c3e50;
+            color: #000000;
             margin-bottom: 20px;
         }
 
@@ -130,7 +130,7 @@
         .content-area h4,
         .content-area h5,
         .content-area h6 {
-            color: #2c3e50;
+            color: #040404;
             margin-top: 20px;
             margin-bottom: 10px;
         }

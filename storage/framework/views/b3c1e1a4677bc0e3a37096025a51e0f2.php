@@ -45,9 +45,9 @@
             padding: clamp(10px, 2.5vw, 20px);
             border-radius: clamp(6px, 1vw, 12px);
             text-align: center;
-            width: clamp(180px, 20vw, 250px);
-            min-width: 160px;
-            max-width: 280px;
+            width: clamp(160px, 20vw, 250px);
+            min-width: 140px;
+            max-width: 260px;
             position: relative;
             box-shadow: 0 4px 15px rgba(2, 117, 188, 0.2);
             transition: all 0.3s ease;
@@ -402,12 +402,13 @@
                         <?php endif; ?>
 
                         <div class="org-title"><?php echo e($org->title); ?></div>
+                        <?php if($org->degree): ?>
+                            <div class="org-title"><?php echo e($org->degree); ?></div>
+                        <?php endif; ?>
                         <?php if($org->name): ?>
                             <div class="org-name"><?php echo e($org->name); ?></div>
                         <?php endif; ?>
-                        <?php if($org->degree): ?>
-                            <div class="org-degree"><?php echo e($org->degree); ?></div>
-                        <?php endif; ?>
+
                     </div>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>

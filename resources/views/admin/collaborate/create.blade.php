@@ -25,7 +25,6 @@
             <div class="text-danger">{{ $message }}</div>
         @enderror
     </div>
-
     <div class="mb-3">
         <label for="date" class="form-label">Tanggal</label>
         <input type="date" class="form-control" id="date" name="date" value="{{ old('date') }}" required>
